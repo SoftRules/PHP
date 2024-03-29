@@ -3,45 +3,45 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\ITextValueItem;
+use SoftRules\PHP\Interfaces\TextValueItemInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class TextValueItem implements ITextValueItem
+class TextValueItem implements TextValueItemInterface
 {
     use ParsedFromXml;
 
-    private $value;
-    private $Text;
-    private $ImageUrl;
+    private string $value = '';
+    private ?string $text = null;
+    private ?string $imageUrl = null;
 
-    public function setText($Text): void
+    public function setText(?string $text): void
     {
-        $this->Text = $Text;
+        $this->text = $text;
     }
 
-    public function getText()
+    public function getText(): ?string
     {
-        return $this->Text;
+        return $this->text;
     }
 
-    public function setValue($value): void
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
-    public function setImageUrl($ImageUrl): void
+    public function setImageUrl(?string $imageUrl): void
     {
-        $this->ImageUrl = $ImageUrl;
+        $this->imageUrl = $imageUrl;
     }
 
-    public function getImageUrl()
+    public function getImageUrl(): ?string
     {
-        return $this->ImageUrl;
+        return $this->imageUrl;
     }
 
     public function parse(DOMNode $node): self

@@ -5,18 +5,19 @@ namespace SoftRules\PHP\UI;
 use DOMDocument;
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\IExpression;
-use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Interfaces\BaseItemInterface;
+use SoftRules\PHP\Interfaces\ConditionInterface;
+use SoftRules\PHP\Interfaces\ExpressionInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Expression implements IExpression
+class Expression implements ExpressionInterface
 {
     use ParsedFromXml;
 
     private string $description = '';
     private bool $startValue = true;
     /**
-     * @var Collection<int, Condition>
+     * @var Collection<int, ConditionInterface>
      */
     public readonly Collection $conditions;
 
@@ -49,7 +50,7 @@ class Expression implements IExpression
         return $this->startValue;
     }
 
-    public function addCondition(Condition $condition): void
+    public function addCondition(ConditionInterface $condition): void
     {
         $this->conditions->add($condition);
     }
@@ -60,14 +61,14 @@ class Expression implements IExpression
     }
 
     /**
-     * @param Collection<ISoftRules_Base> $items
+     * @param Collection<BaseItemInterface> $items
      */
-    public function value(Collection $items, DOMDocument $UserinterfaceData): bool
+    public function value(Collection $items, DOMDocument $userInterfaceData): bool
     {
         $res = $this->getStartValue();
 
         foreach ($this->conditions as $condition) {
-            $res = $condition->value($res, $items, $UserinterfaceData);
+            $res = $condition->value($res, $items, $userInterfaceData);
         }
 
         return $res;

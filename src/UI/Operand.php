@@ -5,10 +5,10 @@ namespace SoftRules\PHP\UI;
 use DOMNode;
 use Exception;
 use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Interfaces\IOperand;
+use SoftRules\PHP\Interfaces\OperandInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Operand implements IOperand
+class Operand implements OperandInterface
 {
     use ParsedFromXml;
 

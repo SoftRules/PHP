@@ -4,15 +4,15 @@ namespace SoftRules\PHP\Interfaces;
 
 use DOMNode;
 
-interface ISoftRules_Base
+interface BaseItemInterface
 {
     public function setDescription(string $description): void;
 
     public function getDescription(): string;
 
-    public function setVisibleExpression(IExpression $visibleExpression): void;
+    public function setVisibleExpression(ExpressionInterface $visibleExpression): void;
 
-    public function getVisibleExpression(): IExpression;
+    public function getVisibleExpression(): ExpressionInterface;
 
     public function parse(DOMNode $node): self;
 }

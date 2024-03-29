@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use DOMNode;
 
-interface ICustomProperty
+interface CustomPropertyInterface
 {
     public function setName(?string $name): void;
 

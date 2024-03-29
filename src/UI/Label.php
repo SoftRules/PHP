@@ -3,14 +3,15 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\IExpression;
-use SoftRules\PHP\Interfaces\ILabel;
-use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Interfaces\ExpressionInterface;
 use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
+use SoftRules\PHP\Interfaces\LabelItemInterface;
+use SoftRules\PHP\Interfaces\ParameterInterface;
+use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Label implements ILabel, ItemWithCustomProperties
+class Label implements ItemWithCustomProperties, LabelItemInterface, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -19,8 +20,8 @@ class Label implements ILabel, ItemWithCustomProperties
     private string $text;
     private $description;
     private $displayType;
-    private IParameter $parameter;
-    private IExpression $visibleExpression;
+    private ParameterInterface $parameter;
+    private ExpressionInterface $visibleExpression;
 
     public function __construct()
     {
@@ -67,22 +68,22 @@ class Label implements ILabel, ItemWithCustomProperties
         return $this->description;
     }
 
-    public function setParameter(Parameter $parameter): void
+    public function setParameter(ParameterInterface $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): Parameter
+    public function getParameter(): ParameterInterface
     {
         return $this->parameter;
     }
 
-    public function setVisibleExpression(IExpression $visibleExpression): void
+    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): IExpression
+    public function getVisibleExpression(): ExpressionInterface
     {
         return $this->visibleExpression;
     }
@@ -121,5 +122,10 @@ class Label implements ILabel, ItemWithCustomProperties
         }
 
         return $this;
+    }
+
+    public function render(): string
+    {
+        return "{$this->getText()}<br/>";
     }
 }

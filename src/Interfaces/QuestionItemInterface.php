@@ -3,15 +3,12 @@
 namespace SoftRules\PHP\Interfaces;
 
 use Illuminate\Support\Collection;
-use SoftRules\PHP\UI\CustomProperty;
-use SoftRules\PHP\UI\Parameter;
-use SoftRules\PHP\UI\TextValueItem;
 
-interface IQuestion extends ISoftRules_Base
+interface QuestionItemInterface extends BaseItemInterface
 {
-    public function setQuestionID($questionID);
+    public function setQuestionID(string $questionID);
 
-    public function getQuestionID();
+    public function getQuestionID(): string;
 
     public function setName($name): void;
 
@@ -57,13 +54,13 @@ interface IQuestion extends ISoftRules_Base
 
     public function getDataType();
 
-    public function setRestrictions(IRestrictions $restrictions): void;
+    public function setRestrictions(RestrictionsInterface $restrictions): void;
 
-    public function getRestrictions(): IRestrictions;
+    public function getRestrictions(): RestrictionsInterface;
 
-    public function setParameter(Parameter $parameter): void;
+    public function setParameter(ParameterInterface $parameter): void;
 
-    public function getParameter(): Parameter;
+    public function getParameter(): ParameterInterface;
 
     public function setElementPath($elementPath): void;
 
@@ -73,35 +70,38 @@ interface IQuestion extends ISoftRules_Base
 
     public function getCoreValue();
 
-    public function setUpdateUserinterface($updateUserinterface): void;
+    public function setUpdateUserInterface($updateUserInterface): void;
 
-    public function getUpdateUserinterface();
+    public function getUpdateUserInterface();
 
     public function setInvalidMessage($invalidMessage): void;
 
     public function getInvalidMessage();
 
-    public function addCustomProperty(CustomProperty $customProperty): void;
+    public function addCustomProperty(CustomPropertyInterface $customProperty): void;
 
+    /**
+     * @return Collection<int, CustomPropertyInterface>
+     */
     public function getCustomProperties(): Collection;
 
-    public function setDefaultStateExpression(IExpression $defaultStateExpression): void;
+    public function setDefaultStateExpression(ExpressionInterface $defaultStateExpression): void;
 
-    public function getDefaultStateExpression();
+    public function getDefaultStateExpression(): ExpressionInterface;
 
-    public function setRequiredExpression(IExpression $requiredExpression): void;
+    public function setRequiredExpression(ExpressionInterface $requiredExpression): void;
 
-    public function getRequiredExpression();
+    public function getRequiredExpression(): ExpressionInterface;
 
-    public function setValidExpression(IExpression $validExpression): void;
+    public function setValidExpression(ExpressionInterface $validExpression): void;
 
-    public function getValidExpression();
+    public function getValidExpression(): ExpressionInterface;
 
-    public function setUpdateExpression(IExpression $updateExpression): void;
+    public function setUpdateExpression(ExpressionInterface $updateExpression): void;
 
     public function setReadyForProcess($readyForProcess): void;
 
     public function getReadyForProcess();
 
-    public function addTextValue(TextValueItem $textValue): void;
+    public function addTextValue(TextValueItemInterface $textValue): void;
 }

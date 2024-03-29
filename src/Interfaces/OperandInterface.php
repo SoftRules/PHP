@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use SoftRules\PHP\Enums\eValueType;
 
-interface IOperand
+interface OperandInterface
 {
     public function setValue(mixed $value): void;
 

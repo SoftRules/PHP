@@ -11,7 +11,7 @@ interface RenderableWrapper
     public function renderClosingTags(): string;
 
     /**
-     * @return Collection<int, ISoftRules_Base>
+     * @return Collection<int, BaseItemInterface>
      */
     public function getItems(): Collection;
 }

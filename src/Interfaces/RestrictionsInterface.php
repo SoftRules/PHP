@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-interface IRestrictions
+interface RestrictionsInterface
 {
     public function setEnumerationValues($enumerationValues): void;
 

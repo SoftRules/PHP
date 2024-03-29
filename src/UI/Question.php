@@ -4,67 +4,71 @@ namespace SoftRules\PHP\UI;
 
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\IExpression;
-use SoftRules\PHP\Interfaces\IQuestion;
-use SoftRules\PHP\Interfaces\IRestrictions;
+use SoftRules\PHP\Interfaces\ExpressionInterface;
 use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
+use SoftRules\PHP\Interfaces\ParameterInterface;
+use SoftRules\PHP\Interfaces\QuestionItemInterface;
+use SoftRules\PHP\Interfaces\Renderable;
+use SoftRules\PHP\Interfaces\RestrictionsInterface;
+use SoftRules\PHP\Interfaces\TextValueItemInterface;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Question implements IQuestion, ItemWithCustomProperties
+class Question implements ItemWithCustomProperties, QuestionItemInterface, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
 
-    private $QuestionID;
+    private string $questionID;
     private $name;
     private $value;
-    private $Description;
-    private $Placeholder;
-    private $Tooltip;
-    private $HelpText;
-    private $DefaultState;
-    private $IncludeInvisibleQuestion;
-    private $DataType;
-    private $DisplayType;
-    private $DisplayOnly;
-    private IRestrictions $Restrictions;
-    private $Parameter;
-    private $ElementPath;
-    private $UpdateUserinterface;
-    private $InvalidMessage;
-    private $ReadyForProcess;
-    private $CoreValue;
+    private $description;
+    private $placeholder;
+    private $tooltip;
+    private $helpText;
+    private $defaultState;
+    private $includeInvisibleQuestion;
+    private $dataType;
+    private $displayType;
+    private $displayOnly;
+    private RestrictionsInterface $restrictions;
+    private ParameterInterface $parameter;
+    private $elementPath;
+    private $updateUserInterface;
+    private $invalidMessage;
+    private $readyForProcess;
+    private $coreValue;
 
     /**
-     * @var Collection<int, TextValueItem>
+     * @var Collection<int, TextValueItemInterface>
      */
     public readonly Collection $textValues;
 
-    private IExpression $ValidExpression;
-    private IExpression $DefaultStateExpression;
-    private IExpression $RequiredExpression;
-    private IExpression $UpdateExpression;
-    private IExpression $VisibleExpression;
+    private ExpressionInterface $validExpression;
+    private ExpressionInterface $defaultStateExpression;
+    private ExpressionInterface $requiredExpression;
+    private ExpressionInterface $updateExpression;
+    private ExpressionInterface $visibleExpression;
 
     public function __construct()
     {
         $this->textValues = new Collection();
-        $this->setVisibleExpression(new Expression());
-        $this->setValidExpression(new Expression());
-        $this->setRequiredExpression(new Expression());
-        $this->setUpdateExpression(new Expression());
-        $this->setDefaultStateExpression(new Expression());
+
+        $this->validExpression = new Expression();
+        $this->defaultStateExpression = new Expression();
+        $this->requiredExpression = new Expression();
+        $this->updateExpression = new Expression();
+        $this->visibleExpression = new Expression();
     }
 
-    public function setQuestionID($questionID): void
+    public function setQuestionID(string $questionID): void
     {
-        $this->QuestionID = $questionID;
+        $this->questionID = $questionID;
     }
 
-    public function getQuestionID()
+    public function getQuestionID(): string
     {
-        return $this->QuestionID;
+        return $this->questionID;
     }
 
     public function setName($name): void
@@ -89,215 +93,215 @@ class Question implements IQuestion, ItemWithCustomProperties
 
     public function setDescription(string $description): void
     {
-        $this->Description = $description;
+        $this->description = $description;
     }
 
     public function getDescription(): string
     {
-        return $this->Description;
+        return $this->description;
     }
 
     public function setPlaceholder($placeholder): void
     {
-        $this->Placeholder = $placeholder;
+        $this->placeholder = $placeholder;
     }
 
     public function getPlaceholder()
     {
-        return $this->Placeholder;
+        return $this->placeholder;
     }
 
     public function setTooltip($tooltip): void
     {
-        $this->Tooltip = $tooltip;
+        $this->tooltip = $tooltip;
     }
 
     public function getTooltip()
     {
-        return $this->Tooltip;
+        return $this->tooltip;
     }
 
     public function setHelpText($helpText): void
     {
-        $this->HelpText = $helpText;
+        $this->helpText = $helpText;
     }
 
     public function getHelpText()
     {
-        return $this->HelpText;
+        return $this->helpText;
     }
 
     public function setDefaultState($defaultState): void
     {
-        $this->DefaultState = $defaultState;
+        $this->defaultState = $defaultState;
     }
 
     public function getDefaultState()
     {
-        return $this->DefaultState;
+        return $this->defaultState;
     }
 
     public function setCoreValue($coreValue): void
     {
-        $this->CoreValue = $coreValue;
+        $this->coreValue = $coreValue;
     }
 
     public function getCoreValue()
     {
-        return $this->CoreValue;
+        return $this->coreValue;
     }
 
     public function setIncludeInvisibleQuestion($includeInvisibleQuestion): void
     {
-        $this->IncludeInvisibleQuestion = $includeInvisibleQuestion;
+        $this->includeInvisibleQuestion = $includeInvisibleQuestion;
     }
 
     public function getIncludeInvisibleQuestion()
     {
-        return $this->IncludeInvisibleQuestion;
+        return $this->includeInvisibleQuestion;
     }
 
     public function setDataType($dataType): void
     {
-        $this->DataType = $dataType;
+        $this->dataType = $dataType;
     }
 
     public function getDataType()
     {
-        return $this->DataType;
+        return $this->dataType;
     }
 
     public function setDisplayType($displayType): void
     {
-        $this->DisplayType = $displayType;
+        $this->displayType = $displayType;
     }
 
     public function getDisplayType()
     {
-        return $this->DisplayType;
+        return $this->displayType;
     }
 
     public function setDisplayOnly($displayOnly): void
     {
-        $this->DisplayOnly = $displayOnly;
+        $this->displayOnly = $displayOnly;
     }
 
     public function getDisplayOnly()
     {
-        return $this->DisplayOnly;
+        return $this->displayOnly;
     }
 
-    public function setRestrictions(IRestrictions $restrictions): void
+    public function setRestrictions(RestrictionsInterface $restrictions): void
     {
-        $this->Restrictions = $restrictions;
+        $this->restrictions = $restrictions;
     }
 
-    public function getRestrictions(): IRestrictions
+    public function getRestrictions(): RestrictionsInterface
     {
-        return $this->Restrictions;
+        return $this->restrictions;
     }
 
-    public function setParameter(Parameter $parameter): void
+    public function setParameter(ParameterInterface $parameter): void
     {
-        $this->Parameter = $parameter;
+        $this->parameter = $parameter;
     }
 
-    public function getParameter(): Parameter
+    public function getParameter(): ParameterInterface
     {
-        return $this->Parameter;
+        return $this->parameter;
     }
 
     public function setElementPath($elementPath): void
     {
-        $this->ElementPath = $elementPath;
+        $this->elementPath = $elementPath;
     }
 
     public function getElementPath()
     {
-        return $this->ElementPath;
+        return $this->elementPath;
     }
 
-    public function setUpdateUserinterface($updateUserinterface): void
+    public function setUpdateUserInterface($updateUserInterface): void
     {
-        $this->UpdateUserinterface = $updateUserinterface;
+        $this->updateUserInterface = $updateUserInterface;
     }
 
-    public function getUpdateUserinterface()
+    public function getUpdateUserInterface()
     {
-        return $this->UpdateUserinterface;
+        return $this->updateUserInterface;
     }
 
     public function setInvalidMessage($invalidMessage): void
     {
-        $this->InvalidMessage = $invalidMessage;
+        $this->invalidMessage = $invalidMessage;
     }
 
     public function getInvalidMessage()
     {
-        return $this->InvalidMessage;
+        return $this->invalidMessage;
     }
 
-    public function setDefaultStateExpression(IExpression $defaultStateExpression): void
+    public function setDefaultStateExpression(ExpressionInterface $defaultStateExpression): void
     {
-        $this->DefaultStateExpression = $defaultStateExpression;
+        $this->defaultStateExpression = $defaultStateExpression;
     }
 
-    public function getDefaultStateExpression()
+    public function getDefaultStateExpression(): ExpressionInterface
     {
-        return $this->DefaultStateExpression;
+        return $this->defaultStateExpression;
     }
 
-    public function setRequiredExpression(IExpression $requiredExpression): void
+    public function setRequiredExpression(ExpressionInterface $requiredExpression): void
     {
-        $this->RequiredExpression = $requiredExpression;
+        $this->requiredExpression = $requiredExpression;
     }
 
-    public function getRequiredExpression()
+    public function getRequiredExpression(): ExpressionInterface
     {
-        return $this->RequiredExpression;
+        return $this->requiredExpression;
     }
 
-    public function setUpdateExpression(IExpression $updateExpression): void
+    public function setUpdateExpression(ExpressionInterface $updateExpression): void
     {
-        $this->UpdateExpression = $updateExpression;
+        $this->updateExpression = $updateExpression;
     }
 
-    public function getUpdateExpression()
+    public function getUpdateExpression(): ExpressionInterface
     {
-        return $this->UpdateExpression;
+        return $this->updateExpression;
     }
 
-    public function setValidExpression(IExpression $validExpression): void
+    public function setValidExpression(ExpressionInterface $validExpression): void
     {
-        $this->ValidExpression = $validExpression;
+        $this->validExpression = $validExpression;
     }
 
-    public function getValidExpression()
+    public function getValidExpression(): ExpressionInterface
     {
-        return $this->ValidExpression;
+        return $this->validExpression;
     }
 
-    public function setVisibleExpression(IExpression $VisibleExpression): void
+    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
     {
-        $this->VisibleExpression = $VisibleExpression;
+        $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): IExpression
+    public function getVisibleExpression(): ExpressionInterface
     {
-        return $this->VisibleExpression;
+        return $this->visibleExpression;
     }
 
     public function setReadyForProcess($readyForProcess): void
     {
-        $this->ReadyForProcess = $readyForProcess;
+        $this->readyForProcess = $readyForProcess;
     }
 
     public function getReadyForProcess()
     {
-        return $this->ReadyForProcess;
+        return $this->readyForProcess;
     }
 
-    public function addTextValue(TextValueItem $textValue): void
+    public function addTextValue(TextValueItemInterface $textValue): void
     {
         $this->textValues->add($textValue);
     }
@@ -346,45 +350,45 @@ class Question implements IQuestion, ItemWithCustomProperties
                     $this->setCoreValue($item->nodeValue);
                     break;
                 case 'Restrictions':
-                    $this->Restrictions = new Restrictions();
+                    $this->restrictions = new Restrictions();
 
                     foreach ($item->childNodes as $restriction) {
                         switch ($restriction->nodeName) {
                             case 'enumerationValues':
-                                $this->Restrictions->setEnumerationValues($restriction->nodeValue);
+                                $this->restrictions->setEnumerationValues($restriction->nodeValue);
                                 break;
                             case 'fractionDigits':
-                                $this->Restrictions->setFractionDigits($restriction->nodeValue);
+                                $this->restrictions->setFractionDigits($restriction->nodeValue);
                                 break;
                             case 'length':
-                                $this->Restrictions->setLength($restriction->nodeValue);
+                                $this->restrictions->setLength($restriction->nodeValue);
                                 break;
                             case 'maxExclusive':
-                                $this->Restrictions->setMaxExclusive($restriction->nodeValue);
+                                $this->restrictions->setMaxExclusive($restriction->nodeValue);
                                 break;
                             case 'minExclusive':
-                                $this->Restrictions->setMinExclusive($restriction->nodeValue);
+                                $this->restrictions->setMinExclusive($restriction->nodeValue);
                                 break;
                             case 'maxInclusive':
-                                $this->Restrictions->setMaxInclusive($restriction->nodeValue);
+                                $this->restrictions->setMaxInclusive($restriction->nodeValue);
                                 break;
                             case 'minInclusive':
-                                $this->Restrictions->setMinInclusive($restriction->nodeValue);
+                                $this->restrictions->setMinInclusive($restriction->nodeValue);
                                 break;
                             case 'maxLength':
-                                $this->Restrictions->setMaxLength($restriction->nodeValue);
+                                $this->restrictions->setMaxLength($restriction->nodeValue);
                                 break;
                             case 'minLength':
-                                $this->Restrictions->setMinLength($restriction->nodeValue);
+                                $this->restrictions->setMinLength($restriction->nodeValue);
                                 break;
                             case 'pattern':
-                                $this->Restrictions->setPattern($restriction->nodeValue);
+                                $this->restrictions->setPattern($restriction->nodeValue);
                                 break;
                             case 'totalDigits':
-                                $this->Restrictions->setTotalDigits($restriction->nodeValue);
+                                $this->restrictions->setTotalDigits($restriction->nodeValue);
                                 break;
                             case 'whiteSpace':
-                                $this->Restrictions->setWhiteSpace($restriction->nodeValue);
+                                $this->restrictions->setWhiteSpace($restriction->nodeValue);
                                 break;
                             default:
                                 echo 'restriction Not implemented yet:' . $restriction->nodeName . '<br>';
@@ -399,7 +403,7 @@ class Question implements IQuestion, ItemWithCustomProperties
                     $this->setElementPath($item->nodeValue);
                     break;
                 case 'UpdateUserInterface':
-                    $this->setUpdateUserinterface($item->nodeValue);
+                    $this->setUpdateUserInterface($item->nodeValue);
                     break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($item->nodeValue);
@@ -439,5 +443,26 @@ class Question implements IQuestion, ItemWithCustomProperties
         }
 
         return $this;
+    }
+
+    public function render(): string
+    {
+        $html = '<li>';
+        $html .= "Question: {$this->getDescription()}({$this->getName()}) Value: {$this->getValue()} UpdateUserinterface: {$this->getUpdateUserInterface()}{$this->getTextValuesDescription()}";
+        $html .= '</li>';
+
+        return $html;
+    }
+
+    private function getTextValuesDescription(): string
+    {
+        if ($this->textValues->isEmpty()) {
+            return '';
+        }
+
+        $items = $this->textValues
+            ->implode(fn (TextValueItem $textValueItem) => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
+
+        return " Aantal TextValues: {$this->textValues->count()} ({$items})";
     }
 }

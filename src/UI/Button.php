@@ -4,13 +4,14 @@ namespace SoftRules\PHP\UI;
 
 use DOMNode;
 use SoftRules\PHP\Enums\eButtonType;
-use SoftRules\PHP\Interfaces\IButton;
-use SoftRules\PHP\Interfaces\IExpression;
-use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Interfaces\ButtonItemInterface;
+use SoftRules\PHP\Interfaces\ExpressionInterface;
+use SoftRules\PHP\Interfaces\ParameterInterface;
+use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Button implements IButton
+class Button implements ButtonItemInterface, Renderable
 {
     use HasCustomProperties, ParsedFromXml;
 
@@ -21,8 +22,8 @@ class Button implements IButton
     private $description;
     private $displayType;
     private $skipFormValidation;
-    private IExpression $visibleExpression;
-    private IParameter $parameter;
+    private ExpressionInterface $visibleExpression;
+    private ParameterInterface $parameter;
 
     public function __construct()
     {
@@ -105,22 +106,22 @@ class Button implements IButton
         return $this->description;
     }
 
-    public function setVisibleExpression(IExpression $visibleExpression): void
+    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): IExpression
+    public function getVisibleExpression(): ExpressionInterface
     {
         return $this->visibleExpression;
     }
 
-    public function setParameter(Parameter $parameter): void
+    public function setParameter(ParameterInterface $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): Parameter
+    public function getParameter(): ParameterInterface
     {
         return $this->parameter;
     }
@@ -168,5 +169,51 @@ class Button implements IButton
         }
 
         return $this;
+    }
+
+    public function render(): string
+    {
+        $styleType = '';
+
+        if (strtolower((string) $this->getDisplayType()) === 'tile') {
+            $tile = true;
+        }
+
+        foreach ($this->getCustomProperties() as $customProperty) {
+            switch (strtolower((string) $customProperty->getName())) {
+                case 'nextpage':
+                    $name = $customProperty->getValue();
+                    break;
+                case 'pictureurl':
+                    $pictureUrl = $customProperty->getValue();
+                    break;
+                case 'width':
+                    $width = $customProperty->getValue();
+                    break;
+                case 'height':
+                    $height = $customProperty->getValue();
+                    break;
+                case 'styletype':
+                    $styleType = " data-styleType='" . $customProperty->getValue() . "'";
+                    break;
+                case 'align':
+                    $align = " data-align='" . $customProperty->getValue() . "'";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $buttonFunction = match ($this->getType()) {
+            eButtonType::submit => 'processButton',
+            eButtonType::navigate, eButtonType::update => 'updateButton',
+            default => '',
+        };
+
+        $html = '<div>';
+        $html .= "<button type=\"button\" class=\"{$buttonFunction} btn btn-default\" data-type='button' data-id=\"{$this->getButtonID()}\">{$this->getText()}</button>";
+        $html .= '</div>';
+
+        return $html;
     }
 }

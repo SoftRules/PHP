@@ -3,11 +3,13 @@
 namespace SoftRules\PHP\Interfaces;
 
 use Illuminate\Support\Collection;
-use SoftRules\PHP\UI\CustomProperty;
 
 interface ItemWithCustomProperties
 {
-    public function addCustomProperty(CustomProperty $customProperty): void;
+    public function addCustomProperty(CustomPropertyInterface $customProperty): void;
 
+    /**
+     * @return Collection<int, CustomPropertyInterface>
+     */
     public function getCustomProperties(): Collection;
 }

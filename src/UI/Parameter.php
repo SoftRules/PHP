@@ -3,94 +3,94 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Interfaces\ParameterInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Parameter implements IParameter
+class Parameter implements ParameterInterface
 {
     use ParsedFromXml;
 
-    private $Name;
-    private $Path;
-    private $ParentGroupID;
-    private $ParentUserinterfaceID;
-    private $ParentConfigID;
-    private $Renew;
-    private $UsedByEvents;
+    private ?string $name = null;
+    private $path;
+    private ?string $parentGroupID = null;
+    private ?string $parentUserInterfaceID = null;
+    private ?string $parentConfigID = null;
+    private $renew;
+    private $usedByEvents;
 
-    public function setName($Name): void
+    public function setName($name): void
     {
-        $this->Name = $Name;
+        $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setPath($Path): void
+    public function setPath($path): void
     {
-        $this->Path = $Path;
+        $this->path = $path;
     }
 
     public function getPath()
     {
-        return $this->Path;
+        return $this->path;
     }
 
-    public function setParentGroupID($ParentGroupID): void
+    public function setParentGroupID(?string $parentGroupID): void
     {
-        $this->ParentGroupID = $ParentGroupID;
+        $this->parentGroupID = $parentGroupID;
     }
 
-    public function getParentGroupID()
+    public function getParentGroupID(): ?string
     {
-        return $this->ParentGroupID;
+        return $this->parentGroupID;
     }
 
-    public function setParentUserinterfaceID($ParentUserinterfaceID): void
+    public function setParentUserInterfaceID(?string $parentUserInterfaceID): void
     {
-        $this->ParentUserinterfaceID = $ParentUserinterfaceID;
+        $this->parentUserInterfaceID = $parentUserInterfaceID;
     }
 
-    public function getParentUserinterfaceID()
+    public function getParentUserInterfaceID(): ?string
     {
-        return $this->ParentUserinterfaceID;
+        return $this->parentUserInterfaceID;
     }
 
-    public function setParentConfigID($ParentConfigID): void
+    public function setParentConfigID(?string $parentConfigID): void
     {
-        $this->ParentConfigID = $ParentConfigID;
+        $this->parentConfigID = $parentConfigID;
     }
 
-    public function getParentConfigID()
+    public function getParentConfigID(): ?string
     {
-        return $this->ParentConfigID;
+        return $this->parentConfigID;
     }
 
-    public function setRenew($Renew): void
+    public function setRenew($renew): void
     {
-        $this->Renew = $Renew;
+        $this->renew = $renew;
     }
 
     public function getRenew()
     {
-        return $this->Renew;
+        return $this->renew;
     }
 
-    public function setUsedByEvents($UsedByEvents): void
+    public function setUsedByEvents($usedByEvents): void
     {
-        $this->UsedByEvents = $UsedByEvents;
+        $this->usedByEvents = $usedByEvents;
     }
 
     public function getUsedByEvents()
     {
-        return $this->UsedByEvents;
+        return $this->usedByEvents;
     }
 
-    public function parse(DOMNode $item): self
+    public function parse(DOMNode $node): self
     {
-        foreach ($item->childNodes as $parameter) {
+        foreach ($node->childNodes as $parameter) {
             switch ($parameter->nodeName) {
                 case 'Name':
                     $this->setName($parameter->nodeValue);
@@ -102,7 +102,7 @@ class Parameter implements IParameter
                     $this->setParentGroupID($parameter->nodeValue);
                     break;
                 case 'ParentUserinterfaceID':
-                    $this->setParentUserinterfaceID($parameter->nodeValue);
+                    $this->setParentUserInterfaceID($parameter->nodeValue);
                     break;
                 case 'ParentConfigID':
                     $this->setParentConfigID($parameter->nodeValue);

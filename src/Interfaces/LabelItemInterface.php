@@ -2,9 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-use SoftRules\PHP\UI\Parameter;
-
-interface ILabel extends ISoftRules_Base
+interface LabelItemInterface extends BaseItemInterface
 {
     public function setLabelID(string $labelID): void;
 
@@ -14,7 +12,7 @@ interface ILabel extends ISoftRules_Base
 
     public function getText(): string;
 
-    public function setParameter(Parameter $parameter): void;
+    public function setParameter(ParameterInterface $parameter): void;
 
-    public function getParameter(): Parameter;
+    public function getParameter(): ParameterInterface;
 }

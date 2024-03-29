@@ -2,13 +2,13 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-interface IRange
+interface RangeInterface
 {
-    public function setHighValue($HighValue): void;
+    public function setHighValue($highValue): void;
 
     public function getHighValue();
 
-    public function setLowValue($LowValue): void;
+    public function setLowValue($lowValue): void;
 
     public function getLowValue();
 }

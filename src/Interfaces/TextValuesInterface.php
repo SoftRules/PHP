@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-interface ITextValues
+interface TextValuesInterface
 {
     public function setTextValuesID($textValuesID): void;
 

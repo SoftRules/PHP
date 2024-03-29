@@ -5,43 +5,43 @@ namespace SoftRules\PHP\UI;
 use DOMNode;
 use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eGroupType;
-use SoftRules\PHP\Interfaces\IExpression;
-use SoftRules\PHP\Interfaces\IGroup;
-use SoftRules\PHP\Interfaces\IParameter;
-use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Interfaces\BaseItemInterface;
+use SoftRules\PHP\Interfaces\ExpressionInterface;
+use SoftRules\PHP\Interfaces\GroupItemInterface;
+use SoftRules\PHP\Interfaces\ParameterInterface;
 use SoftRules\PHP\Interfaces\RenderableWrapper;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Group implements IGroup, RenderableWrapper
+class Group implements GroupItemInterface, RenderableWrapper
 {
     use HasCustomProperties;
     use ParsedFromXml;
 
-    private $groupID;
+    private string $groupID;
 
-    private $name;
+    private string $name;
 
     private eGroupType $type;
 
-    private $updateUserinterface;
+    private $updateUserInterface;
 
-    private $pageID;
+    private string $pageID;
 
     private $suppressItemsWhenInvisible;
 
     /**
-     * @var Collection<int, ISoftRules_Base>
+     * @var Collection<int, BaseItemInterface>
      */
     private Collection $items;
 
     private array $headerItems = [];
 
-    private $description;
+    private string $description = '';
 
-    private IExpression $visibleExpression;
+    private ExpressionInterface $visibleExpression;
 
-    private IParameter $parameter;
+    private ParameterInterface $parameter;
 
     public function __construct()
     {
@@ -49,22 +49,22 @@ class Group implements IGroup, RenderableWrapper
         $this->setVisibleExpression(new Expression());
     }
 
-    public function setGroupID($groupID): void
+    public function setGroupID(string $groupID): void
     {
-        $this->groupID = $groupID;
+        $this->groupID = str_replace('|', '_', $groupID);
     }
 
-    public function getGroupID()
+    public function getGroupID(): string
     {
-        return str_replace('|', '_', (string) $this->groupID);
+        return $this->groupID;
     }
 
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -85,22 +85,22 @@ class Group implements IGroup, RenderableWrapper
         return $this->type;
     }
 
-    public function setUpdateUserinterface($updateUserinterface): void
+    public function setUpdateUserInterface($updateUserInterface): void
     {
-        $this->updateUserinterface = $updateUserinterface;
+        $this->updateUserInterface = $updateUserInterface;
     }
 
-    public function getUpdateUserinterface()
+    public function getUpdateUserInterface()
     {
-        return $this->updateUserinterface;
+        return $this->updateUserInterface;
     }
 
-    public function setPageID($pageID): void
+    public function setPageID(string $pageID): void
     {
         $this->pageID = $pageID;
     }
 
-    public function getPageID()
+    public function getPageID(): string
     {
         return $this->pageID;
     }
@@ -115,7 +115,7 @@ class Group implements IGroup, RenderableWrapper
         return $this->suppressItemsWhenInvisible;
     }
 
-    public function addItem(ISoftRules_Base $item): void
+    public function addItem(BaseItemInterface $item): void
     {
         $this->items->add($item);
     }
@@ -140,12 +140,12 @@ class Group implements IGroup, RenderableWrapper
         $this->headerItems[] = $item;
     }
 
-    public function setVisibleExpression(IExpression $visibleExpression): void
+    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): IExpression
+    public function getVisibleExpression(): ExpressionInterface
     {
         return $this->visibleExpression;
     }
@@ -160,12 +160,12 @@ class Group implements IGroup, RenderableWrapper
         return $this->description;
     }
 
-    public function setParameter(Parameter $parameter): void
+    public function setParameter(ParameterInterface $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): Parameter
+    public function getParameter(): ParameterInterface
     {
         return $this->parameter;
     }
@@ -184,7 +184,7 @@ class Group implements IGroup, RenderableWrapper
                     $this->setType($item->nodeValue);
                     break;
                 case 'UpdateUserInterface':
-                    $this->setUpdateUserinterface($item->nodeValue);
+                    $this->setUpdateUserInterface($item->nodeValue);
                     break;
                 case 'PageID':
                     $this->setPageID($item->nodeValue);

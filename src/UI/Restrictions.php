@@ -2,9 +2,9 @@
 
 namespace SoftRules\PHP\UI;
 
-use SoftRules\PHP\Interfaces\IRestrictions;
+use SoftRules\PHP\Interfaces\RestrictionsInterface;
 
-class Restrictions implements IRestrictions
+class Restrictions implements RestrictionsInterface
 {
     private $enumerationValues;
     private $fractionDigits;

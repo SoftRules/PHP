@@ -11,35 +11,35 @@ use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Interfaces\ICondition;
-use SoftRules\PHP\Interfaces\IOperand;
-use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Interfaces\BaseItemInterface;
+use SoftRules\PHP\Interfaces\ConditionInterface;
+use SoftRules\PHP\Interfaces\OperandInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use Throwable;
 
-class Condition implements ICondition
+class Condition implements ConditionInterface
 {
     use ParsedFromXml;
 
-    private ?eLogOperator $logoperator = null;
+    private ?eLogOperator $logOperator = null;
     private eOperator $operator;
-    private IOperand $left_operand;
-    private IOperand $right_operand;
+    private OperandInterface $leftOperand;
+    private OperandInterface $rightOperand;
 
-    public function setLogoperator(eLogOperator|string $logoperator): void
+    public function setLogOperator(eLogOperator|string $logOperator): void
     {
-        if ($logoperator instanceof eLogOperator) {
-            $this->logoperator = $logoperator;
+        if ($logOperator instanceof eLogOperator) {
+            $this->logOperator = $logOperator;
 
             return;
         }
 
-        $this->logoperator = eLogOperator::from($logoperator);
+        $this->logOperator = eLogOperator::from($logOperator);
     }
 
-    public function getLogoperator(): ?eLogOperator
+    public function getLogOperator(): ?eLogOperator
     {
-        return $this->logoperator;
+        return $this->logOperator;
     }
 
     public function setOperator(eOperator|string $operator): void
@@ -58,24 +58,24 @@ class Condition implements ICondition
         return $this->operator;
     }
 
-    public function setLeft_operand(IOperand $left_operand): void
+    public function setLeftOperand(OperandInterface $leftOperand): void
     {
-        $this->left_operand = $left_operand;
+        $this->leftOperand = $leftOperand;
     }
 
-    public function getLeft_operand(): IOperand
+    public function getLeftOperand(): OperandInterface
     {
-        return $this->left_operand;
+        return $this->leftOperand;
     }
 
-    public function setRight_operand(IOperand $right_operand): void
+    public function setRightOperand(OperandInterface $rightOperand): void
     {
-        $this->right_operand = $right_operand;
+        $this->rightOperand = $rightOperand;
     }
 
-    public function getRight_operand(): IOperand
+    public function getRightOperand(): OperandInterface
     {
-        return $this->right_operand;
+        return $this->rightOperand;
     }
 
     public function copyFrom($sourceCondition): void
@@ -84,9 +84,9 @@ class Condition implements ICondition
     }
 
     /**
-     * @param Collection<int, ISoftRules_Base> $items
+     * @param Collection<int, BaseItemInterface> $items
      */
-    public function getElement(Collection $items, IOperand $operand, DOMDocument $UserinterfaceData): mixed
+    public function getElement(Collection $items, OperandInterface $operand, DOMDocument $UserInterfaceData): mixed
     {
         foreach ($items as $item) {
             if ($item instanceof Question) {
@@ -101,7 +101,7 @@ class Condition implements ICondition
                     }
                 }
             } elseif ($item instanceof Group) {
-                $return = $this->getElement($item->getItems(), $operand, $UserinterfaceData);
+                $return = $this->getElement($item->getItems(), $operand, $UserInterfaceData);
 
                 if ($return !== '') {
                     return $return;
@@ -110,7 +110,7 @@ class Condition implements ICondition
         }
 
         $operandPath = $operand->getElementPath();
-        $xpath = new DOMXpath($UserinterfaceData);
+        $xpath = new DOMXpath($UserInterfaceData);
         $operandPath = str_replace(['{', '}'], ['[', ']'], $operandPath);
 
         $nodes = $xpath->query('/' . $operandPath . '/' . $operand->getValue());
@@ -122,23 +122,23 @@ class Condition implements ICondition
     }
 
     /**
-     * @param Collection<int, ISoftRules_Base> $items
+     * @param Collection<int, BaseItemInterface> $items
      */
-    public function value($status, Collection $items, DOMDocument $UserinterfaceData): bool
+    public function value($status, Collection $items, DOMDocument $UserInterfaceData): bool
     {
         $res = false;
         $processed = false;
 
-        if ($this->getLeft_operand()->getValueType() === eValueType::ELEMENTNAME) {
-            $lfs = $this->getElement($items, $this->getLeft_operand(), $UserinterfaceData);
+        if ($this->getLeftOperand()->getValueType() === eValueType::ELEMENTNAME) {
+            $lfs = $this->getElement($items, $this->getLeftOperand(), $UserInterfaceData);
         } else {
-            $lfs = $this->getLeft_operand()->getValue();
+            $lfs = $this->getLeftOperand()->getValue();
         }
 
-        if ($this->getRight_operand()->getValueType() === eValueType::ELEMENTNAME) {
-            $rfs = $this->getElement($items, $this->getRight_operand(), $UserinterfaceData);
+        if ($this->getRightOperand()->getValueType() === eValueType::ELEMENTNAME) {
+            $rfs = $this->getElement($items, $this->getRightOperand(), $UserInterfaceData);
         } else {
-            $rfs = $this->getRight_operand()->getValue();
+            $rfs = $this->getRightOperand()->getValue();
         }
 
         $lf = $this->convertInt($lfs);
@@ -257,7 +257,7 @@ class Condition implements ICondition
             }
         }
 
-        return match ($this->getLogoperator()) {
+        return match ($this->getLogOperator()) {
             eLogOperator::AND => $res && $status,
             eLogOperator::OR => $res || $status,
             default => $status,
@@ -286,6 +286,10 @@ class Condition implements ICondition
 
     public function convertDate(mixed $value): ?CarbonInterface
     {
+        if ($value instanceof CarbonInterface) {
+            return $value;
+        }
+
         if (! is_string($value)) {
             return null;
         }
@@ -312,16 +316,16 @@ class Condition implements ICondition
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
                 case 'LogOperator':
-                    $this->setLogoperator($item->nodeValue);
+                    $this->setLogOperator($item->nodeValue);
                     break;
                 case 'Operator':
                     $this->setOperator($item->nodeValue);
                     break;
                 case 'LeftOperand':
-                    $this->setLeft_operand(Operand::createFromDomNode($item));
+                    $this->setLeftOperand(Operand::createFromDomNode($item));
                     break;
                 case 'RightOperand':
-                    $this->setRight_operand(Operand::createFromDomNode($item));
+                    $this->setRightOperand(Operand::createFromDomNode($item));
                     break;
             }
         }

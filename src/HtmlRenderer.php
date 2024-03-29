@@ -4,17 +4,13 @@ namespace SoftRules\PHP;
 
 use DOMDocument;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Enums\eButtonType;
-use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Interfaces\BaseItemInterface;
 use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
 use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Interfaces\RenderableWrapper;
 use SoftRules\PHP\UI\Button;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Group;
-use SoftRules\PHP\UI\Label;
-use SoftRules\PHP\UI\Question;
-use SoftRules\PHP\UI\TextValueItem;
 use SoftRules\PHP\UI\UIClass;
 use Stringable;
 
@@ -23,9 +19,9 @@ final class HtmlRenderer implements Stringable
     private string $html = '';
     private int $currentPage;
     public readonly int $totalPages;
-    public readonly DOMDocument $userinterfaceData;
+    public readonly DOMDocument $userInterfaceData;
     /**
-     * @var Collection<int, ISoftRules_Base>
+     * @var Collection<int, BaseItemInterface>
      */
     private readonly Collection $allItems;
 //    private DOMDocument $SR_XML;
@@ -34,44 +30,45 @@ final class HtmlRenderer implements Stringable
     {
         $this->totalPages = $UIClass->getPages();
         $this->currentPage = $UIClass->getPage();
-        $this->userinterfaceData = $UIClass->getUserinterfaceData();
+        $this->userInterfaceData = $UIClass->getUserinterfaceData();
 //        $this->SR_XML = $UIClass->getSoftRulesXml();
         $this->allItems = $UIClass->items;
 
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
 
-        $this->userinterfaceItems($UIClass->items);
+        $this->userInterfaceItems($UIClass->items);
     }
 
     /**
-     * @param Collection<int, ISoftRules_Base> $items
+     * @param Collection<int, BaseItemInterface> $items
      */
-    private function userinterfaceItems(Collection $items): void
+    private function userInterfaceItems(Collection $items): void
     {
         foreach ($items as $item) {
+            $itemName = class_basename($item);
+            $this->html .= '<div>';
+            $this->html .= $itemName;
+            if ($item instanceof Button) {
+                $this->html .= ' Text: <b>' . $item->getText() . '</b>';
+            } elseif ($item instanceof Group) {
+                $this->html .= ' Type: <b>' . $item->getType()->value . '</b> ' . $item->getName();
+            }
+            if ($item instanceof ItemWithCustomProperties) {
+                $this->html .= $this->getCustomPropertyDescriptions($item);
+            }
+
+            $VisibleText = '';
+
+            if (! $this->itemVisible($item)) {
+                $VisibleText = ' Niet tonen (invisible)';
+            }
+
+            $this->html .= $VisibleText . '<br>';
+            $this->html .= '</div>';
+
             if ($item instanceof RenderableWrapper) {
-                $VisibleText = '';
-
-                if (! $this->itemVisible($item)) {
-                    $VisibleText = ' Niet tonen (invisible)';
-                }
-
-                $itemName = class_basename($item);
-
-                $this->html .= "{$itemName} Type: ";
-
-                if ($item instanceof Group) {
-                    $this->html .= '<b>' . $item->getType()->value . '</b> ' . $item->getName();
-                }
-
-                if ($item instanceof ItemWithCustomProperties) {
-                    $this->html .= $this->getCustomPropertyDescriptions($item);
-                }
-
-                $this->html .= $VisibleText . '<br>';
-
                 $this->html .= $item->renderOpeningTags();
-                $this->userinterfaceItems($item->getItems());
+                $this->userInterfaceItems($item->getItems());
                 $this->html .= $item->renderClosingTags();
 
                 if ($item instanceof Group && $item->shouldHavePagination()) {
@@ -94,79 +91,10 @@ final class HtmlRenderer implements Stringable
 
                     $this->html .= '</div>';
                 }
-            } elseif ($item instanceof Renderable) {
+            }
+
+            if ($item instanceof Renderable) {
                 $this->html .= $item->render();
-            } elseif ($item instanceof Question) {
-                $id = $item->getQuestionID();
-                $VisibleText = '';
-                $textvalues = $this->getTextValuesDescription($item);
-
-                if (! $this->itemVisible($item)) {
-                    $VisibleText = ' Niet tonen (invisible)';
-                }
-
-                $this->html .= '<li>';
-                $this->html .= "Question: {$item->getDescription()}({$item->getName()}) Value: {$item->getValue()} UpdateUserinterface: {$item->getUpdateUserinterface()}{$textvalues}{$VisibleText}";
-                $this->html .= '</li>';
-            } elseif ($item instanceof Label) {
-                $VisibleText = '';
-
-                if (! $this->itemVisible($item)) {
-                    $VisibleText = ' Niet tonen (invisible)';
-                }
-
-                $this->html .= "Label Text: {$item->getText()}{$VisibleText}<br/>";
-            } elseif ($item instanceof Button) {
-                $id = $item->getButtonID();
-                $StyleType = '';
-                $nextPageID = $this->currentPage;
-                $VisibleText = '';
-                $custompropertyDescription = $this->getCustomPropertyDescriptions($item);
-
-                if (strtolower((string) $item->getDisplayType()) === 'tile') {
-                    $tile = true;
-                }
-
-                if (! $this->itemVisible($item)) {
-                    $VisibleText = ' Niet tonen (invisible)';
-                }
-
-                foreach ($item->getCustomProperties() as $customproperty) {
-                    switch (strtolower((string) $customproperty->getName())) {
-                        case 'nextpage':
-                            $name = $customproperty->getValue();
-                            break;
-                        case 'pictureurl':
-                            $PictureUrl = $customproperty->getValue();
-                            break;
-                        case 'width':
-                            $width = $customproperty->getValue();
-                            break;
-                        case 'height':
-                            $height = $customproperty->getValue();
-                            break;
-                        case 'styletype':
-                            $StyleType = " data-styleType='" . $customproperty->getValue() . "'";
-                            break;
-                        case 'align':
-                            $Align = " data-align='" . $customproperty->getValue() . "'";
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                $buttonfunction = match ($item->getType()) {
-                    eButtonType::submit => 'processButton',
-                    eButtonType::navigate, eButtonType::update => 'updateButton',
-                    default => '',
-                };
-                $this->html .= '<li>';
-                $this->html .= 'Button Text: ' . $item->getText() . $custompropertyDescription . $VisibleText . '<br>';
-                $this->html .= '</li>';
-                $this->html .= '<ul><li>';
-                $this->html .= "<button type=\"button\" class=\"{$buttonfunction} btn btn-default\" data-type='button' data-id=" . $id . ">{$item->getText()}</button>";
-                $this->html .= '</li></ul>';
             }
         }
     }
@@ -183,21 +111,9 @@ final class HtmlRenderer implements Stringable
         return " {$item->getCustomProperties()->count()} Custom Properties ({$description})";
     }
 
-    private function getTextValuesDescription(Question $item): string
+    public function itemVisible(BaseItemInterface $item): bool
     {
-        if ($item->textValues->isEmpty()) {
-            return '';
-        }
-
-        $items = $item->textValues
-            ->implode(fn (TextValueItem $textValueItem) => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
-
-        return " Aantal TextValues: {$item->textValues->count()} ({$items})";
-    }
-
-    public function itemVisible(ISoftRules_Base $item): bool
-    {
-        return $item->getVisibleExpression()->value($this->allItems, $this->userinterfaceData);
+        return $item->getVisibleExpression()->value($this->allItems, $this->userInterfaceData);
     }
 
     private function hasPreviousPage(): bool

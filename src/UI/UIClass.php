@@ -6,28 +6,28 @@ use DOMDocument;
 use DOMNameSpaceNode;
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\ISoftRules_Base;
-use SoftRules\PHP\Interfaces\IUIClass;
+use SoftRules\PHP\Interfaces\BaseItemInterface;
+use SoftRules\PHP\Interfaces\UIClassInterface;
 
-class UIClass implements IUIClass
+class UIClass implements UIClassInterface
 {
     private DOMDocument $softRulesXml;
     private string $state = '';
     private int $page = 1;
     private int $pages = 1;
-    private DOMDocument $userinterfaceData;
+    private DOMDocument $userInterfaceData;
     private string $sessionID;
     private $configID;
     private $userInterfaceID;
     /**
-     * @var Collection<int, ISoftRules_Base>
+     * @var Collection<int, BaseItemInterface>
      */
     public readonly Collection $items;
 
     public function __construct()
     {
         $this->items = new Collection();
-        $this->userinterfaceData = new DOMDocument();
+        $this->userInterfaceData = new DOMDocument();
         $this->softRulesXml = new DOMDocument();
     }
 
@@ -81,14 +81,14 @@ class UIClass implements IUIClass
         return $this->pages;
     }
 
-    public function setUserinterfaceData(DOMDocument $userinterfaceData): void
+    public function setUserinterfaceData(DOMDocument $userInterfaceData): void
     {
-        $this->userinterfaceData = $userinterfaceData;
+        $this->userInterfaceData = $userInterfaceData;
     }
 
     public function getUserinterfaceData(): DOMDocument
     {
-        return $this->userinterfaceData;
+        return $this->userInterfaceData;
     }
 
     public function setSessionID(string $sessionID): void
@@ -111,27 +111,27 @@ class UIClass implements IUIClass
         return $this->state;
     }
 
-    public function addItem(ISoftRules_Base $item): void
+    public function addItem(BaseItemInterface $item): void
     {
         $this->items->add($item);
     }
 
-    public function itemVisible(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
+    public function itemVisible(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemValid(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
+    public function itemValid(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemRequired(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
+    public function itemRequired(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemEnabled(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
+    public function itemEnabled(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
