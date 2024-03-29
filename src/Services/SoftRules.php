@@ -9,7 +9,7 @@ use Illuminate\Http\Client\PendingRequest;
 
 class SoftRules extends Factory
 {
-    private string $product;
+    private readonly string $product;
 
     public function __construct()
     {

@@ -5,129 +5,121 @@ namespace SoftRules\PHP\UI;
 use DOMNode;
 use SoftRules\PHP\Interfaces\IExpression;
 use SoftRules\PHP\Interfaces\ILabel;
+use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
+use SoftRules\PHP\Traits\HasCustomProperties;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Label implements ILabel
+class Label implements ILabel, ItemWithCustomProperties
 {
-    private $LabelID;
-    private $Text;
-    private $Description;
-    private $DisplayType;
-    private $Parameter;
-    private array $CustomProperties = [];
-    private IExpression $VisibleExpression;
+    use HasCustomProperties;
+    use ParsedFromXml;
 
-    function __construct()
+    private string $labelID;
+    private string $text;
+    private $description;
+    private $displayType;
+    private IParameter $parameter;
+    private IExpression $visibleExpression;
+
+    public function __construct()
     {
         $this->setVisibleExpression(new Expression());
     }
 
-    public function setLabelID($LabelID): void
+    public function setLabelID(string $labelID): void
     {
-        $this->LabelID = $LabelID;
+        $this->labelID = $labelID;
     }
 
-    public function getLabelID()
+    public function getLabelID(): string
     {
-        return $this->LabelID;
+        return $this->labelID;
     }
 
-    public function setText($Text): void
+    public function setText(string $text): void
     {
-        $this->Text = $Text;
+        $this->text = $text;
     }
 
-    public function getText()
+    public function getText(): string
     {
-        return $this->Text;
+        return $this->text;
     }
 
-    public function setDisplayType($DisplayType): void
+    public function setDisplayType($displayType): void
     {
-        $this->DisplayType = $DisplayType;
+        $this->displayType = $displayType;
     }
 
     public function getDisplayType()
     {
-        return $this->DisplayType;
+        return $this->displayType;
     }
 
-    public function setCustomProperties($CustomProperties): void
+    public function setDescription(string $description): void
     {
-        $this->CustomProperties = $CustomProperties;
-    }
-
-    public function getCustomProperties()
-    {
-        return $this->CustomProperties;
-    }
-
-    public function setDescription(string $Description): void
-    {
-        $this->Description = $Description;
+        $this->description = $description;
     }
 
     public function getDescription(): string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setParameter(Parameter $Parameter): void
+    public function setParameter(Parameter $parameter): void
     {
-        $this->Parameter = $Parameter;
+        $this->parameter = $parameter;
     }
 
     public function getParameter(): Parameter
     {
-        return $this->Parameter;
+        return $this->parameter;
     }
 
-    public function setVisibleExpression(IExpression $VisibleExpression): void
+    public function setVisibleExpression(IExpression $visibleExpression): void
     {
-        $this->VisibleExpression = $VisibleExpression;
+        $this->visibleExpression = $visibleExpression;
     }
 
     public function getVisibleExpression(): IExpression
     {
-        return $this->VisibleExpression;
+        return $this->visibleExpression;
     }
 
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
-                case "LabelID":
+                case 'LabelID':
                     $this->setLabelID($item->nodeValue);
                     break;
-                case "Text":
+                case 'Text':
                     $this->setText($item->nodeValue);
                     break;
-                case "Description":
+                case 'Description':
                     $this->setDescription($item->nodeValue);
                     break;
-                case "DisplayType":
+                case 'DisplayType':
                     $this->setDisplayType($item->nodeValue);
                     break;
                 case 'CustomProperties':
                     foreach ($item->childNodes as $cp) {
-                        $customProperty = new CustomProperty();
-                        $customProperty->parse($cp);
-                        $this->CustomProperties[] = $customProperty;
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
                     break;
-                case "Parameter":
-                    $Parameter = new Parameter();
-                    $Parameter->parse($item);
-                    $this->setParameter($Parameter);
+                case 'Parameter':
+                    $this->setParameter(Parameter::createFromDomNode($item));
                     break;
                 case 'VisibleExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setVisibleExpression($expression);
+                    $this->setVisibleExpression(Expression::createFromDomNode($item));
                     break;
                 default:
-                    echo "Label Not implemented yet:" . $item->nodeName . "<br>";
+                    echo 'Label Not implemented yet:' . $item->nodeName . '<br>';
                     break;
             }
         }
+
+        return $this;
     }
 }

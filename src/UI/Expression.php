@@ -4,13 +4,26 @@ namespace SoftRules\PHP\UI;
 
 use DOMDocument;
 use DOMNode;
+use Illuminate\Support\Collection;
 use SoftRules\PHP\Interfaces\IExpression;
+use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class Expression implements IExpression
 {
+    use ParsedFromXml;
+
     private string $description = '';
     private bool $startValue = true;
-    private array $conditions = [];
+    /**
+     * @var Collection<int, Condition>
+     */
+    public readonly Collection $conditions;
+
+    public function __construct()
+    {
+        $this->conditions = new Collection();
+    }
 
     public function setDescription(string $description): void
     {
@@ -27,7 +40,7 @@ class Expression implements IExpression
         if (is_bool($startValue)) {
             $this->startValue = $startValue;
         } else {
-            $this->startValue = strtolower($startValue) === "true";
+            $this->startValue = strtolower($startValue) === 'true';
         }
     }
 
@@ -36,36 +49,36 @@ class Expression implements IExpression
         return $this->startValue;
     }
 
-    public function setConditions(array $conditions): void
+    public function addCondition(Condition $condition): void
     {
-        $this->conditions = $conditions;
+        $this->conditions->add($condition);
     }
 
-    public function getConditions(): array
-    {
-        return $this->conditions;
-    }
-
-    public function Clean(): void
+    public function clean(): void
     {
         //
     }
 
-    public function Value(array $Items, DOMDocument $UserinterfaceData): bool
+    /**
+     * @param Collection<ISoftRules_Base> $items
+     */
+    public function value(Collection $items, DOMDocument $UserinterfaceData): bool
     {
         $res = $this->getStartValue();
-        foreach ($this->getConditions() as $condition) {
-            $res = $condition->Value($res, $Items, $UserinterfaceData);
+
+        foreach ($this->conditions as $condition) {
+            $res = $condition->value($res, $items, $UserinterfaceData);
         }
+
         return $res;
     }
 
-    public function WriteXml($writer): void
+    public function writeXml($writer): void
     {
         //
     }
 
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
@@ -77,12 +90,12 @@ class Expression implements IExpression
                     break;
                 case 'Conditions':
                     foreach ($item->childNodes as $conditionNode) {
-                        $condition = new Condition();
-                        $condition->parse($conditionNode);
-                        $this->conditions[] = $condition;
+                        $this->addCondition(Condition::createFromDomNode($conditionNode));
                     }
                     break;
             }
         }
+
+        return $this;
     }
 }

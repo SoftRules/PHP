@@ -12,17 +12,29 @@
         "ext-dom": "*",
         "ext-simplexml": "*",
         "guzzlehttp/guzzle": "^7.8",
+        "illuminate/collections": "^10.0|^11.0",
         "illuminate/http": "^10.0|^11.0",
         "spatie/ignition": "^1.12",
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
+        "laravel/pint": "^1.15",
+        "phpstan/phpstan": "^1.10",
+        "rector/rector": "^1.0",
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
             "SoftRules\\PHP\\": "src"
         }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "phpstan": [
+            "vendor/bin/phpstan analyse"
+        ]
     },
     "config": {
         "platform": {

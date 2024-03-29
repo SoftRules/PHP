@@ -5,7 +5,7 @@ namespace SoftRules\PHP\Interfaces;
 use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\UI\Parameter;
 
-interface IGroup extends ISoftRules_Base
+interface IGroup extends ISoftRules_Base, ItemWithCustomProperties
 {
     public function setGroupID($GroupID): void;
 
@@ -31,19 +31,17 @@ interface IGroup extends ISoftRules_Base
 
     public function getSuppressItemsWhenInvisible();
 
-    public function setItems(array $Items): void;
-
-    public function getItems(): array;
-
     public function setHeaderItems(array $HeaderItems): void;
 
     public function getHeaderItems(): array;
 
-    public function setCustomProperties(array $CustomProperties): void;
-
-    public function getCustomProperties(): array;
-
     public function setParameter(Parameter $Parameter): void;
 
     public function getParameter(): Parameter;
+
+    public function shouldHavePagination(): bool;
+
+    public function shouldHaveNextPageButton(): bool;
+
+    public function shouldHavePreviousPageButton(): bool;
 }

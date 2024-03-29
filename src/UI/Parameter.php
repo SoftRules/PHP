@@ -4,9 +4,12 @@ namespace SoftRules\PHP\UI;
 
 use DOMNode;
 use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class Parameter implements IParameter
 {
+    use ParsedFromXml;
+
     private $Name;
     private $Path;
     private $ParentGroupID;
@@ -85,46 +88,34 @@ class Parameter implements IParameter
         return $this->UsedByEvents;
     }
 
-    public function parse(DOMNode $item): void
+    public function parse(DOMNode $item): self
     {
         foreach ($item->childNodes as $parameter) {
             switch ($parameter->nodeName) {
                 case 'Name':
-                {
                     $this->setName($parameter->nodeValue);
                     break;
-                }
                 case 'Path':
-                {
                     $this->setPath($parameter->nodeValue);
                     break;
-                }
                 case 'ParentGroupID':
-                {
                     $this->setParentGroupID($parameter->nodeValue);
                     break;
-                }
                 case 'ParentUserinterfaceID':
-                {
                     $this->setParentUserinterfaceID($parameter->nodeValue);
                     break;
-                }
                 case 'ParentConfigID':
-                {
                     $this->setParentConfigID($parameter->nodeValue);
                     break;
-                }
                 case 'Renew':
-                {
                     $this->setRenew($parameter->nodeValue);
                     break;
-                }
                 case 'UsedByEvents':
-                {
                     $this->setUsedByEvents($parameter->nodeValue);
                     break;
-                }
             }
         }
+
+        return $this;
     }
 }

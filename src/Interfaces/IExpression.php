@@ -3,6 +3,8 @@
 namespace SoftRules\PHP\Interfaces;
 
 use DOMDocument;
+use Illuminate\Support\Collection;
+use SoftRules\PHP\UI\Condition;
 
 interface IExpression
 {
@@ -14,13 +16,11 @@ interface IExpression
 
     public function getStartValue(): bool;
 
-    public function setConditions(array $conditions): void;
+    public function addCondition(Condition $condition): void;
 
-    public function getConditions(): array;
+    public function clean(): void;
 
-    public function Clean(): void;
+    public function value(Collection $items, DOMDocument $userinterfaceData): bool;
 
-    public function Value(array $Items, DOMDocument $UserinterfaceData): bool;
-
-    public function WriteXml($writer): void;
+    public function writeXml($writer): void;
 }

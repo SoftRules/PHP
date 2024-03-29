@@ -52,5 +52,5 @@ interface IRestrictions
 
     public function getWhiteSpace();
 
-    public function Valid($question);
+    public function Valid($question): bool;
 }

@@ -6,15 +6,15 @@ use SoftRules\PHP\UI\Parameter;
 
 interface ILabel extends ISoftRules_Base
 {
-    public function setLabelID($LabelID): void;
+    public function setLabelID(string $labelID): void;
 
-    public function getLabelID();
+    public function getLabelID(): string;
 
-    public function setText($Text): void;
+    public function setText(string $text): void;
 
-    public function getText();
+    public function getText(): string;
 
-    public function setParameter(Parameter $Parameter): void;
+    public function setParameter(Parameter $parameter): void;
 
     public function getParameter(): Parameter;
 }

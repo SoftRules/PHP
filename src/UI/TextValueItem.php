@@ -2,11 +2,15 @@
 
 namespace SoftRules\PHP\UI;
 
+use DOMNode;
 use SoftRules\PHP\Interfaces\ITextValueItem;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class TextValueItem implements ITextValueItem
 {
-    private $Value;
+    use ParsedFromXml;
+
+    private $value;
     private $Text;
     private $ImageUrl;
 
@@ -20,14 +24,14 @@ class TextValueItem implements ITextValueItem
         return $this->Text;
     }
 
-    public function setValue($Value): void
+    public function setValue($value): void
     {
-        $this->Value = $Value;
+        $this->value = $value;
     }
 
     public function getValue()
     {
-        return $this->Value;
+        return $this->value;
     }
 
     public function setImageUrl($ImageUrl): void
@@ -40,37 +44,31 @@ class TextValueItem implements ITextValueItem
         return $this->ImageUrl;
     }
 
-    public function parse($item)
+    public function parse(DOMNode $node): self
     {
-        switch ($item->nodeName) {
+        switch ($node->nodeName) {
             case 'Item':
-            {
-                foreach ($item->childNodes as $textValueItem) {
+                foreach ($node->childNodes as $textValueItem) {
                     switch ($textValueItem->nodeName) {
                         case 'Value':
-                        {
                             $this->setValue((string) $textValueItem->nodeValue);
                             break;
-                        }
                         case 'Text':
-                        {
                             $this->setText((string) $textValueItem->nodeValue);
                             break;
-                        }
                         case 'ImageUrl':
-                        {
                             $this->setImageUrl((string) $textValueItem->nodeValue);
                             break;
-                        }
                     }
                 }
                 break;
-            }
         }
+
+        return $this;
     }
 
-    public function writeXml($writer)
+    public function writeXml($writer): void
     {
-
+        //
     }
 }

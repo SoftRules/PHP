@@ -7,16 +7,20 @@ use Carbon\CarbonInterface;
 use DOMDocument;
 use DOMNode;
 use DOMXPath;
+use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 use SoftRules\PHP\Enums\eValueType;
 use SoftRules\PHP\Interfaces\ICondition;
 use SoftRules\PHP\Interfaces\IOperand;
 use SoftRules\PHP\Interfaces\ISoftRules_Base;
+use SoftRules\PHP\Traits\ParsedFromXml;
 use Throwable;
 
 class Condition implements ICondition
 {
+    use ParsedFromXml;
+
     private ?eLogOperator $logoperator = null;
     private eOperator $operator;
     private IOperand $left_operand;
@@ -26,6 +30,7 @@ class Condition implements ICondition
     {
         if ($logoperator instanceof eLogOperator) {
             $this->logoperator = $logoperator;
+
             return;
         }
 
@@ -41,6 +46,7 @@ class Condition implements ICondition
     {
         if ($operator instanceof eOperator) {
             $this->operator = $operator;
+
             return;
         }
 
@@ -72,23 +78,23 @@ class Condition implements ICondition
         return $this->right_operand;
     }
 
-    public function CopyFrom($sourceCondition): void
+    public function copyFrom($sourceCondition): void
     {
         //
     }
 
     /**
-     * @param ISoftRules_Base[] $Items
+     * @param Collection<int, ISoftRules_Base> $items
      */
-    public function getElement(array $Items, IOperand $operand, DOMDocument $UserinterfaceData): mixed
+    public function getElement(Collection $items, IOperand $operand, DOMDocument $UserinterfaceData): mixed
     {
-        foreach ($Items as $item) {
+        foreach ($items as $item) {
             if ($item instanceof Question) {
                 if ($item->getName() == $operand->getValue()) {
                     //Tussen accolades staat de instantie van de node in het xml. Staat er niets, dan impliceert dat de eerste instantie zijnde {1}
                     //Door {1} te vervangen door niets, kunnen de strings met elkaar vergeleken worden.
-                    $itempath = str_replace("{1}", "", $item->getElementPath());
-                    $operandpath = str_replace("{1}", "", $operand->getElementPath());
+                    $itempath = str_replace('{1}', '', (string) $item->getElementPath());
+                    $operandpath = str_replace('{1}', '', $operand->getElementPath());
 
                     if ($itempath === $operandpath) {
                         return $item->getValue();
@@ -97,7 +103,7 @@ class Condition implements ICondition
             } elseif ($item instanceof Group) {
                 $return = $this->getElement($item->getItems(), $operand, $UserinterfaceData);
 
-                if ($return !== "") {
+                if ($return !== '') {
                     return $return;
                 }
             }
@@ -107,30 +113,30 @@ class Condition implements ICondition
         $xpath = new DOMXpath($UserinterfaceData);
         $operandPath = str_replace(['{', '}'], ['[', ']'], $operandPath);
 
-        $nodes = $xpath->query("/" . $operandPath . "/" . $operand->getValue());
+        $nodes = $xpath->query('/' . $operandPath . '/' . $operand->getValue());
         if ($nodes->length > 0) {
             return $nodes->item(0)->nodeValue;
         }
 
-        return "";
+        return '';
     }
 
     /**
-     * @param ISoftRules_Base[] $Items
+     * @param Collection<int, ISoftRules_Base> $items
      */
-    public function Value($status, array $Items, DOMDocument $UserinterfaceData): bool
+    public function value($status, Collection $items, DOMDocument $UserinterfaceData): bool
     {
         $res = false;
         $processed = false;
 
         if ($this->getLeft_operand()->getValueType() === eValueType::ELEMENTNAME) {
-            $lfs = $this->getElement($Items, $this->getLeft_operand(), $UserinterfaceData);
+            $lfs = $this->getElement($items, $this->getLeft_operand(), $UserinterfaceData);
         } else {
             $lfs = $this->getLeft_operand()->getValue();
         }
 
         if ($this->getRight_operand()->getValueType() === eValueType::ELEMENTNAME) {
-            $rfs = $this->getElement($Items, $this->getRight_operand(), $UserinterfaceData);
+            $rfs = $this->getElement($items, $this->getRight_operand(), $UserinterfaceData);
         } else {
             $rfs = $this->getRight_operand()->getValue();
         }
@@ -160,7 +166,7 @@ class Condition implements ICondition
                     $res = ($lf < $rf);
                     break;
                 case eOperator::IN:
-                    $options = str_split($rfs);
+                    $options = str_split((string) $rfs);
                     foreach ($options as $option) {
                         if ($option == $lfs) {
                             $res = true;
@@ -169,7 +175,7 @@ class Condition implements ICondition
                     }
                     break;
                 default:
-                    echo "Operator not implemented yet:" . $this->getOperator()->value . "<br>";
+                    echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
                     break;
             }
         }
@@ -201,7 +207,7 @@ class Condition implements ICondition
                         break;
                     case eOperator::IN:
                         $res = false;
-                        $options = str_split($rfs);
+                        $options = str_split((string) $rfs);
                         // TODO: double check these date comparisons?
                         foreach ($options as $option) {
                             if ($option == $lfs) {
@@ -211,7 +217,7 @@ class Condition implements ICondition
                         }
                         break;
                     default:
-                        echo "Operator not implemented yet:" . $this->getOperator()->value . "<br>";
+                        echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
                         break;
                 }
             }
@@ -234,7 +240,7 @@ class Condition implements ICondition
                     break;
                 case eOperator::IN:
                     $res = false;
-                    $options = str_split($rfs);
+                    $options = str_split((string) $rfs);
                     foreach ($options as $option) {
                         if ($option == $lfs) {
                             $res = true;
@@ -265,7 +271,7 @@ class Condition implements ICondition
         }
 
         // alleen deze waarde mag 0 zijn
-        if ($value === "0") {
+        if ($value === '0') {
             return 0;
         }
 
@@ -296,12 +302,12 @@ class Condition implements ICondition
         return null;
     }
 
-    public function WriteXml($writer): void
+    public function writeXml($writer): void
     {
         //
     }
 
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
@@ -312,16 +318,14 @@ class Condition implements ICondition
                     $this->setOperator($item->nodeValue);
                     break;
                 case 'LeftOperand':
-                    $operand = new Operand();
-                    $operand->parse($item);
-                    $this->setLeft_operand($operand);
+                    $this->setLeft_operand(Operand::createFromDomNode($item));
                     break;
                 case 'RightOperand':
-                    $operand = new Operand();
-                    $operand->parse($item);
-                    $this->setRight_operand($operand);
+                    $this->setRight_operand(Operand::createFromDomNode($item));
                     break;
             }
         }
+
+        return $this;
     }
 }

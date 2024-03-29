@@ -6,9 +6,12 @@ use DOMNode;
 use Exception;
 use SoftRules\PHP\Enums\eValueType;
 use SoftRules\PHP\Interfaces\IOperand;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class Operand implements IOperand
 {
+    use ParsedFromXml;
+
     private mixed $value;
     private string $elementPath;
     private string $attributes;
@@ -48,18 +51,20 @@ class Operand implements IOperand
     {
         if ($valueType instanceof eValueType) {
             $this->valueType = $valueType;
+
             return;
         }
 
         if (is_int($valueType)) {
             $this->valueType = eValueType::from($valueType);
+
             return;
         }
 
         $this->valueType = match ($valueType) {
-            "CONSTANT" => eValueType::CONSTANT,
-            "ELEMENTNAME" => eValueType::ELEMENTNAME,
-            "FORMULA" => eValueType::FORMULA,
+            'CONSTANT' => eValueType::CONSTANT,
+            'ELEMENTNAME' => eValueType::ELEMENTNAME,
+            'FORMULA' => eValueType::FORMULA,
             default => throw new Exception('Invalid value type ' . $valueType),
         };
     }
@@ -74,7 +79,7 @@ class Operand implements IOperand
         //
     }
 
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
@@ -92,5 +97,7 @@ class Operand implements IOperand
                     break;
             }
         }
+
+        return $this;
     }
 }

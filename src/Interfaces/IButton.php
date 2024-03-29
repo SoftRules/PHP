@@ -5,7 +5,7 @@ namespace SoftRules\PHP\Interfaces;
 use SoftRules\PHP\Enums\eButtonType;
 use SoftRules\PHP\UI\Parameter;
 
-interface IButton extends ISoftRules_Base
+interface IButton extends ISoftRules_Base, ItemWithCustomProperties
 {
     public function setButtonID(string $ButtonID): void;
 

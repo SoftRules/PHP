@@ -3,151 +3,135 @@
 namespace SoftRules\PHP\UI;
 
 use DOMDocument;
-use DOMElement;
 use DOMNameSpaceNode;
 use DOMNode;
+use Illuminate\Support\Collection;
 use SoftRules\PHP\Interfaces\ISoftRules_Base;
 use SoftRules\PHP\Interfaces\IUIClass;
 
 class UIClass implements IUIClass
 {
-    private DOMDocument $SoftRulesXml;
-    private string $State = "";
-    private int $Page = 1;
-    private int $Pages = 1;
-    private DOMDocument $UserinterfaceData;
-    private string $SessionID;
-    private $ConfigID;
-    private $UserInterfaceID;
+    private DOMDocument $softRulesXml;
+    private string $state = '';
+    private int $page = 1;
+    private int $pages = 1;
+    private DOMDocument $userinterfaceData;
+    private string $sessionID;
+    private $configID;
+    private $userInterfaceID;
     /**
-     * @var ISoftRules_Base[]
+     * @var Collection<int, ISoftRules_Base>
      */
-    private array $Items = [];
+    public readonly Collection $items;
 
     public function __construct()
     {
-        $this->UserinterfaceData = new DOMDocument();
-        $this->SoftRulesXml = new DOMDocument();
+        $this->items = new Collection();
+        $this->userinterfaceData = new DOMDocument();
+        $this->softRulesXml = new DOMDocument();
     }
 
-    public function setSoftRulesXml(DOMDocument $SoftRulesXml): void
+    public function setSoftRulesXml(DOMDocument $softRulesXml): void
     {
-        $this->SoftRulesXml = new DOMDocument();
-        $this->SoftRulesXml->loadXML($SoftRulesXml->saveHTML());
+        $this->softRulesXml = $softRulesXml;
     }
 
     public function getSoftRulesXml(): DOMDocument
     {
-        return $this->SoftRulesXml;
+        return $this->softRulesXml;
     }
 
-    public function setConfigID($ConfigID): void
+    public function setConfigID($configID): void
     {
-        $this->ConfigID = $ConfigID;
+        $this->configID = $configID;
     }
 
     public function getConfigID()
     {
-        return $this->ConfigID;
+        return $this->configID;
     }
 
-    public function setUserInterfaceID($UserInterfaceID): void
+    public function setUserInterfaceID($userInterfaceID): void
     {
-        $this->UserInterfaceID = $UserInterfaceID;
+        $this->userInterfaceID = $userInterfaceID;
     }
 
     public function getUserInterfaceID()
     {
-        return $this->UserInterfaceID;
+        return $this->userInterfaceID;
     }
 
-    public function setPage(int $Page): void
+    public function setPage(int $page): void
     {
-        $this->Page = $Page;
+        $this->page = $page;
     }
 
     public function getPage(): int
     {
-        return $this->Page;
+        return $this->page;
     }
 
-    public function setPages(int $Pages): void
+    public function setPages(int $pages): void
     {
-        $this->Pages = $Pages;
+        $this->pages = $pages;
     }
 
     public function getPages(): int
     {
-        return $this->Pages;
+        return $this->pages;
     }
 
-    public function setUserinterfaceData(DOMDocument $UserinterfaceData): void
+    public function setUserinterfaceData(DOMDocument $userinterfaceData): void
     {
-        $this->UserinterfaceData = $UserinterfaceData;
+        $this->userinterfaceData = $userinterfaceData;
     }
 
     public function getUserinterfaceData(): DOMDocument
     {
-        return $this->UserinterfaceData;
+        return $this->userinterfaceData;
     }
 
-    public function setSessionID(string $SessionID): void
+    public function setSessionID(string $sessionID): void
     {
-        $this->SessionID = $SessionID;
+        $this->sessionID = $sessionID;
     }
 
     public function getSessionID(): string
     {
-        return $this->SessionID;
+        return $this->sessionID;
     }
 
-    public function setState(string $State): void
+    public function setState(string $state): void
     {
-        $this->State = $State;
+        $this->state = $state;
     }
 
     public function getState(): string
     {
-        return $this->State;
+        return $this->state;
     }
 
-    /**
-     * @param ISoftRules_Base[] $Items
-     */
-    public function setItems(array $Items): void
+    public function addItem(ISoftRules_Base $item): void
     {
-        $this->Items = $Items;
+        $this->items->add($item);
     }
 
-    /**
-     * @return ISoftRules_Base[]
-     */
-    public function getItems(): array
-    {
-        return $this->Items;
-    }
-
-    public function AddItem(ISoftRules_Base $item): void
-    {
-        $this->Items[] = $item;
-    }
-
-    public function ItemVisible(array $Items, $item, DOMDocument $userinterfaceData): bool
+    public function itemVisible(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
     {
         return true;
     }
 
-    public function ItemValid(array $Items, $item, DOMDocument $userinterfaceData): bool
+    public function itemValid(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
     {
         return true;
     }
 
-    public function ItemRequired(array $Items, $item, DOMDocument $userinterfaceData): bool
+    public function itemRequired(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
     {
         return true;
     }
 
-    public function ItemEnabled(array $Items, $item, DOMDocument $userinterfaceData): bool
+    public function itemEnabled(array $items, ISoftRules_Base $item, DOMDocument $userinterfaceData): bool
     {
         return true;
     }
@@ -168,7 +152,9 @@ class UIClass implements IUIClass
                     $this->setSessionID($child->nodeValue);
                     break;
                 case 'SoftRulesXml':
-                    $this->setSoftRulesXml($child->nodeValue);
+                    $xml = new DOMDocument();
+                    $xml->loadXML($child->nodeValue);
+                    $this->setSoftRulesXml($xml);
                     break;
                 case 'ConfigID':
                     $this->setConfigID($child->nodeValue);
@@ -183,7 +169,7 @@ class UIClass implements IUIClass
                     break;
                 case 'UserinterfaceData':
                     if ($child->childNodes->length > 0) {
-                        $innerHTML = "";
+                        $innerHTML = '';
                         $children = $child->childNodes;
 
                         foreach ($children as $innerChild) {
@@ -195,54 +181,30 @@ class UIClass implements IUIClass
 
                         $this->setUserinterfaceData($xml);
                     }
-
                     break;
                 case 'Questions': //this tag contains child elements, of which we only want one.
-                {
-                    foreach ($child->childNodes as $Item) {
-                        switch ($Item->nodeName) {
+                    foreach ($child->childNodes as $item) {
+                        switch ($item->nodeName) {
                             case 'Group':
-                            {
-                                $newGroup = new Group();
-                                $newGroup->parse($Item);
-                                $this->AddItem($newGroup);
+                                $this->addItem(Group::createFromDomNode($item));
                                 break;
-                            }
                             case 'Question':
-                            {
-                                $newQuestion = new Question();
-                                $newQuestion->parse($Item);
-                                $this->AddItem($newQuestion);
+                                $this->addItem(Question::createFromDomNode($item));
                                 break;
-                            }
                             case 'Label':
-                            {
-                                $newLabel = new Label();
-                                $newLabel->parse($Item);
-                                $this->AddItem($newLabel);
+                                $this->addItem(Label::createFromDomNode($item));
                                 break;
-                            }
                             case 'Button':
-                            {
-                                $newButton = new Button();
-                                $newButton->parse($Item);
-                                $this->AddItem($newButton);
+                                $this->addItem(Button::createFromDomNode($item));
                                 break;
-                            }
                             default:
-                            {
                                 break;
-                            }
                         }
                     }
-
                     break;
-                }
                 default:
-                {
-                    echo "ParseUI Not implemented yet:" . $child->nodeName . "<br>";
+                    echo 'ParseUI Not implemented yet:' . $child->nodeName . '<br>';
                     break;
-                }
             }
         }
     }

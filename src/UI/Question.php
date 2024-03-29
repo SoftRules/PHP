@@ -3,15 +3,22 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
+use Illuminate\Support\Collection;
 use SoftRules\PHP\Interfaces\IExpression;
 use SoftRules\PHP\Interfaces\IQuestion;
 use SoftRules\PHP\Interfaces\IRestrictions;
+use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
+use SoftRules\PHP\Traits\HasCustomProperties;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Question implements IQuestion
+class Question implements IQuestion, ItemWithCustomProperties
 {
+    use HasCustomProperties;
+    use ParsedFromXml;
+
     private $QuestionID;
-    private $Name;
-    private $Value;
+    private $name;
+    private $value;
     private $Description;
     private $Placeholder;
     private $Tooltip;
@@ -26,18 +33,23 @@ class Question implements IQuestion
     private $ElementPath;
     private $UpdateUserinterface;
     private $InvalidMessage;
-    private $CustomProperties;
     private $ReadyForProcess;
     private $CoreValue;
-    private array $TextValues = [];
+
+    /**
+     * @var Collection<int, TextValueItem>
+     */
+    public readonly Collection $textValues;
+
     private IExpression $ValidExpression;
     private IExpression $DefaultStateExpression;
     private IExpression $RequiredExpression;
     private IExpression $UpdateExpression;
     private IExpression $VisibleExpression;
 
-    function __construct()
+    public function __construct()
     {
+        $this->textValues = new Collection();
         $this->setVisibleExpression(new Expression());
         $this->setValidExpression(new Expression());
         $this->setRequiredExpression(new Expression());
@@ -45,9 +57,9 @@ class Question implements IQuestion
         $this->setDefaultStateExpression(new Expression());
     }
 
-    public function setQuestionID($QuestionID): void
+    public function setQuestionID($questionID): void
     {
-        $this->QuestionID = $QuestionID;
+        $this->QuestionID = $questionID;
     }
 
     public function getQuestionID()
@@ -55,29 +67,29 @@ class Question implements IQuestion
         return $this->QuestionID;
     }
 
-    public function setName($Name): void
+    public function setName($name): void
     {
-        $this->Name = $Name;
+        $this->name = $name;
     }
 
     public function getName()
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setValue($Value): void
+    public function setValue($value): void
     {
-        $this->Value = $Value;
+        $this->value = $value;
     }
 
     public function getValue()
     {
-        return $this->Value;
+        return $this->value;
     }
 
-    public function setDescription(string $Description): void
+    public function setDescription(string $description): void
     {
-        $this->Description = $Description;
+        $this->Description = $description;
     }
 
     public function getDescription(): string
@@ -85,9 +97,9 @@ class Question implements IQuestion
         return $this->Description;
     }
 
-    public function setPlaceholder($Placeholder): void
+    public function setPlaceholder($placeholder): void
     {
-        $this->Placeholder = $Placeholder;
+        $this->Placeholder = $placeholder;
     }
 
     public function getPlaceholder()
@@ -95,9 +107,9 @@ class Question implements IQuestion
         return $this->Placeholder;
     }
 
-    public function setTooltip($Tooltip): void
+    public function setTooltip($tooltip): void
     {
-        $this->Tooltip = $Tooltip;
+        $this->Tooltip = $tooltip;
     }
 
     public function getTooltip()
@@ -105,9 +117,9 @@ class Question implements IQuestion
         return $this->Tooltip;
     }
 
-    public function setHelpText($HelpText): void
+    public function setHelpText($helpText): void
     {
-        $this->HelpText = $HelpText;
+        $this->HelpText = $helpText;
     }
 
     public function getHelpText()
@@ -115,9 +127,9 @@ class Question implements IQuestion
         return $this->HelpText;
     }
 
-    public function setDefaultState($DefaultState): void
+    public function setDefaultState($defaultState): void
     {
-        $this->DefaultState = $DefaultState;
+        $this->DefaultState = $defaultState;
     }
 
     public function getDefaultState()
@@ -125,9 +137,9 @@ class Question implements IQuestion
         return $this->DefaultState;
     }
 
-    public function setCoreValue($CoreValue): void
+    public function setCoreValue($coreValue): void
     {
-        $this->CoreValue = $CoreValue;
+        $this->CoreValue = $coreValue;
     }
 
     public function getCoreValue()
@@ -135,9 +147,9 @@ class Question implements IQuestion
         return $this->CoreValue;
     }
 
-    public function setIncludeInvisibleQuestion($IncludeInvisibleQuestion): void
+    public function setIncludeInvisibleQuestion($includeInvisibleQuestion): void
     {
-        $this->IncludeInvisibleQuestion = $IncludeInvisibleQuestion;
+        $this->IncludeInvisibleQuestion = $includeInvisibleQuestion;
     }
 
     public function getIncludeInvisibleQuestion()
@@ -145,9 +157,9 @@ class Question implements IQuestion
         return $this->IncludeInvisibleQuestion;
     }
 
-    public function setDataType($DataType): void
+    public function setDataType($dataType): void
     {
-        $this->DataType = $DataType;
+        $this->DataType = $dataType;
     }
 
     public function getDataType()
@@ -155,9 +167,9 @@ class Question implements IQuestion
         return $this->DataType;
     }
 
-    public function setDisplayType($DisplayType): void
+    public function setDisplayType($displayType): void
     {
-        $this->DisplayType = $DisplayType;
+        $this->DisplayType = $displayType;
     }
 
     public function getDisplayType()
@@ -165,9 +177,9 @@ class Question implements IQuestion
         return $this->DisplayType;
     }
 
-    public function setDisplayOnly($DisplayOnly): void
+    public function setDisplayOnly($displayOnly): void
     {
-        $this->DisplayOnly = $DisplayOnly;
+        $this->DisplayOnly = $displayOnly;
     }
 
     public function getDisplayOnly()
@@ -175,9 +187,9 @@ class Question implements IQuestion
         return $this->DisplayOnly;
     }
 
-    public function setRestrictions(IRestrictions $Restrictions): void
+    public function setRestrictions(IRestrictions $restrictions): void
     {
-        $this->Restrictions = $Restrictions;
+        $this->Restrictions = $restrictions;
     }
 
     public function getRestrictions(): IRestrictions
@@ -185,9 +197,9 @@ class Question implements IQuestion
         return $this->Restrictions;
     }
 
-    public function setParameter(Parameter $Parameter): void
+    public function setParameter(Parameter $parameter): void
     {
-        $this->Parameter = $Parameter;
+        $this->Parameter = $parameter;
     }
 
     public function getParameter(): Parameter
@@ -195,9 +207,9 @@ class Question implements IQuestion
         return $this->Parameter;
     }
 
-    public function setElementPath($ElementPath): void
+    public function setElementPath($elementPath): void
     {
-        $this->ElementPath = $ElementPath;
+        $this->ElementPath = $elementPath;
     }
 
     public function getElementPath()
@@ -205,9 +217,9 @@ class Question implements IQuestion
         return $this->ElementPath;
     }
 
-    public function setUpdateUserinterface($UpdateUserinterface): void
+    public function setUpdateUserinterface($updateUserinterface): void
     {
-        $this->UpdateUserinterface = $UpdateUserinterface;
+        $this->UpdateUserinterface = $updateUserinterface;
     }
 
     public function getUpdateUserinterface()
@@ -215,9 +227,9 @@ class Question implements IQuestion
         return $this->UpdateUserinterface;
     }
 
-    public function setInvalidMessage($InvalidMessage): void
+    public function setInvalidMessage($invalidMessage): void
     {
-        $this->InvalidMessage = $InvalidMessage;
+        $this->InvalidMessage = $invalidMessage;
     }
 
     public function getInvalidMessage()
@@ -225,19 +237,9 @@ class Question implements IQuestion
         return $this->InvalidMessage;
     }
 
-    public function setCustomProperties($CustomProperties): void
+    public function setDefaultStateExpression(IExpression $defaultStateExpression): void
     {
-        $this->CustomProperties = $CustomProperties;
-    }
-
-    public function getCustomProperties()
-    {
-        return $this->CustomProperties;
-    }
-
-    public function setDefaultStateExpression(IExpression $DefaultStateExpression): void
-    {
-        $this->DefaultStateExpression = $DefaultStateExpression;
+        $this->DefaultStateExpression = $defaultStateExpression;
     }
 
     public function getDefaultStateExpression()
@@ -245,9 +247,9 @@ class Question implements IQuestion
         return $this->DefaultStateExpression;
     }
 
-    public function setRequiredExpression(IExpression $RequiredExpression): void
+    public function setRequiredExpression(IExpression $requiredExpression): void
     {
-        $this->RequiredExpression = $RequiredExpression;
+        $this->RequiredExpression = $requiredExpression;
     }
 
     public function getRequiredExpression()
@@ -255,9 +257,9 @@ class Question implements IQuestion
         return $this->RequiredExpression;
     }
 
-    public function setUpdateExpression(IExpression $UpdateExpression): void
+    public function setUpdateExpression(IExpression $updateExpression): void
     {
-        $this->UpdateExpression = $UpdateExpression;
+        $this->UpdateExpression = $updateExpression;
     }
 
     public function getUpdateExpression()
@@ -265,9 +267,9 @@ class Question implements IQuestion
         return $this->UpdateExpression;
     }
 
-    public function setValidExpression(IExpression $ValidExpression): void
+    public function setValidExpression(IExpression $validExpression): void
     {
-        $this->ValidExpression = $ValidExpression;
+        $this->ValidExpression = $validExpression;
     }
 
     public function getValidExpression()
@@ -285,9 +287,9 @@ class Question implements IQuestion
         return $this->VisibleExpression;
     }
 
-    public function setReadyForProcess($ReadyForProcess): void
+    public function setReadyForProcess($readyForProcess): void
     {
-        $this->ReadyForProcess = $ReadyForProcess;
+        $this->ReadyForProcess = $readyForProcess;
     }
 
     public function getReadyForProcess()
@@ -295,68 +297,63 @@ class Question implements IQuestion
         return $this->ReadyForProcess;
     }
 
-    public function setTextValues($TextValues): void
+    public function addTextValue(TextValueItem $textValue): void
     {
-        $this->TextValues = $TextValues;
+        $this->textValues->add($textValue);
     }
 
-    public function getTextValues(): array
-    {
-        return $this->TextValues;
-    }
-
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
-                case "QuestionID":
+                case 'QuestionID':
                     $this->setQuestionID($item->nodeValue);
                     break;
-                case "Name":
+                case 'Name':
                     $this->setName($item->nodeValue);
                     break;
-                case "Value":
+                case 'Value':
                     $this->setValue($item->nodeValue);
                     break;
-                case "Description":
+                case 'Description':
                     $this->setDescription($item->nodeValue);
                     break;
-                case "Placeholder":
+                case 'Placeholder':
                     $this->setPlaceholder($item->nodeValue);
                     break;
-                case "Tooltip":
+                case 'Tooltip':
                     $this->setTooltip($item->nodeValue);
                     break;
-                case "HelpText":
+                case 'HelpText':
                     $this->setHelpText($item->nodeValue);
                     break;
-                case "DefaultState":
+                case 'DefaultState':
                     $this->setDefaultState($item->nodeValue);
                     break;
-                case "IncludeInvisibleQuestion":
+                case 'IncludeInvisibleQuestion':
                     $this->setIncludeInvisibleQuestion($item->nodeValue);
                     break;
-                case "DataType":
+                case 'DataType':
                     $this->setDataType($item->nodeValue);
                     break;
-                case "DisplayType":
+                case 'DisplayType':
                     $this->setDisplayType($item->nodeValue);
                     break;
-                case "DisplayOnly":
+                case 'DisplayOnly':
                     $this->setDisplayOnly($item->nodeValue);
                     break;
-                case "CoreValue":
+                case 'CoreValue':
                     $this->setCoreValue($item->nodeValue);
                     break;
-                case "Restrictions":
+                case 'Restrictions':
                     $this->Restrictions = new Restrictions();
 
                     foreach ($item->childNodes as $restriction) {
                         switch ($restriction->nodeName) {
-                            case "enumerationValues":
+                            case 'enumerationValues':
                                 $this->Restrictions->setEnumerationValues($restriction->nodeValue);
                                 break;
-                            case "fractionDigits":
+                            case 'fractionDigits':
                                 $this->Restrictions->setFractionDigits($restriction->nodeValue);
                                 break;
                             case 'length':
@@ -390,71 +387,57 @@ class Question implements IQuestion
                                 $this->Restrictions->setWhiteSpace($restriction->nodeValue);
                                 break;
                             default:
-                                echo "restriction Not implemented yet:" . $restriction->nodeName . "<br>";
+                                echo 'restriction Not implemented yet:' . $restriction->nodeName . '<br>';
                                 break;
                         }
                     }
                     break;
-                case "Parameter":
-                    $Parameter = new Parameter();
-                    $Parameter->parse($item);
-                    $this->setParameter($Parameter);
+                case 'Parameter':
+                    $this->setParameter(Parameter::createFromDomNode($item));
                     break;
-                case "ElementPath":
+                case 'ElementPath':
                     $this->setElementPath($item->nodeValue);
                     break;
-                case "UpdateUserInterface":
+                case 'UpdateUserInterface':
                     $this->setUpdateUserinterface($item->nodeValue);
                     break;
-                case "InvalidMessage":
+                case 'InvalidMessage':
                     $this->setInvalidMessage($item->nodeValue);
                     break;
-                case "CustomProperties":
+                case 'CustomProperties':
                     foreach ($item->childNodes as $cp) {
-                        $customProperty = new CustomProperty();
-                        $customProperty->parse($cp);
-                        $this->CustomProperties[] = $customProperty;
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
                     break;
                 case 'VisibleExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setVisibleExpression($expression);
+                    $this->setVisibleExpression(Expression::createFromDomNode($item));
                     break;
                 case 'RequiredExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setRequiredExpression($expression);
+                    $this->setRequiredExpression(Expression::createFromDomNode($item));
                     break;
                 case 'ValidExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setValidExpression($expression);
+                    $this->setValidExpression(Expression::createFromDomNode($item));
                     break;
                 case 'DefaultStateExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setDefaultStateExpression($expression);
+                    $this->setDefaultStateExpression(Expression::createFromDomNode($item));
                     break;
                 case 'UpdateExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setUpdateExpression($expression);
+                    $this->setUpdateExpression(Expression::createFromDomNode($item));
                     break;
                 case 'ReadyForProcess':
                     $this->setReadyForProcess($item->nodeValue);
                     break;
                 case 'TextValues':
                     foreach ($item->childNodes as $textValueItem) {
-                        $newItem = new TextValueItem();
-                        $newItem->parse($textValueItem);
-                        $this->TextValues[] = $newItem;
+                        $this->addTextValue(TextValueItem::createFromDomNode($textValueItem));
                     }
                     break;
                 default:
-                    echo "Question Not implemented yet:" . $item->nodeName . "<br>";
+                    echo 'Question Not implemented yet:' . $item->nodeName . '<br>';
                     break;
             }
         }
+
+        return $this;
     }
 }

@@ -6,176 +6,167 @@ use DOMNode;
 use SoftRules\PHP\Enums\eButtonType;
 use SoftRules\PHP\Interfaces\IButton;
 use SoftRules\PHP\Interfaces\IExpression;
+use SoftRules\PHP\Interfaces\IParameter;
+use SoftRules\PHP\Traits\HasCustomProperties;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class Button implements IButton
 {
-    private string $ButtonID;
-    private string $Text = '';
-    private $Hint;
-    private $Type;
-    private $Description;
-    private $DisplayType;
-    private $SkipFormValidation;
-    private array $CustomProperties = [];
-    private $VisibleExpression;
-    private $Parameter;
+    use HasCustomProperties, ParsedFromXml;
+
+    private string $buttonID;
+    private string $text = '';
+    private $hint;
+    private $type;
+    private $description;
+    private $displayType;
+    private $skipFormValidation;
+    private IExpression $visibleExpression;
+    private IParameter $parameter;
 
     public function __construct()
     {
         $this->setVisibleExpression(new Expression());
     }
 
-    public function setButtonID(string $ButtonID): void
+    public function setButtonID(string $buttonID): void
     {
-        $this->ButtonID = $ButtonID;
+        $this->buttonID = $buttonID;
     }
 
     public function getButtonID(): string
     {
-        return $this->ButtonID;
+        return $this->buttonID;
     }
 
-    public function setText(string $Text): void
+    public function setText(string $text): void
     {
-        $this->Text = $Text;
+        $this->text = $text;
     }
 
     public function getText(): string
     {
-        return $this->Text;
+        return $this->text;
     }
 
-    public function setHint($Hint): void
+    public function setHint($hint): void
     {
-        $this->Hint = $Hint;
+        $this->hint = $hint;
     }
 
     public function getHint()
     {
-        return $this->Hint;
+        return $this->hint;
     }
 
-    public function setType(eButtonType|string $Type): void
+    public function setType(eButtonType|string $type): void
     {
-        if ($Type instanceof eButtonType) {
-            $this->Type = $Type;
+        if ($type instanceof eButtonType) {
+            $this->type = $type;
+
             return;
         }
 
-        $this->Type = eButtonType::from(strtolower($Type));
+        $this->type = eButtonType::from(strtolower($type));
     }
 
     public function getType(): eButtonType
     {
-        return $this->Type;
+        return $this->type;
     }
 
-    public function setDisplayType($DisplayType): void
+    public function setDisplayType($displayType): void
     {
-        $this->DisplayType = $DisplayType;
+        $this->displayType = $displayType;
     }
 
     public function getDisplayType()
     {
-        return $this->DisplayType;
+        return $this->displayType;
     }
 
-    public function setSkipFormValidation($SkipFormValidation): void
+    public function setSkipFormValidation($skipFormValidation): void
     {
-        $this->SkipFormValidation = $SkipFormValidation;
+        $this->skipFormValidation = $skipFormValidation;
     }
 
     public function getSkipFormValidation()
     {
-        return $this->SkipFormValidation;
+        return $this->skipFormValidation;
     }
 
-    public function setCustomProperties(array $CustomProperties): void
+    public function setDescription(string $description): void
     {
-        $this->CustomProperties = $CustomProperties;
-    }
-
-    public function getCustomProperties(): array
-    {
-        return $this->CustomProperties;
-    }
-
-    public function setDescription(string $Description): void
-    {
-        $this->Description = $Description;
+        $this->description = $description;
     }
 
     public function getDescription(): string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setVisibleExpression(IExpression $VisibleExpression): void
+    public function setVisibleExpression(IExpression $visibleExpression): void
     {
-        $this->VisibleExpression = $VisibleExpression;
+        $this->visibleExpression = $visibleExpression;
     }
 
     public function getVisibleExpression(): IExpression
     {
-        return $this->VisibleExpression;
+        return $this->visibleExpression;
     }
 
-    public function setParameter(Parameter $Parameter): void
+    public function setParameter(Parameter $parameter): void
     {
-        $this->Parameter = $Parameter;
+        $this->parameter = $parameter;
     }
 
     public function getParameter(): Parameter
     {
-        return $this->Parameter;
+        return $this->parameter;
     }
 
-    public function parse(DOMNode $node): void
+    public function parse(DOMNode $node): self
     {
         foreach ($node->childNodes as $item) {
             switch ($item->nodeName) {
-                case "ButtonID":
+                case 'ButtonID':
                     $this->setButtonID($item->nodeValue);
                     break;
-                case "Hint":
+                case 'Hint':
                     $this->setHint($item->nodeValue);
                     break;
-                case "Text":
+                case 'Text':
                     $this->setText($item->nodeValue);
                     break;
-                case "Type":
+                case 'Type':
                     $this->setType($item->nodeValue);
                     break;
-                case "Description":
+                case 'Description':
                     $this->setDescription($item->nodeValue);
                     break;
-                case "DisplayType":
+                case 'DisplayType':
                     $this->setDisplayType($item->nodeValue);
                     break;
-                case "SkipFormValidation":
+                case 'SkipFormValidation':
                     $this->setSkipFormValidation($item->nodeValue);
                     break;
-                case "CustomProperties":
+                case 'CustomProperties':
                     foreach ($item->childNodes as $cp) {
-                        $customProperty = new CustomProperty();
-                        $customProperty->parse($cp);
-                        $this->CustomProperties[] = $customProperty;
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
                     break;
-                case "Parameter":
-                    $Parameter = new Parameter();
-                    $Parameter->parse($item);
-                    $this->setParameter($Parameter);
+                case 'Parameter':
+                    $this->setParameter(Parameter::createFromDomNode($item));
                     break;
                 case 'VisibleExpression':
-                    $expression = new Expression();
-                    $expression->parse($item);
-                    $this->setVisibleExpression($expression);
+                    $this->setVisibleExpression(Expression::createFromDomNode($item));
                     break;
                 default:
                     echo "Button Not implemented yet: {$item->nodeName}<br>";
                     break;
             }
         }
+
+        return $this;
     }
 }

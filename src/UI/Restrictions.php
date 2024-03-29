@@ -139,7 +139,7 @@ class Restrictions implements IRestrictions
         return $this->whiteSpace;
     }
 
-    public function Valid($question)
+    public function Valid($question): bool
     {
         return true;
     }

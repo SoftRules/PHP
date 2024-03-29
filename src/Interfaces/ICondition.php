@@ -3,6 +3,7 @@
 namespace SoftRules\PHP\Interfaces;
 
 use DOMDocument;
+use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 
@@ -24,9 +25,9 @@ interface ICondition
 
     public function getRight_operand(): IOperand;
 
-    public function CopyFrom($sourceCondition): void;
+    public function copyFrom($sourceCondition): void;
 
-    public function Value($status, array $Items, DOMDocument $UserinterfaceData);
+    public function value($status, Collection $items, DOMDocument $UserinterfaceData);
 
-    public function WriteXml($writer): void;
+    public function writeXml($writer): void;
 }

@@ -2,36 +2,54 @@
 
 namespace SoftRules\PHP\UI;
 
+use DOMNode;
 use SoftRules\PHP\Interfaces\ICustomProperty;
+use SoftRules\PHP\Traits\ParsedFromXml;
 
 class CustomProperty implements ICustomProperty
 {
-    private $Name;
-    private $Value;
+    use ParsedFromXml;
 
-    public function setName($Name): void
+    private ?string $name = null;
+
+    private string|bool|null $value = null;
+
+    public function setName(?string $name): void
     {
-        $this->Name = $Name;
+        $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setValue($Value): void
+    public function setValue(string|bool|null $value): void
     {
-        $this->Value = $Value;
+        $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string|bool|null
     {
-        return $this->Value;
+        return $this->value;
     }
 
-    public function parse($item)
+    public function isTrue(): bool
     {
-        foreach ($item->childNodes as $values) {
+        if ($this->value === null) {
+            return false;
+        }
+
+        if (is_bool($this->value)) {
+            return $this->value;
+        }
+
+        return strtolower($this->value) === 'true';
+    }
+
+    public function parse(DOMNode $node): self
+    {
+        foreach ($node->childNodes as $values) {
             switch ($values->nodeName) {
                 case 'Name':
                     $this->setName($values->nodeValue);
@@ -41,5 +59,7 @@ class CustomProperty implements ICustomProperty
                     break;
             }
         }
+
+        return $this;
     }
 }
