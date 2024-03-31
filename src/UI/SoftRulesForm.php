@@ -16,13 +16,21 @@ use SoftRules\PHP\UI\Components\Question;
 final class SoftRulesForm implements SoftRulesFormInterface
 {
     private DOMDocument $softRulesXml;
+
     private string $state = '';
+
     private int $page = 1;
+
     private int $pages = 1;
+
     private DOMDocument $userInterfaceData;
+
     private string $sessionID;
+
     private string $configID;
+
     private string $userInterfaceID;
+
     public readonly UiComponentsCollection $components;
 
     private function __construct()
@@ -195,6 +203,7 @@ final class SoftRulesForm implements SoftRulesFormInterface
 
                         $this->setUserInterfaceData($xml);
                     }
+
                     break;
                 case 'Questions': //this tag contains child elements, of which we only want one.
                     foreach ($child->childNodes as $childNode) {
@@ -215,6 +224,7 @@ final class SoftRulesForm implements SoftRulesFormInterface
                                 break;
                         }
                     }
+
                     break;
                 default:
                     echo 'ParseUI Not implemented yet:' . $child->nodeName . '<br>';

@@ -15,7 +15,9 @@ class Expression implements ExpressionInterface
     use ParsedFromXml;
 
     private string $description = '';
+
     private bool $startValue = true;
+
     /**
      * @var Collection<int, ConditionInterface>
      */
@@ -38,11 +40,7 @@ class Expression implements ExpressionInterface
 
     public function setStartValue(string|bool $startValue): void
     {
-        if (is_bool($startValue)) {
-            $this->startValue = $startValue;
-        } else {
-            $this->startValue = strtolower($startValue) === 'true';
-        }
+        $this->startValue = is_bool($startValue) ? $startValue : strtolower($startValue) === 'true';
     }
 
     public function getStartValue(): bool
@@ -90,6 +88,7 @@ class Expression implements ExpressionInterface
                     foreach ($childNode->childNodes as $conditionNode) {
                         $this->addCondition(Condition::createFromDomNode($conditionNode));
                     }
+
                     break;
             }
         }

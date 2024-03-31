@@ -23,10 +23,15 @@ class Label implements ComponentWithCustomProperties, LabelComponentInterface, R
     public static ?LabelComponentStyle $style = null;
 
     private string $labelID;
+
     private string $text;
+
     private $description;
+
     private $displayType;
+
     private ParameterInterface $parameter;
+
     private ExpressionInterface $visibleExpression;
 
     public function __construct()
@@ -124,6 +129,7 @@ class Label implements ComponentWithCustomProperties, LabelComponentInterface, R
                     foreach ($childNode->childNodes as $cp) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
+
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));

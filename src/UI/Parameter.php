@@ -11,11 +11,17 @@ class Parameter implements ParameterInterface
     use ParsedFromXml;
 
     private ?string $name = null;
+
     private $path;
+
     private ?string $parentGroupID = null;
+
     private ?string $parentUserInterfaceID = null;
+
     private ?string $parentConfigID = null;
+
     private $renew;
+
     private $usedByEvents;
 
     public function setName($name): void

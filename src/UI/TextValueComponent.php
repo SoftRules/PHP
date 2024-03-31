@@ -11,7 +11,9 @@ class TextValueComponent implements TextValueComponentInterface
     use ParsedFromXml;
 
     private string $value = '';
+
     private ?string $text = null;
+
     private ?string $imageUrl = null;
 
     public function setText(?string $text): void
@@ -61,6 +63,7 @@ class TextValueComponent implements TextValueComponentInterface
                             break;
                     }
                 }
+
                 break;
         }
 

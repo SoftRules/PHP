@@ -22,13 +22,21 @@ class Button implements ButtonComponentInterface, Renderable
     public static ?ButtonComponentStyle $style = null;
 
     private string $buttonID;
+
     private string $text = '';
+
     private $hint;
+
     private $type;
+
     private $description;
+
     private $displayType;
+
     private $skipFormValidation;
+
     private ExpressionInterface $visibleExpression;
+
     private ParameterInterface $parameter;
 
     public function __construct()
@@ -171,6 +179,7 @@ class Button implements ButtonComponentInterface, Renderable
                     foreach ($childNode->childNodes as $cp) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
+
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));

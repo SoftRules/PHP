@@ -17,9 +17,13 @@ use Stringable;
 final class HtmlRenderer implements Stringable
 {
     private string $html = '';
+
     private int $currentPage;
+
     public readonly int $totalPages;
+
     public readonly DOMDocument $userInterfaceData;
+
     private readonly UiComponentsCollection $allComponents;
 
 //    private DOMDocument $SR_XML;
@@ -103,7 +107,7 @@ final class HtmlRenderer implements Stringable
         }
 
         $description = $component->getCustomProperties()
-            ->implode(fn (CustomProperty $customProperty) => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
+            ->implode(fn (CustomProperty $customProperty): string => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
 
         return " {$component->getCustomProperties()->count()} Custom Properties ({$description})";
     }

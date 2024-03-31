@@ -7,16 +7,27 @@ use SoftRules\PHP\Interfaces\RestrictionsInterface;
 class Restrictions implements RestrictionsInterface
 {
     private $enumerationValues;
+
     private $fractionDigits;
+
     private $length;
+
     private $maxExclusive;
+
     private $minExclusive;
+
     private $maxInclusive;
+
     private $minInclusive;
+
     private $maxLength;
+
     private $minLength;
+
     private $pattern;
+
     private $totalDigits;
+
     private $whiteSpace;
 
     public function setEnumerationValues($enumerationValues): void

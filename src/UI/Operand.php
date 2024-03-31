@@ -13,8 +13,11 @@ class Operand implements OperandInterface
     use ParsedFromXml;
 
     private mixed $value;
+
     private string $elementPath;
+
     private string $attributes;
+
     private eValueType $valueType;
 
     public function setValue(mixed $value): void

@@ -23,8 +23,11 @@ class Condition implements ConditionInterface
     use ParsedFromXml;
 
     private ?eLogOperator $logOperator = null;
+
     private eOperator $operator;
+
     private OperandInterface $leftOperand;
+
     private OperandInterface $rightOperand;
 
     public function setLogOperator(eLogOperator|string $logOperator): void
@@ -151,7 +154,7 @@ class Condition implements ConditionInterface
                     $res = ($lf <= $rf);
                     break;
                 case eOperator::NOT_EQUAL:
-                    $res = ($lf != $rf);
+                    $res = ($lf !== $rf);
                     break;
                 case eOperator::GREATER:
                     $res = ($lf > $rf);
@@ -167,6 +170,7 @@ class Condition implements ConditionInterface
                             break;
                         }
                     }
+
                     break;
                 default:
                     echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
@@ -209,6 +213,7 @@ class Condition implements ConditionInterface
                                 break;
                             }
                         }
+
                         break;
                     default:
                         echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
@@ -241,6 +246,7 @@ class Condition implements ConditionInterface
                             break;
                         }
                     }
+
                     break;
                 case eOperator::GREATER:
                     $res = ($lfs > $rfs);

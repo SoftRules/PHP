@@ -204,6 +204,7 @@ class Group implements GroupComponentInterface, RenderableWrapper
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
+
                     break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
@@ -228,6 +229,7 @@ class Group implements GroupComponentInterface, RenderableWrapper
                                 break;
                         }
                     }
+
                     break;
                 case 'Items':
                     foreach ($childNode->childNodes as $grandChildNode) {
@@ -248,6 +250,7 @@ class Group implements GroupComponentInterface, RenderableWrapper
                                 break;
                         }
                     }
+
                     break;
                 default:
                     echo 'Group Not implemented yet:' . $childNode->nodeName . '<br>';

@@ -28,23 +28,41 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
     public static ?QuestionComponentStyle $style = null;
 
     private string $questionID;
+
     private $name;
+
     private $value;
+
     private $description;
+
     private $placeholder;
+
     private $tooltip;
+
     private $helpText;
+
     private $defaultState;
+
     private $includeInvisibleQuestion;
+
     private $dataType;
+
     private $displayType;
+
     private $displayOnly;
+
     private RestrictionsInterface $restrictions;
+
     private ParameterInterface $parameter;
+
     private $elementPath;
+
     private $updateUserInterface;
+
     private $invalidMessage;
+
     private $readyForProcess;
+
     private $coreValue;
 
     /**
@@ -53,9 +71,13 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
     public readonly Collection $textValues;
 
     private ExpressionInterface $validExpression;
+
     private ExpressionInterface $defaultStateExpression;
+
     private ExpressionInterface $requiredExpression;
+
     private ExpressionInterface $updateExpression;
+
     private ExpressionInterface $visibleExpression;
 
     public function __construct()
@@ -413,6 +435,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
                                 break;
                         }
                     }
+
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
@@ -430,6 +453,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
+
                     break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
@@ -453,6 +477,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addTextValue(TextValueComponent::createFromDomNode($grandChildNode));
                     }
+
                     break;
                 default:
                     echo 'Question Not implemented yet:' . $childNode->nodeName . '<br>';
@@ -478,7 +503,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
         }
 
         $items = $this->textValues
-            ->implode(fn (TextValueComponent $textValueItem) => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
+            ->implode(fn (TextValueComponent $textValueItem): string => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
 
         return " Aantal TextValues: {$this->textValues->count()} ({$items})";
     }

@@ -71,12 +71,12 @@ return RectorConfig::configure()
     // here we can define, what prepared sets of rules will be applied
     ->withPreparedSets(
         codeQuality: false,
-        codingStyle: false,
-        privatization: false,
+        codingStyle: true,
+        privatization: true,
         naming: false,
-        earlyReturn: false,
+        earlyReturn: true,
     )
     ->withDeadCodeLevel(40)// max 40
     ->withMemoryLimit('3G')
     ->withPhpSets(php81: true)
-    ->withTypeCoverageLevel(0); // max 37
+    ->withTypeCoverageLevel(12); // max 37
