@@ -6,7 +6,8 @@ use SoftRules\PHP\HtmlRenderer;
 use SoftRules\PHP\Services\SoftRules;
 use SoftRules\PHP\UI\SoftRulesForm;
 
-$xml = (new SoftRules())->firstpage();
+$product = 'softrules';
+$xml = (new SoftRules($product))->firstpage();
 ?>
 <!DOCTYPE html>
 <html>
@@ -31,6 +32,9 @@ $xml = (new SoftRules())->firstpage();
     <?php echo new HtmlRenderer(SoftRulesForm::fromDomDocument($xml)); ?>
 </form>
 
-<script>var SoftRules_XML = '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>'</script>
+<script>
+    const SoftRules_XML = '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>';
+    const product = '<?php echo $product; ?>';
+</script>
 </body>
 </html>

@@ -6,16 +6,31 @@ use Carbon\CarbonInterval;
 use DOMDocument;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
+use RuntimeException;
 
-class SoftRules extends Factory
+final class SoftRules extends Factory
 {
-    private readonly string $product;
+    private readonly string $uri;
 
-    public function __construct()
-    {
+    private readonly string $username;
+
+    private readonly string $password;
+
+    public function __construct(
+        public readonly string $product,
+    ) {
         parent::__construct();
 
-        $this->product = (string) getenv('SOFTRULES_PRODUCT');
+        $config = collect((require __DIR__ . '/../../config/softrules.php')['forms'])
+            ->firstWhere('product', $product);
+
+        if (! $config) {
+            throw new RuntimeException('No form found for product "' . $product . '". in the config');
+        }
+
+        $this->uri = $config['uri'];
+        $this->username = $config['username'];
+        $this->password = $config['password'];
     }
 
     public function firstpage(): DOMDocument
@@ -122,15 +137,15 @@ class SoftRules extends Factory
             ->timeout((int) CarbonInterval::seconds(25)->totalSeconds)
             ->connectTimeout((int) CarbonInterval::seconds(5)->totalSeconds)
             // TODO use some kind of config system
-            ->baseUrl(getenv('SOFTRULES_URI'));
+            ->baseUrl($this->uri);
     }
 
     private function createSession(): string
     {
         $response = $this->retry(3, 200)
             ->get('/getsession', [
-                'username' => getenv('SOFTRULES_USERNAME'),
-                'password' => getenv('SOFTRULES_PASSWORD'),
+                'username' => $this->username,
+                'password' => $this->password,
             ]);
 
         $xml = simplexml_load_string(trim($response->body()));
