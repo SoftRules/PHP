@@ -27,9 +27,9 @@ class Button implements ButtonComponentInterface, Renderable
 
     private $hint;
 
-    private $type;
+    private ?eButtonType $type = null;
 
-    private $description;
+    private string $description;
 
     private $displayType;
 

@@ -26,7 +26,7 @@ class Label implements ComponentWithCustomProperties, LabelComponentInterface, R
 
     private string $text;
 
-    private $description;
+    private string $description;
 
     private $displayType;
 

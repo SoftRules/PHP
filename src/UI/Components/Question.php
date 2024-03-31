@@ -33,7 +33,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
 
     private $value;
 
-    private $description;
+    private string $description;
 
     private $placeholder;
 

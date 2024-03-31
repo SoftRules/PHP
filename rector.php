@@ -79,4 +79,4 @@ return RectorConfig::configure()
     ->withDeadCodeLevel(40)// max 40
     ->withMemoryLimit('3G')
     ->withPhpSets(php81: true)
-    ->withTypeCoverageLevel(12); // max 37
+    ->withTypeCoverageLevel(37); // max 37
