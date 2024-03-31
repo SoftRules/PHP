@@ -47,7 +47,7 @@ class CustomProperty implements CustomPropertyInterface
         return strtolower($this->value) === 'true';
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
         foreach ($node->childNodes as $values) {
             switch ($values->nodeName) {

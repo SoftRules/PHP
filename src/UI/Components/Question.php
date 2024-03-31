@@ -1,23 +1,31 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\UI;
+namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
 use Illuminate\Support\Collection;
+use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
 use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
 use SoftRules\PHP\Interfaces\ParameterInterface;
-use SoftRules\PHP\Interfaces\QuestionItemInterface;
+use SoftRules\PHP\Interfaces\QuestionComponentInterface;
 use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Interfaces\RestrictionsInterface;
-use SoftRules\PHP\Interfaces\TextValueItemInterface;
+use SoftRules\PHP\Interfaces\TextValueComponentInterface;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\CustomProperty;
+use SoftRules\PHP\UI\Expression;
+use SoftRules\PHP\UI\Parameter;
+use SoftRules\PHP\UI\Restrictions;
+use SoftRules\PHP\UI\Style\QuestionComponentStyle;
+use SoftRules\PHP\UI\TextValueComponent;
 
-class Question implements ItemWithCustomProperties, QuestionItemInterface, Renderable
+class Question implements ComponentWithCustomProperties, QuestionComponentInterface, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
+
+    public static ?QuestionComponentStyle $style = null;
 
     private string $questionID;
     private $name;
@@ -40,7 +48,7 @@ class Question implements ItemWithCustomProperties, QuestionItemInterface, Rende
     private $coreValue;
 
     /**
-     * @var Collection<int, TextValueItemInterface>
+     * @var Collection<int, TextValueComponentInterface>
      */
     public readonly Collection $textValues;
 
@@ -59,6 +67,16 @@ class Question implements ItemWithCustomProperties, QuestionItemInterface, Rende
         $this->requiredExpression = new Expression();
         $this->updateExpression = new Expression();
         $this->visibleExpression = new Expression();
+    }
+
+    public static function setStyle(QuestionComponentStyle $style): void
+    {
+        self::$style = $style;
+    }
+
+    public function getStyle(): QuestionComponentStyle
+    {
+        return self::$style ?? QuestionComponentStyle::bootstrap();
     }
 
     public function setQuestionID(string $questionID): void
@@ -301,143 +319,143 @@ class Question implements ItemWithCustomProperties, QuestionItemInterface, Rende
         return $this->readyForProcess;
     }
 
-    public function addTextValue(TextValueItemInterface $textValue): void
+    public function addTextValue(TextValueComponentInterface $textValue): void
     {
         $this->textValues->add($textValue);
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'QuestionID':
-                    $this->setQuestionID($item->nodeValue);
+                    $this->setQuestionID($childNode->nodeValue);
                     break;
                 case 'Name':
-                    $this->setName($item->nodeValue);
+                    $this->setName($childNode->nodeValue);
                     break;
                 case 'Value':
-                    $this->setValue($item->nodeValue);
+                    $this->setValue($childNode->nodeValue);
                     break;
                 case 'Description':
-                    $this->setDescription($item->nodeValue);
+                    $this->setDescription($childNode->nodeValue);
                     break;
                 case 'Placeholder':
-                    $this->setPlaceholder($item->nodeValue);
+                    $this->setPlaceholder($childNode->nodeValue);
                     break;
                 case 'Tooltip':
-                    $this->setTooltip($item->nodeValue);
+                    $this->setTooltip($childNode->nodeValue);
                     break;
                 case 'HelpText':
-                    $this->setHelpText($item->nodeValue);
+                    $this->setHelpText($childNode->nodeValue);
                     break;
                 case 'DefaultState':
-                    $this->setDefaultState($item->nodeValue);
+                    $this->setDefaultState($childNode->nodeValue);
                     break;
                 case 'IncludeInvisibleQuestion':
-                    $this->setIncludeInvisibleQuestion($item->nodeValue);
+                    $this->setIncludeInvisibleQuestion($childNode->nodeValue);
                     break;
                 case 'DataType':
-                    $this->setDataType($item->nodeValue);
+                    $this->setDataType($childNode->nodeValue);
                     break;
                 case 'DisplayType':
-                    $this->setDisplayType($item->nodeValue);
+                    $this->setDisplayType($childNode->nodeValue);
                     break;
                 case 'DisplayOnly':
-                    $this->setDisplayOnly($item->nodeValue);
+                    $this->setDisplayOnly($childNode->nodeValue);
                     break;
                 case 'CoreValue':
-                    $this->setCoreValue($item->nodeValue);
+                    $this->setCoreValue($childNode->nodeValue);
                     break;
                 case 'Restrictions':
                     $this->restrictions = new Restrictions();
 
-                    foreach ($item->childNodes as $restriction) {
-                        switch ($restriction->nodeName) {
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        switch ($grandChildNode->nodeName) {
                             case 'enumerationValues':
-                                $this->restrictions->setEnumerationValues($restriction->nodeValue);
+                                $this->restrictions->setEnumerationValues($grandChildNode->nodeValue);
                                 break;
                             case 'fractionDigits':
-                                $this->restrictions->setFractionDigits($restriction->nodeValue);
+                                $this->restrictions->setFractionDigits($grandChildNode->nodeValue);
                                 break;
                             case 'length':
-                                $this->restrictions->setLength($restriction->nodeValue);
+                                $this->restrictions->setLength($grandChildNode->nodeValue);
                                 break;
                             case 'maxExclusive':
-                                $this->restrictions->setMaxExclusive($restriction->nodeValue);
+                                $this->restrictions->setMaxExclusive($grandChildNode->nodeValue);
                                 break;
                             case 'minExclusive':
-                                $this->restrictions->setMinExclusive($restriction->nodeValue);
+                                $this->restrictions->setMinExclusive($grandChildNode->nodeValue);
                                 break;
                             case 'maxInclusive':
-                                $this->restrictions->setMaxInclusive($restriction->nodeValue);
+                                $this->restrictions->setMaxInclusive($grandChildNode->nodeValue);
                                 break;
                             case 'minInclusive':
-                                $this->restrictions->setMinInclusive($restriction->nodeValue);
+                                $this->restrictions->setMinInclusive($grandChildNode->nodeValue);
                                 break;
                             case 'maxLength':
-                                $this->restrictions->setMaxLength($restriction->nodeValue);
+                                $this->restrictions->setMaxLength($grandChildNode->nodeValue);
                                 break;
                             case 'minLength':
-                                $this->restrictions->setMinLength($restriction->nodeValue);
+                                $this->restrictions->setMinLength($grandChildNode->nodeValue);
                                 break;
                             case 'pattern':
-                                $this->restrictions->setPattern($restriction->nodeValue);
+                                $this->restrictions->setPattern($grandChildNode->nodeValue);
                                 break;
                             case 'totalDigits':
-                                $this->restrictions->setTotalDigits($restriction->nodeValue);
+                                $this->restrictions->setTotalDigits($grandChildNode->nodeValue);
                                 break;
                             case 'whiteSpace':
-                                $this->restrictions->setWhiteSpace($restriction->nodeValue);
+                                $this->restrictions->setWhiteSpace($grandChildNode->nodeValue);
                                 break;
                             default:
-                                echo 'restriction Not implemented yet:' . $restriction->nodeName . '<br>';
+                                echo 'restriction Not implemented yet:' . $grandChildNode->nodeName . '<br>';
                                 break;
                         }
                     }
                     break;
                 case 'Parameter':
-                    $this->setParameter(Parameter::createFromDomNode($item));
+                    $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
                 case 'ElementPath':
-                    $this->setElementPath($item->nodeValue);
+                    $this->setElementPath($childNode->nodeValue);
                     break;
                 case 'UpdateUserInterface':
-                    $this->setUpdateUserInterface($item->nodeValue);
+                    $this->setUpdateUserInterface($childNode->nodeValue);
                     break;
                 case 'InvalidMessage':
-                    $this->setInvalidMessage($item->nodeValue);
+                    $this->setInvalidMessage($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
-                    foreach ($item->childNodes as $cp) {
-                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
                     break;
                 case 'VisibleExpression':
-                    $this->setVisibleExpression(Expression::createFromDomNode($item));
+                    $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'RequiredExpression':
-                    $this->setRequiredExpression(Expression::createFromDomNode($item));
+                    $this->setRequiredExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'ValidExpression':
-                    $this->setValidExpression(Expression::createFromDomNode($item));
+                    $this->setValidExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'DefaultStateExpression':
-                    $this->setDefaultStateExpression(Expression::createFromDomNode($item));
+                    $this->setDefaultStateExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'UpdateExpression':
-                    $this->setUpdateExpression(Expression::createFromDomNode($item));
+                    $this->setUpdateExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'ReadyForProcess':
-                    $this->setReadyForProcess($item->nodeValue);
+                    $this->setReadyForProcess($childNode->nodeValue);
                     break;
                 case 'TextValues':
-                    foreach ($item->childNodes as $textValueItem) {
-                        $this->addTextValue(TextValueItem::createFromDomNode($textValueItem));
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        $this->addTextValue(TextValueComponent::createFromDomNode($grandChildNode));
                     }
                     break;
                 default:
-                    echo 'Question Not implemented yet:' . $item->nodeName . '<br>';
+                    echo 'Question Not implemented yet:' . $childNode->nodeName . '<br>';
                     break;
             }
         }
@@ -449,9 +467,8 @@ class Question implements ItemWithCustomProperties, QuestionItemInterface, Rende
     {
         $html = '<li>';
         $html .= "Question: {$this->getDescription()}({$this->getName()}) Value: {$this->getValue()} UpdateUserinterface: {$this->getUpdateUserInterface()}{$this->getTextValuesDescription()}";
-        $html .= '</li>';
 
-        return $html;
+        return $html . '</li>';
     }
 
     private function getTextValuesDescription(): string
@@ -461,7 +478,7 @@ class Question implements ItemWithCustomProperties, QuestionItemInterface, Rende
         }
 
         $items = $this->textValues
-            ->implode(fn (TextValueItem $textValueItem) => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
+            ->implode(fn (TextValueComponent $textValueItem) => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
 
         return " Aantal TextValues: {$this->textValues->count()} ({$items})";
     }

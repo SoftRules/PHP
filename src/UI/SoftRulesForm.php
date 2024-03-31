@@ -5,11 +5,15 @@ namespace SoftRules\PHP\UI;
 use DOMDocument;
 use DOMNameSpaceNode;
 use DOMNode;
-use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
-use SoftRules\PHP\Interfaces\UIClassInterface;
+use SoftRules\PHP\Interfaces\SoftRulesFormInterface;
+use SoftRules\PHP\Interfaces\UiComponentInterface;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
+use SoftRules\PHP\UI\Components\Button;
+use SoftRules\PHP\UI\Components\Group;
+use SoftRules\PHP\UI\Components\Label;
+use SoftRules\PHP\UI\Components\Question;
 
-class UIClass implements UIClassInterface
+final class SoftRulesForm implements SoftRulesFormInterface
 {
     private DOMDocument $softRulesXml;
     private string $state = '';
@@ -17,18 +21,28 @@ class UIClass implements UIClassInterface
     private int $pages = 1;
     private DOMDocument $userInterfaceData;
     private string $sessionID;
-    private $configID;
-    private $userInterfaceID;
-    /**
-     * @var Collection<int, BaseItemInterface>
-     */
-    public readonly Collection $items;
+    private string $configID;
+    private string $userInterfaceID;
+    public readonly UiComponentsCollection $components;
 
-    public function __construct()
+    private function __construct()
     {
-        $this->items = new Collection();
+        $this->components = new UiComponentsCollection();
         $this->userInterfaceData = new DOMDocument();
         $this->softRulesXml = new DOMDocument();
+    }
+
+    public static function fromXmlString(string $xmlString): self
+    {
+        $xml = new DOMDocument();
+        $xml->loadXML($xmlString);
+
+        return self::fromDomDocument($xml);
+    }
+
+    public static function fromDomDocument(DOMDocument $xml): self
+    {
+        return (new self())->parseUIXML($xml);
     }
 
     public function setSoftRulesXml(DOMDocument $softRulesXml): void
@@ -41,22 +55,22 @@ class UIClass implements UIClassInterface
         return $this->softRulesXml;
     }
 
-    public function setConfigID($configID): void
+    public function setConfigID(string $configID): void
     {
         $this->configID = $configID;
     }
 
-    public function getConfigID()
+    public function getConfigID(): string
     {
         return $this->configID;
     }
 
-    public function setUserInterfaceID($userInterfaceID): void
+    public function setUserInterfaceID(string $userInterfaceID): void
     {
         $this->userInterfaceID = $userInterfaceID;
     }
 
-    public function getUserInterfaceID()
+    public function getUserInterfaceID(): string
     {
         return $this->userInterfaceID;
     }
@@ -81,12 +95,12 @@ class UIClass implements UIClassInterface
         return $this->pages;
     }
 
-    public function setUserinterfaceData(DOMDocument $userInterfaceData): void
+    public function setUserInterfaceData(DOMDocument $userInterfaceData): void
     {
         $this->userInterfaceData = $userInterfaceData;
     }
 
-    public function getUserinterfaceData(): DOMDocument
+    public function getUserInterfaceData(): DOMDocument
     {
         return $this->userInterfaceData;
     }
@@ -111,32 +125,32 @@ class UIClass implements UIClassInterface
         return $this->state;
     }
 
-    public function addItem(BaseItemInterface $item): void
+    public function addComponent(UiComponentInterface $component): void
     {
-        $this->items->add($item);
+        $this->components->add($component);
     }
 
-    public function itemVisible(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
-    {
-        return true;
-    }
-
-    public function itemValid(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
+    public function componentVisible(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemRequired(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
+    public function componentValid(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemEnabled(array $items, BaseItemInterface $item, DOMDocument $userInterfaceData): bool
+    public function itemRequired(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function ParseUIXML(DOMDocument $xml): void
+    public function itemEnabled(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
+    {
+        return true;
+    }
+
+    public function parseUIXML(DOMDocument $xml): self
     {
         $x = $xml->documentElement;
         /** @var DOMNode|DOMNameSpaceNode $child */
@@ -149,7 +163,7 @@ class UIClass implements UIClassInterface
                     $this->setPages((int) $child->nodeValue);
                     break;
                 case 'SessionID':
-                    $this->setSessionID($child->nodeValue);
+                    $this->setSessionID((string) $child->nodeValue);
                     break;
                 case 'SoftRulesXml':
                     $xml = new DOMDocument();
@@ -179,23 +193,23 @@ class UIClass implements UIClassInterface
                         $xml = new DOMDocument();
                         $xml->loadXML($innerHTML);
 
-                        $this->setUserinterfaceData($xml);
+                        $this->setUserInterfaceData($xml);
                     }
                     break;
                 case 'Questions': //this tag contains child elements, of which we only want one.
-                    foreach ($child->childNodes as $item) {
-                        switch ($item->nodeName) {
+                    foreach ($child->childNodes as $childNode) {
+                        switch ($childNode->nodeName) {
                             case 'Group':
-                                $this->addItem(Group::createFromDomNode($item));
+                                $this->addComponent(Group::createFromDomNode($childNode));
                                 break;
                             case 'Question':
-                                $this->addItem(Question::createFromDomNode($item));
+                                $this->addComponent(Question::createFromDomNode($childNode));
                                 break;
                             case 'Label':
-                                $this->addItem(Label::createFromDomNode($item));
+                                $this->addComponent(Label::createFromDomNode($childNode));
                                 break;
                             case 'Button':
-                                $this->addItem(Button::createFromDomNode($item));
+                                $this->addComponent(Button::createFromDomNode($childNode));
                                 break;
                             default:
                                 break;
@@ -207,5 +221,7 @@ class UIClass implements UIClassInterface
                     break;
             }
         }
+
+        return $this;
     }
 }

@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use SoftRules\PHP\Enums\eButtonType;
 
-interface ButtonItemInterface extends BaseItemInterface, ItemWithCustomProperties
+interface ButtonComponentInterface extends ComponentWithCustomProperties, UiComponentInterface
 {
     public function setButtonID(string $buttonID): void;
 

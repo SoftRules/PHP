@@ -1,20 +1,26 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\UI;
+namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
+use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
 use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
-use SoftRules\PHP\Interfaces\LabelItemInterface;
+use SoftRules\PHP\Interfaces\LabelComponentInterface;
 use SoftRules\PHP\Interfaces\ParameterInterface;
 use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\CustomProperty;
+use SoftRules\PHP\UI\Expression;
+use SoftRules\PHP\UI\Parameter;
+use SoftRules\PHP\UI\Style\LabelComponentStyle;
 
-class Label implements ItemWithCustomProperties, LabelItemInterface, Renderable
+class Label implements ComponentWithCustomProperties, LabelComponentInterface, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
+
+    public static ?LabelComponentStyle $style = null;
 
     private string $labelID;
     private string $text;
@@ -26,6 +32,16 @@ class Label implements ItemWithCustomProperties, LabelItemInterface, Renderable
     public function __construct()
     {
         $this->setVisibleExpression(new Expression());
+    }
+
+    public static function setStyle(LabelComponentStyle $style): void
+    {
+        self::$style = $style;
+    }
+
+    public function getStyle(): LabelComponentStyle
+    {
+        return self::$style ?? LabelComponentStyle::bootstrap();
     }
 
     public function setLabelID(string $labelID): void
@@ -88,35 +104,35 @@ class Label implements ItemWithCustomProperties, LabelItemInterface, Renderable
         return $this->visibleExpression;
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'LabelID':
-                    $this->setLabelID($item->nodeValue);
+                    $this->setLabelID($childNode->nodeValue);
                     break;
                 case 'Text':
-                    $this->setText($item->nodeValue);
+                    $this->setText($childNode->nodeValue);
                     break;
                 case 'Description':
-                    $this->setDescription($item->nodeValue);
+                    $this->setDescription($childNode->nodeValue);
                     break;
                 case 'DisplayType':
-                    $this->setDisplayType($item->nodeValue);
+                    $this->setDisplayType($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
-                    foreach ($item->childNodes as $cp) {
+                    foreach ($childNode->childNodes as $cp) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
                     break;
                 case 'Parameter':
-                    $this->setParameter(Parameter::createFromDomNode($item));
+                    $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
                 case 'VisibleExpression':
-                    $this->setVisibleExpression(Expression::createFromDomNode($item));
+                    $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;
                 default:
-                    echo 'Label Not implemented yet:' . $item->nodeName . '<br>';
+                    echo 'Label Not implemented yet:' . $childNode->nodeName . '<br>';
                     break;
             }
         }

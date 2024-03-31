@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use Illuminate\Support\Collection;
 
-interface ItemWithCustomProperties
+interface ComponentWithCustomProperties
 {
     public function addCustomProperty(CustomPropertyInterface $customProperty): void;
 

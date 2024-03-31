@@ -16,5 +16,5 @@ interface CustomPropertyInterface
 
     public function isTrue(): bool;
 
-    public function parse(DOMNode $node): self;
+    public function parse(DOMNode $node): static;
 }

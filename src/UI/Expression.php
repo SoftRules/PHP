@@ -5,10 +5,10 @@ namespace SoftRules\PHP\UI;
 use DOMDocument;
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
 use SoftRules\PHP\Interfaces\ConditionInterface;
 use SoftRules\PHP\Interfaces\ExpressionInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
 class Expression implements ExpressionInterface
 {
@@ -60,15 +60,12 @@ class Expression implements ExpressionInterface
         //
     }
 
-    /**
-     * @param Collection<BaseItemInterface> $items
-     */
-    public function value(Collection $items, DOMDocument $userInterfaceData): bool
+    public function value(UiComponentsCollection $components, DOMDocument $userInterfaceData): bool
     {
         $res = $this->getStartValue();
 
         foreach ($this->conditions as $condition) {
-            $res = $condition->value($res, $items, $userInterfaceData);
+            $res = $condition->value($res, $components, $userInterfaceData);
         }
 
         return $res;
@@ -79,18 +76,18 @@ class Expression implements ExpressionInterface
         //
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'StartValue':
-                    $this->setStartValue($item->nodeValue);
+                    $this->setStartValue($childNode->nodeValue);
                     break;
                 case 'Description':
-                    $this->setDescription($item->nodeValue);
+                    $this->setDescription($childNode->nodeValue);
                     break;
                 case 'Conditions':
-                    foreach ($item->childNodes as $conditionNode) {
+                    foreach ($childNode->childNodes as $conditionNode) {
                         $this->addCondition(Condition::createFromDomNode($conditionNode));
                     }
                     break;

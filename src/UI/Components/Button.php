@@ -1,19 +1,25 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\UI;
+namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
 use SoftRules\PHP\Enums\eButtonType;
-use SoftRules\PHP\Interfaces\ButtonItemInterface;
+use SoftRules\PHP\Interfaces\ButtonComponentInterface;
 use SoftRules\PHP\Interfaces\ExpressionInterface;
 use SoftRules\PHP\Interfaces\ParameterInterface;
 use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\CustomProperty;
+use SoftRules\PHP\UI\Expression;
+use SoftRules\PHP\UI\Parameter;
+use SoftRules\PHP\UI\Style\ButtonComponentStyle;
 
-class Button implements ButtonItemInterface, Renderable
+class Button implements ButtonComponentInterface, Renderable
 {
     use HasCustomProperties, ParsedFromXml;
+
+    public static ?ButtonComponentStyle $style = null;
 
     private string $buttonID;
     private string $text = '';
@@ -28,6 +34,16 @@ class Button implements ButtonItemInterface, Renderable
     public function __construct()
     {
         $this->setVisibleExpression(new Expression());
+    }
+
+    public static function setStyle(ButtonComponentStyle $style): void
+    {
+        self::$style = $style;
+    }
+
+    public function getStyle(): ButtonComponentStyle
+    {
+        return self::$style ?? ButtonComponentStyle::bootstrap();
     }
 
     public function setButtonID(string $buttonID): void
@@ -126,44 +142,44 @@ class Button implements ButtonItemInterface, Renderable
         return $this->parameter;
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'ButtonID':
-                    $this->setButtonID($item->nodeValue);
+                    $this->setButtonID($childNode->nodeValue);
                     break;
                 case 'Hint':
-                    $this->setHint($item->nodeValue);
+                    $this->setHint($childNode->nodeValue);
                     break;
                 case 'Text':
-                    $this->setText($item->nodeValue);
+                    $this->setText($childNode->nodeValue);
                     break;
                 case 'Type':
-                    $this->setType($item->nodeValue);
+                    $this->setType($childNode->nodeValue);
                     break;
                 case 'Description':
-                    $this->setDescription($item->nodeValue);
+                    $this->setDescription($childNode->nodeValue);
                     break;
                 case 'DisplayType':
-                    $this->setDisplayType($item->nodeValue);
+                    $this->setDisplayType($childNode->nodeValue);
                     break;
                 case 'SkipFormValidation':
-                    $this->setSkipFormValidation($item->nodeValue);
+                    $this->setSkipFormValidation($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
-                    foreach ($item->childNodes as $cp) {
+                    foreach ($childNode->childNodes as $cp) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
                     }
                     break;
                 case 'Parameter':
-                    $this->setParameter(Parameter::createFromDomNode($item));
+                    $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
                 case 'VisibleExpression':
-                    $this->setVisibleExpression(Expression::createFromDomNode($item));
+                    $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;
                 default:
-                    echo "Button Not implemented yet: {$item->nodeName}<br>";
+                    echo "Button Not implemented yet: {$childNode->nodeName}<br>";
                     break;
             }
         }
@@ -173,8 +189,6 @@ class Button implements ButtonItemInterface, Renderable
 
     public function render(): string
     {
-        $styleType = '';
-
         if (strtolower((string) $this->getDisplayType()) === 'tile') {
             $tile = true;
         }
@@ -193,9 +207,6 @@ class Button implements ButtonItemInterface, Renderable
                 case 'height':
                     $height = $customProperty->getValue();
                     break;
-                case 'styletype':
-                    $styleType = " data-styleType='" . $customProperty->getValue() . "'";
-                    break;
                 case 'align':
                     $align = " data-align='" . $customProperty->getValue() . "'";
                     break;
@@ -204,6 +215,13 @@ class Button implements ButtonItemInterface, Renderable
             }
         }
 
+        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
+        $buttonStyle = match ($styleType) {
+            // TODO: Hans wat zijn de mogelijke styleTypes? Zullen we hier een enum voor maken?
+            'danger' => $this->getStyle()->danger,
+            default => $this->getStyle()->default,
+        };
+
         $buttonFunction = match ($this->getType()) {
             eButtonType::submit => 'processButton',
             eButtonType::navigate, eButtonType::update => 'updateButton',
@@ -211,9 +229,8 @@ class Button implements ButtonItemInterface, Renderable
         };
 
         $html = '<div>';
-        $html .= "<button type=\"button\" class=\"{$buttonFunction} btn btn-default\" data-type='button' data-id=\"{$this->getButtonID()}\">{$this->getText()}</button>";
-        $html .= '</div>';
+        $html .= "<button type='button' class='sr-button sr-button-{$styleType} {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
 
-        return $html;
+        return $html . '</div>';
     }
 }

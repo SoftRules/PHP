@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use SoftRules\PHP\Enums\eGroupType;
 
-interface GroupItemInterface extends BaseItemInterface, ItemWithCustomProperties
+interface GroupComponentInterface extends ComponentWithCustomProperties, UiComponentInterface
 {
     public function setGroupID(string $groupID): void;
 
@@ -30,7 +30,7 @@ interface GroupItemInterface extends BaseItemInterface, ItemWithCustomProperties
 
     public function getSuppressItemsWhenInvisible();
 
-    public function setHeaderItems(array $headerItems): void;
+    public function addHeaderItem($headerItem): void;
 
     public function getHeaderItems(): array;
 

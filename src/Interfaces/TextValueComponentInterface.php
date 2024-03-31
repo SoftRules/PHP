@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-interface TextValueItemInterface
+interface TextValueComponentInterface
 {
     public function setValue(string $value): void;
 

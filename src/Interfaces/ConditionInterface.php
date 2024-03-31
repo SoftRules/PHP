@@ -3,9 +3,9 @@
 namespace SoftRules\PHP\Interfaces;
 
 use DOMDocument;
-use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
 interface ConditionInterface
 {
@@ -27,7 +27,7 @@ interface ConditionInterface
 
     public function copyFrom($sourceCondition): void;
 
-    public function value($status, Collection $items, DOMDocument $UserInterfaceData);
+    public function value($status, UiComponentsCollection $components, DOMDocument $UserInterfaceData);
 
     public function writeXml($writer): void;
 }

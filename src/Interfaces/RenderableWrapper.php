@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-use Illuminate\Support\Collection;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
 interface RenderableWrapper
 {
@@ -10,8 +10,5 @@ interface RenderableWrapper
 
     public function renderClosingTags(): string;
 
-    /**
-     * @return Collection<int, BaseItemInterface>
-     */
-    public function getItems(): Collection;
+    public function getComponents(): UiComponentsCollection;
 }

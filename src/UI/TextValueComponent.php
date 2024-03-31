@@ -3,10 +3,10 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\TextValueItemInterface;
+use SoftRules\PHP\Interfaces\TextValueComponentInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class TextValueItem implements TextValueItemInterface
+class TextValueComponent implements TextValueComponentInterface
 {
     use ParsedFromXml;
 
@@ -44,20 +44,20 @@ class TextValueItem implements TextValueItemInterface
         return $this->imageUrl;
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
         switch ($node->nodeName) {
             case 'Item':
-                foreach ($node->childNodes as $textValueItem) {
-                    switch ($textValueItem->nodeName) {
+                foreach ($node->childNodes as $childNode) {
+                    switch ($childNode->nodeName) {
                         case 'Value':
-                            $this->setValue((string) $textValueItem->nodeValue);
+                            $this->setValue((string) $childNode->nodeValue);
                             break;
                         case 'Text':
-                            $this->setText((string) $textValueItem->nodeValue);
+                            $this->setText((string) $childNode->nodeValue);
                             break;
                         case 'ImageUrl':
-                            $this->setImageUrl((string) $textValueItem->nodeValue);
+                            $this->setImageUrl((string) $childNode->nodeValue);
                             break;
                     }
                 }

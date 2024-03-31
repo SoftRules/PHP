@@ -3,10 +3,10 @@
 namespace SoftRules\PHP\Traits;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
+use SoftRules\PHP\Interfaces\UiComponentInterface;
 
 /**
- * @mixin BaseItemInterface
+ * @mixin UiComponentInterface
  */
 trait ParsedFromXml
 {

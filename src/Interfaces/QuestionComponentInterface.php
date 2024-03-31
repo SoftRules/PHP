@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use Illuminate\Support\Collection;
 
-interface QuestionItemInterface extends BaseItemInterface
+interface QuestionComponentInterface extends UiComponentInterface
 {
     public function setQuestionID(string $questionID);
 
@@ -103,5 +103,5 @@ interface QuestionItemInterface extends BaseItemInterface
 
     public function getReadyForProcess();
 
-    public function addTextValue(TextValueItemInterface $textValue): void;
+    public function addTextValue(TextValueComponentInterface $textValue): void;
 }

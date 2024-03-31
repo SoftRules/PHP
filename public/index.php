@@ -4,8 +4,9 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
 
 use SoftRules\PHP\HtmlRenderer;
 use SoftRules\PHP\Services\SoftRules;
-use SoftRules\PHP\UI\UIClass;
+use SoftRules\PHP\UI\SoftRulesForm;
 
+$xml = (new SoftRules())->firstpage();
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,16 +25,10 @@ use SoftRules\PHP\UI\UIClass;
     <title>SoftRules PHP</title>
 </head>
 <body>
-<?php
-$xml = (new SoftRules())->firstpage();
-
-$UIClass = new UIClass();
-$UIClass->ParseUIXML($xml);
-?>
 <form id='userinterfaceForm'
       method='POST'
       style="padding: 15px;">
-    <?php echo new HtmlRenderer($UIClass); ?>
+    <?php echo new HtmlRenderer(SoftRulesForm::fromDomDocument($xml)); ?>
 </form>
 
 <script>var SoftRules_XML = '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>'</script>

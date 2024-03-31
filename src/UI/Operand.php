@@ -79,21 +79,21 @@ class Operand implements OperandInterface
         //
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'Value':
-                    $this->setValue($item->nodeValue);
+                    $this->setValue($childNode->nodeValue);
                     break;
                 case 'Attributes':
-                    $this->setAttributes($item->nodeValue);
+                    $this->setAttributes($childNode->nodeValue);
                     break;
                 case 'ElementPath':
-                    $this->setElementPath($item->nodeValue);
+                    $this->setElementPath($childNode->nodeValue);
                     break;
                 case 'ValueType':
-                    $this->setValueType($item->nodeValue);
+                    $this->setValueType($childNode->nodeValue);
                     break;
             }
         }

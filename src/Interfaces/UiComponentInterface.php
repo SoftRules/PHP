@@ -4,7 +4,7 @@ namespace SoftRules\PHP\Interfaces;
 
 use DOMNode;
 
-interface BaseItemInterface
+interface UiComponentInterface
 {
     public function setDescription(string $description): void;
 
@@ -14,5 +14,7 @@ interface BaseItemInterface
 
     public function getVisibleExpression(): ExpressionInterface;
 
-    public function parse(DOMNode $node): self;
+    public function parse(DOMNode $node): static;
+
+    public function getStyle(): object;
 }

@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Interfaces;
 
-interface LabelItemInterface extends BaseItemInterface
+interface LabelComponentInterface extends UiComponentInterface
 {
     public function setLabelID(string $labelID): void;
 

@@ -4,11 +4,11 @@ namespace SoftRules\PHP\Traits;
 
 use Illuminate\Support\Collection;
 use ReflectionProperty;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
 use SoftRules\PHP\Interfaces\CustomPropertyInterface;
+use SoftRules\PHP\Interfaces\UiComponentInterface;
 
 /**
- * @mixin BaseItemInterface
+ * @mixin UiComponentInterface
  */
 trait HasCustomProperties
 {

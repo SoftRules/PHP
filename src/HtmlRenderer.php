@@ -3,15 +3,15 @@
 namespace SoftRules\PHP;
 
 use DOMDocument;
-use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
-use SoftRules\PHP\Interfaces\ItemWithCustomProperties;
+use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
 use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Interfaces\RenderableWrapper;
-use SoftRules\PHP\UI\Button;
+use SoftRules\PHP\Interfaces\UiComponentInterface;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
+use SoftRules\PHP\UI\Components\Button;
+use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\CustomProperty;
-use SoftRules\PHP\UI\Group;
-use SoftRules\PHP\UI\UIClass;
+use SoftRules\PHP\UI\SoftRulesForm;
 use Stringable;
 
 final class HtmlRenderer implements Stringable
@@ -20,100 +20,97 @@ final class HtmlRenderer implements Stringable
     private int $currentPage;
     public readonly int $totalPages;
     public readonly DOMDocument $userInterfaceData;
-    /**
-     * @var Collection<int, BaseItemInterface>
-     */
-    private readonly Collection $allItems;
+    private readonly UiComponentsCollection $allComponents;
+
 //    private DOMDocument $SR_XML;
 
-    public function __construct(UIClass $UIClass)
+    public function __construct(SoftRulesForm $UIClass)
     {
         $this->totalPages = $UIClass->getPages();
         $this->currentPage = $UIClass->getPage();
-        $this->userInterfaceData = $UIClass->getUserinterfaceData();
+        $this->userInterfaceData = $UIClass->getUserInterfaceData();
 //        $this->SR_XML = $UIClass->getSoftRulesXml();
-        $this->allItems = $UIClass->items;
+        $this->allComponents = $UIClass->components;
 
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
 
-        $this->userInterfaceItems($UIClass->items);
+        $this->renderComponents($UIClass->components);
     }
 
-    /**
-     * @param Collection<int, BaseItemInterface> $items
-     */
-    private function userInterfaceItems(Collection $items): void
+    private function renderComponents(UiComponentsCollection $components): void
     {
-        foreach ($items as $item) {
-            $itemName = class_basename($item);
+        foreach ($components as $component) {
+            $componentName = class_basename($component);
             $this->html .= '<div>';
-            $this->html .= $itemName;
-            if ($item instanceof Button) {
-                $this->html .= ' Text: <b>' . $item->getText() . '</b>';
-            } elseif ($item instanceof Group) {
-                $this->html .= ' Type: <b>' . $item->getType()->value . '</b> ' . $item->getName();
+            $this->html .= $componentName;
+
+            if ($component instanceof Button) {
+                $this->html .= ' Text: <b>' . $component->getText() . '</b>';
+            } elseif ($component instanceof Group) {
+                $this->html .= ' Type: <b>' . $component->getType()->value . '</b> ' . $component->getName();
             }
-            if ($item instanceof ItemWithCustomProperties) {
-                $this->html .= $this->getCustomPropertyDescriptions($item);
+
+            if ($component instanceof ComponentWithCustomProperties) {
+                $this->html .= $this->getCustomPropertyDescriptions($component);
             }
 
             $VisibleText = '';
 
-            if (! $this->itemVisible($item)) {
+            if (! $this->itemVisible($component)) {
                 $VisibleText = ' Niet tonen (invisible)';
             }
 
             $this->html .= $VisibleText . '<br>';
             $this->html .= '</div>';
 
-            if ($item instanceof RenderableWrapper) {
-                $this->html .= $item->renderOpeningTags();
-                $this->userInterfaceItems($item->getItems());
-                $this->html .= $item->renderClosingTags();
+            if ($component instanceof RenderableWrapper) {
+                $this->html .= $component->renderOpeningTags();
+                $this->renderComponents($component->getComponents());
+                $this->html .= $component->renderClosingTags();
 
-                if ($item instanceof Group && $item->shouldHavePagination()) {
+                if ($component instanceof Group && $component->shouldHavePagination()) {
                     $this->html .= "<div class='row pagination-row'>";
 
                     $nextPageID = $this->currentPage;
                     $previousPageID = $this->currentPage;
 
-                    if ($this->hasPreviousPage() && $item->shouldHavePreviousPageButton()) {
-                        $this->html .= $this->getPreviousButtonHtml($item->getGroupID(), $previousPageID);
+                    if ($this->hasPreviousPage() && $component->shouldHavePreviousPageButton()) {
+                        $this->html .= $this->getPreviousButtonHtml($component->getGroupID(), $previousPageID);
                     }
 
                     if ($this->isLastPage()) {
-                        if ($item->shouldHaveNextPageButton()) {
+                        if ($component->shouldHaveNextPageButton()) {
                             $this->html .= $this->getGoButtonHtml();
                         }
-                    } elseif ($this->hasNextPage() && $item->shouldHaveNextPageButton()) {
-                        $this->html .= $this->getNextButtonHtml($item->getGroupID(), $nextPageID);
+                    } elseif ($this->hasNextPage() && $component->shouldHaveNextPageButton()) {
+                        $this->html .= $this->getNextButtonHtml($component->getGroupID(), $nextPageID);
                     }
 
                     $this->html .= '</div>';
                 }
             }
 
-            if ($item instanceof Renderable) {
-                $this->html .= $item->render();
+            if ($component instanceof Renderable) {
+                $this->html .= $component->render();
             }
         }
     }
 
-    private function getCustomPropertyDescriptions(ItemWithCustomProperties $item): string
+    private function getCustomPropertyDescriptions(ComponentWithCustomProperties $component): string
     {
-        if ($item->getCustomProperties()->isEmpty()) {
+        if ($component->getCustomProperties()->isEmpty()) {
             return '';
         }
 
-        $description = $item->getCustomProperties()
+        $description = $component->getCustomProperties()
             ->implode(fn (CustomProperty $customProperty) => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
 
-        return " {$item->getCustomProperties()->count()} Custom Properties ({$description})";
+        return " {$component->getCustomProperties()->count()} Custom Properties ({$description})";
     }
 
-    public function itemVisible(BaseItemInterface $item): bool
+    public function itemVisible(UiComponentInterface $component): bool
     {
-        return $item->getVisibleExpression()->value($this->allItems, $this->userInterfaceData);
+        return $component->getVisibleExpression()->value($this->allComponents, $this->userInterfaceData);
     }
 
     private function hasPreviousPage(): bool

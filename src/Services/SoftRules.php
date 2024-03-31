@@ -15,7 +15,7 @@ class SoftRules extends Factory
     {
         parent::__construct();
 
-        $this->product = (string) env('SOFTRULES_PRODUCT');
+        $this->product = (string) getenv('SOFTRULES_PRODUCT');
     }
 
     public function firstpage(): DOMDocument
@@ -74,7 +74,7 @@ class SoftRules extends Factory
         return $xml;
     }
 
-    public function updateUserinterface($ID, $XML): DOMDocument
+    public function updateUserinterface($ID, string $XML): DOMDocument
     {
         $response = $this
             ->retry(3, 300)
@@ -88,7 +88,7 @@ class SoftRules extends Factory
         return $xml;
     }
 
-    public function nextPage($ID, $XML): DOMDocument
+    public function nextPage($ID, string $XML): DOMDocument
     {
         $response = $this
             ->retry(3, 300)
@@ -102,7 +102,7 @@ class SoftRules extends Factory
         return $xml;
     }
 
-    public function previousPage($ID, $XML): DOMDocument
+    public function previousPage($ID, string $XML): DOMDocument
     {
         $response = $this
             ->retry(3, 300)
@@ -119,17 +119,18 @@ class SoftRules extends Factory
     protected function newPendingRequest(): PendingRequest
     {
         return parent::newPendingRequest()
-            ->timeout((int) CarbonInterval::minutes(4)->totalSeconds)
+            ->timeout((int) CarbonInterval::seconds(25)->totalSeconds)
+            ->connectTimeout((int) CarbonInterval::seconds(5)->totalSeconds)
             // TODO use some kind of config system
-            ->baseUrl(env('SOFTRULES_URI'));
+            ->baseUrl(getenv('SOFTRULES_URI'));
     }
 
     private function createSession(): string
     {
         $response = $this->retry(3, 200)
             ->get('/getsession', [
-                'username' => env('SOFTRULES_USERNAME'),
-                'password' => env('SOFTRULES_PASSWORD'),
+                'username' => getenv('SOFTRULES_USERNAME'),
+                'password' => getenv('SOFTRULES_PASSWORD'),
             ]);
 
         $xml = simplexml_load_string(trim($response->body()));

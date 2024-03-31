@@ -7,14 +7,15 @@ use Carbon\CarbonInterface;
 use DOMDocument;
 use DOMNode;
 use DOMXPath;
-use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
 use SoftRules\PHP\Interfaces\ConditionInterface;
 use SoftRules\PHP\Interfaces\OperandInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
+use SoftRules\PHP\UI\Components\Group;
+use SoftRules\PHP\UI\Components\Question;
 use Throwable;
 
 class Condition implements ConditionInterface
@@ -83,25 +84,22 @@ class Condition implements ConditionInterface
         //
     }
 
-    /**
-     * @param Collection<int, BaseItemInterface> $items
-     */
-    public function getElement(Collection $items, OperandInterface $operand, DOMDocument $UserInterfaceData): mixed
+    public function getElement(UiComponentsCollection $components, OperandInterface $operand, DOMDocument $UserInterfaceData): mixed
     {
-        foreach ($items as $item) {
-            if ($item instanceof Question) {
-                if ($item->getName() == $operand->getValue()) {
+        foreach ($components as $component) {
+            if ($component instanceof Question) {
+                if ($component->getName() == $operand->getValue()) {
                     //Tussen accolades staat de instantie van de node in het xml. Staat er niets, dan impliceert dat de eerste instantie zijnde {1}
                     //Door {1} te vervangen door niets, kunnen de strings met elkaar vergeleken worden.
-                    $itempath = str_replace('{1}', '', (string) $item->getElementPath());
-                    $operandpath = str_replace('{1}', '', $operand->getElementPath());
+                    $itemPath = str_replace('{1}', '', (string) $component->getElementPath());
+                    $operandPath = str_replace('{1}', '', $operand->getElementPath());
 
-                    if ($itempath === $operandpath) {
-                        return $item->getValue();
+                    if ($itemPath === $operandPath) {
+                        return $component->getValue();
                     }
                 }
-            } elseif ($item instanceof Group) {
-                $return = $this->getElement($item->getItems(), $operand, $UserInterfaceData);
+            } elseif ($component instanceof Group) {
+                $return = $this->getElement($component->getComponents(), $operand, $UserInterfaceData);
 
                 if ($return !== '') {
                     return $return;
@@ -109,11 +107,10 @@ class Condition implements ConditionInterface
             }
         }
 
-        $operandPath = $operand->getElementPath();
         $xpath = new DOMXpath($UserInterfaceData);
-        $operandPath = str_replace(['{', '}'], ['[', ']'], $operandPath);
+        $operandPath = str_replace(['{', '}'], ['[', ']'], $operand->getElementPath());
 
-        $nodes = $xpath->query('/' . $operandPath . '/' . $operand->getValue());
+        $nodes = $xpath->query("/{$operandPath}/{$operand->getValue()}");
         if ($nodes->length > 0) {
             return $nodes->item(0)->nodeValue;
         }
@@ -121,22 +118,19 @@ class Condition implements ConditionInterface
         return '';
     }
 
-    /**
-     * @param Collection<int, BaseItemInterface> $items
-     */
-    public function value($status, Collection $items, DOMDocument $UserInterfaceData): bool
+    public function value($status, UiComponentsCollection $components, DOMDocument $UserInterfaceData): bool
     {
         $res = false;
         $processed = false;
 
         if ($this->getLeftOperand()->getValueType() === eValueType::ELEMENTNAME) {
-            $lfs = $this->getElement($items, $this->getLeftOperand(), $UserInterfaceData);
+            $lfs = $this->getElement($components, $this->getLeftOperand(), $UserInterfaceData);
         } else {
             $lfs = $this->getLeftOperand()->getValue();
         }
 
         if ($this->getRightOperand()->getValueType() === eValueType::ELEMENTNAME) {
-            $rfs = $this->getElement($items, $this->getRightOperand(), $UserInterfaceData);
+            $rfs = $this->getElement($components, $this->getRightOperand(), $UserInterfaceData);
         } else {
             $rfs = $this->getRightOperand()->getValue();
         }
@@ -311,21 +305,21 @@ class Condition implements ConditionInterface
         //
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'LogOperator':
-                    $this->setLogOperator($item->nodeValue);
+                    $this->setLogOperator($childNode->nodeValue);
                     break;
                 case 'Operator':
-                    $this->setOperator($item->nodeValue);
+                    $this->setOperator($childNode->nodeValue);
                     break;
                 case 'LeftOperand':
-                    $this->setLeftOperand(Operand::createFromDomNode($item));
+                    $this->setLeftOperand(Operand::createFromDomNode($childNode));
                     break;
                 case 'RightOperand':
-                    $this->setRightOperand(Operand::createFromDomNode($item));
+                    $this->setRightOperand(Operand::createFromDomNode($childNode));
                     break;
             }
         }

@@ -88,7 +88,7 @@ class Parameter implements ParameterInterface
         return $this->usedByEvents;
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
         foreach ($node->childNodes as $parameter) {
             switch ($parameter->nodeName) {

@@ -3,7 +3,7 @@
 namespace SoftRules\PHP\Interfaces;
 
 use DOMDocument;
-use Illuminate\Support\Collection;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
 interface ExpressionInterface
 {
@@ -19,7 +19,7 @@ interface ExpressionInterface
 
     public function clean(): void;
 
-    public function value(Collection $items, DOMDocument $userInterfaceData): bool;
+    public function value(UiComponentsCollection $components, DOMDocument $userInterfaceData): bool;
 
     public function writeXml($writer): void;
 }

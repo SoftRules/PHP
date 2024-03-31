@@ -1,22 +1,28 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\UI;
+namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
-use Illuminate\Support\Collection;
 use SoftRules\PHP\Enums\eGroupType;
-use SoftRules\PHP\Interfaces\BaseItemInterface;
 use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\GroupItemInterface;
+use SoftRules\PHP\Interfaces\GroupComponentInterface;
 use SoftRules\PHP\Interfaces\ParameterInterface;
 use SoftRules\PHP\Interfaces\RenderableWrapper;
+use SoftRules\PHP\Interfaces\UiComponentInterface;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
+use SoftRules\PHP\UI\CustomProperty;
+use SoftRules\PHP\UI\Expression;
+use SoftRules\PHP\UI\Parameter;
+use SoftRules\PHP\UI\Style\GroupComponentStyle;
 
-class Group implements GroupItemInterface, RenderableWrapper
+class Group implements GroupComponentInterface, RenderableWrapper
 {
     use HasCustomProperties;
     use ParsedFromXml;
+
+    public static ?GroupComponentStyle $style = null;
 
     private string $groupID;
 
@@ -30,10 +36,7 @@ class Group implements GroupItemInterface, RenderableWrapper
 
     private $suppressItemsWhenInvisible;
 
-    /**
-     * @var Collection<int, BaseItemInterface>
-     */
-    private Collection $items;
+    private UiComponentsCollection $components;
 
     private array $headerItems = [];
 
@@ -45,8 +48,18 @@ class Group implements GroupItemInterface, RenderableWrapper
 
     public function __construct()
     {
-        $this->items = new Collection();
+        $this->components = new UiComponentsCollection();
         $this->setVisibleExpression(new Expression());
+    }
+
+    public static function setStyle(GroupComponentStyle $style): void
+    {
+        self::$style = $style;
+    }
+
+    public function getStyle(): GroupComponentStyle
+    {
+        return self::$style ?? GroupComponentStyle::bootstrap();
     }
 
     public function setGroupID(string $groupID): void
@@ -115,19 +128,14 @@ class Group implements GroupItemInterface, RenderableWrapper
         return $this->suppressItemsWhenInvisible;
     }
 
-    public function addItem(BaseItemInterface $item): void
+    public function addComponent(UiComponentInterface $component): void
     {
-        $this->items->add($item);
+        $this->components->add($component);
     }
 
-    public function getItems(): Collection
+    public function getComponents(): UiComponentsCollection
     {
-        return $this->items;
-    }
-
-    public function setHeaderItems(array $headerItems): void
-    {
-        $this->headerItems = $headerItems;
+        return $this->components;
     }
 
     public function getHeaderItems(): array
@@ -135,9 +143,9 @@ class Group implements GroupItemInterface, RenderableWrapper
         return $this->headerItems;
     }
 
-    public function addHeaderItem($item): void
+    public function addHeaderItem($headerItem): void
     {
-        $this->headerItems[] = $item;
+        $this->headerItems[] = $headerItem;
     }
 
     public function setVisibleExpression(ExpressionInterface $visibleExpression): void
@@ -170,51 +178,51 @@ class Group implements GroupItemInterface, RenderableWrapper
         return $this->parameter;
     }
 
-    public function parse(DOMNode $node): self
+    public function parse(DOMNode $node): static
     {
-        foreach ($node->childNodes as $item) {
-            switch ($item->nodeName) {
+        foreach ($node->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'GroupID':
-                    $this->setGroupID($item->nodeValue);
+                    $this->setGroupID($childNode->nodeValue);
                     break;
                 case 'Name':
-                    $this->setName($item->nodeValue);
+                    $this->setName($childNode->nodeValue);
                     break;
                 case 'Type':
-                    $this->setType($item->nodeValue);
+                    $this->setType($childNode->nodeValue);
                     break;
                 case 'UpdateUserInterface':
-                    $this->setUpdateUserInterface($item->nodeValue);
+                    $this->setUpdateUserInterface($childNode->nodeValue);
                     break;
                 case 'PageID':
-                    $this->setPageID($item->nodeValue);
+                    $this->setPageID($childNode->nodeValue);
                     break;
                 case 'SuppressItemsWhenInvisible':
-                    $this->setSuppressItemsWhenInvisible($item->nodeValue);
+                    $this->setSuppressItemsWhenInvisible($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
-                    foreach ($item->childNodes as $cp) {
-                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
                     break;
                 case 'VisibleExpression':
-                    $this->setVisibleExpression(Expression::createFromDomNode($item));
+                    $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;
                 case 'Parameter':
-                    $this->setParameter(Parameter::createFromDomNode($item));
+                    $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
                 case 'ParameterList':
                 case 'RepeatingPath':
                     //no need to parse
                     break;
                 case 'HeaderItems':
-                    foreach ($item->childNodes as $childNode) {
-                        switch ($childNode->nodeName) {
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        switch ($grandChildNode->nodeName) {
                             case 'Group':
-                                $this->addHeaderItem(self::createFromDomNode($childNode));
+                                $this->addHeaderItem(self::createFromDomNode($grandChildNode));
                                 break;
                             case 'Question':
-                                $this->addHeaderItem(Question::createFromDomNode($childNode));
+                                $this->addHeaderItem(Question::createFromDomNode($grandChildNode));
                                 break;
                             default:
                                 break;
@@ -222,19 +230,19 @@ class Group implements GroupItemInterface, RenderableWrapper
                     }
                     break;
                 case 'Items':
-                    foreach ($item->childNodes as $childNode) {
-                        switch ($childNode->nodeName) {
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        switch ($grandChildNode->nodeName) {
                             case 'Group':
-                                $this->addItem(self::createFromDomNode($childNode));
+                                $this->addComponent(self::createFromDomNode($grandChildNode));
                                 break;
                             case 'Question':
-                                $this->addItem(Question::createFromDomNode($childNode));
+                                $this->addComponent(Question::createFromDomNode($grandChildNode));
                                 break;
                             case 'Label':
-                                $this->addItem(Label::createFromDomNode($childNode));
+                                $this->addComponent(Label::createFromDomNode($grandChildNode));
                                 break;
                             case 'Button':
-                                $this->addItem(Button::createFromDomNode($childNode));
+                                $this->addComponent(Button::createFromDomNode($grandChildNode));
                                 break;
                             default:
                                 break;
@@ -242,7 +250,7 @@ class Group implements GroupItemInterface, RenderableWrapper
                     }
                     break;
                 default:
-                    echo 'Group Not implemented yet:' . $item->nodeName . '<br>';
+                    echo 'Group Not implemented yet:' . $childNode->nodeName . '<br>';
                     break;
             }
         }
@@ -267,8 +275,6 @@ class Group implements GroupItemInterface, RenderableWrapper
 
     public function renderOpeningTags(): string
     {
-        $html = '';
-
 //        foreach ($this->getCustomProperties() as $customproperty) {
 //            switch (strtolower($customproperty->getName())) {
 //                case "styletype":
@@ -299,51 +305,30 @@ class Group implements GroupItemInterface, RenderableWrapper
 //            }
 //        }
 
-        switch ($this->getType()) {
-            case eGroupType::page:
-                $html .= "<div class='col-xs-12'>";
-                $html .= '<ul>';
-                break;
-            case eGroupType::box:
-            case eGroupType::expandable:
-            case eGroupType::table:
-            case eGroupType::grid:
-            case eGroupType::gridrow:
-            case eGroupType::gridcolumn:
-            case eGroupType::row:
-                $html .= '<ul>';
-                break;
-            default:
-                echo 'Group Type not implemented ' . $this->getType()->value . '<br>';
-                break;
-        }
+        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
 
-        return $html;
+        $style = match ($this->getType()) {
+            eGroupType::page => $this->getStyle()->page,
+            default => null,
+        };
+
+        $html = "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+
+        return $html . match ($this->getType()) {
+            eGroupType::page => '<ul>',
+            eGroupType::box, eGroupType::expandable, eGroupType::table, eGroupType::grid, eGroupType::gridrow, eGroupType::gridcolumn, eGroupType::row => '<ul>',
+            default => 'Group Type not implemented ' . $this->getType()->value . '<br>',
+        };
     }
 
     public function renderClosingTags(): string
     {
-        $html = '';
+        $html = match ($this->getType()) {
+            eGroupType::page => '</ul>',
+            eGroupType::box, eGroupType::expandable, eGroupType::table, eGroupType::grid, eGroupType::gridrow, eGroupType::gridcolumn, eGroupType::row => '</ul>',
+            default => '',
+        };
 
-        switch ($this->getType()) {
-            case eGroupType::page:
-                $html .= '</ul>';
-                $html .= '</div>';
-                break;
-            case eGroupType::box:
-            case eGroupType::expandable:
-            case eGroupType::table:
-            case eGroupType::grid:
-            case eGroupType::gridrow:
-            case eGroupType::gridcolumn:
-            case eGroupType::row:
-                $html .= '</ul>';
-                break;
-            default:
-                echo 'Group Type not implemented ' . $this->getType()->value . '<br>';
-                break;
-        }
-
-        return $html;
+        return $html . '</div>';
     }
 }
