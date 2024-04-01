@@ -9,7 +9,7 @@ use Illuminate\Http\Client\PendingRequest;
 use RuntimeException;
 use SoftRules\PHP\Contracts\ClientContract;
 
-final class SoftRulesClient extends Factory implements ClientContract
+class SoftRulesClient extends Factory implements ClientContract
 {
     public function __construct(
         public readonly string  $product,
