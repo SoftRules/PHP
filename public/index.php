@@ -34,8 +34,16 @@ $xml = SoftRulesClient::fromConfig($product)
 </form>
 
 <script>
-    const SoftRules_XML = '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>';
-    const product = '<?php echo $product; ?>';
+    const config = {
+        product: '<?php echo $product; ?>',
+        initialXml: '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>',
+        routes: {
+            renderXml: '/page.php',
+            updateUserInterface: '/updateUserInterface.php',
+            previousPage: '/previouspage.php',
+            nextPage: '/nextpage.php',
+        },
+    };
 </script>
 </body>
 </html>

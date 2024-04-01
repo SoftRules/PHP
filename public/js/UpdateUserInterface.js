@@ -1,7 +1,7 @@
 ﻿let $xml;
 
 $(document).ready(() => {
-    $xml = parseXML(SoftRules_XML);
+    $xml = parseXML(config.initialXml);
 });
 
 function parseXML(xml) {
@@ -40,14 +40,14 @@ function nextPage($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/nextpage.php', id, xmlText);
+    getXML_HTML(config.routes.nextPage, id, xmlText);
 }
 
 function previousPage($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/previouspage.php', id, xmlText);
+    getXML_HTML(config.routes.previousPage, id, xmlText);
 }
 
 function updateUserInterface($item) {
@@ -62,7 +62,7 @@ function updateUserInterface($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/updateUserInterface.php', id, xmlText);
+    getXML_HTML(config.routes.updateUserInterface, id, xmlText);
 }
 
 function getXML_HTML(methodUrl, id, xml) {
@@ -75,7 +75,7 @@ function getXML_HTML(methodUrl, id, xml) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            product,
+            product: config.product,
             id,
             xml,
         }),
@@ -105,14 +105,14 @@ function getXML_HTML(methodUrl, id, xml) {
 function getHTML(xml) {
     showWaitCursor();
 
-    fetch('/page.php', {
+    fetch(config.routes.renderXml, {
         method: 'POST',
         headers: {
             'Accept': 'text/html',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            product,
+            product: config.product,
             xml,
         }),
     })
