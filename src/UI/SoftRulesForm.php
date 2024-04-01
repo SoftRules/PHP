@@ -5,15 +5,15 @@ namespace SoftRules\PHP\UI;
 use DOMDocument;
 use DOMNameSpaceNode;
 use DOMNode;
-use SoftRules\PHP\Interfaces\SoftRulesFormInterface;
-use SoftRules\PHP\Interfaces\UiComponentInterface;
+use SoftRules\PHP\Contracts\SoftRulesFormContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\Components\Button;
 use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\Components\Label;
 use SoftRules\PHP\UI\Components\Question;
 
-final class SoftRulesForm implements SoftRulesFormInterface
+final class SoftRulesForm implements SoftRulesFormContract
 {
     private DOMDocument $softRulesXml;
 
@@ -133,27 +133,27 @@ final class SoftRulesForm implements SoftRulesFormInterface
         return $this->state;
     }
 
-    public function addComponent(UiComponentInterface $component): void
+    public function addComponent(UiComponentContract $component): void
     {
         $this->components->add($component);
     }
 
-    public function componentVisible(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
+    public function componentVisible(UiComponentContract $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function componentValid(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
+    public function componentValid(UiComponentContract $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemRequired(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
+    public function itemRequired(UiComponentContract $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }
 
-    public function itemEnabled(UiComponentInterface $component, DOMDocument $userInterfaceData): bool
+    public function itemEnabled(UiComponentContract $component, DOMDocument $userInterfaceData): bool
     {
         return true;
     }

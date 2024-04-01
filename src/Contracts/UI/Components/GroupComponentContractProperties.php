@@ -1,10 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI\Components;
 
+use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eGroupType;
 
-interface GroupComponentInterface extends ComponentWithCustomProperties, UiComponentInterface
+interface GroupComponentContractProperties extends ComponentWithCustomPropertiesContract, UiComponentContract
 {
     public function setGroupID(string $groupID): void;
 
@@ -34,9 +37,9 @@ interface GroupComponentInterface extends ComponentWithCustomProperties, UiCompo
 
     public function getHeaderItems(): array;
 
-    public function setParameter(ParameterInterface $parameter): void;
+    public function setParameter(ParameterContract $parameter): void;
 
-    public function getParameter(): ParameterInterface;
+    public function getParameter(): ParameterContract;
 
     public function shouldHavePagination(): bool;
 

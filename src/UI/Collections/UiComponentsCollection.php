@@ -3,7 +3,6 @@
 namespace SoftRules\PHP\UI\Collections;
 
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\UiComponentInterface;
 
 /**
  * @template-covariant UiComponentInterface

@@ -3,10 +3,10 @@
 namespace SoftRules\PHP;
 
 use DOMDocument;
-use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
-use SoftRules\PHP\Interfaces\Renderable;
-use SoftRules\PHP\Interfaces\RenderableWrapper;
-use SoftRules\PHP\Interfaces\UiComponentInterface;
+use SoftRules\PHP\Contracts\Renderable;
+use SoftRules\PHP\Contracts\RenderableWrapper;
+use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\Components\Button;
 use SoftRules\PHP\UI\Components\Group;
@@ -54,7 +54,7 @@ final class HtmlRenderer implements Stringable
                 $this->html .= ' Type: <b>' . $component->getType()->value . '</b> ' . $component->getName();
             }
 
-            if ($component instanceof ComponentWithCustomProperties) {
+            if ($component instanceof ComponentWithCustomPropertiesContract) {
                 $this->html .= $this->getCustomPropertyDescriptions($component);
             }
 
@@ -100,7 +100,7 @@ final class HtmlRenderer implements Stringable
         }
     }
 
-    private function getCustomPropertyDescriptions(ComponentWithCustomProperties $component): string
+    private function getCustomPropertyDescriptions(ComponentWithCustomPropertiesContract $component): string
     {
         if ($component->getCustomProperties()->isEmpty()) {
             return '';
@@ -112,7 +112,7 @@ final class HtmlRenderer implements Stringable
         return " {$component->getCustomProperties()->count()} Custom Properties ({$description})";
     }
 
-    public function itemVisible(UiComponentInterface $component): bool
+    public function itemVisible(UiComponentContract $component): bool
     {
         return $component->getVisibleExpression()->value($this->allComponents, $this->userInterfaceData);
     }

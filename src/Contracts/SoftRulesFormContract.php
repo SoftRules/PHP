@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts;
 
 use DOMDocument;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 
-interface SoftRulesFormInterface
+interface SoftRulesFormContract
 {
-    public function addComponent(UiComponentInterface $component): void;
+    public function addComponent(UiComponentContract $component): void;
 
     public function setConfigID(string $configID): void;
 
@@ -40,11 +41,11 @@ interface SoftRulesFormInterface
 
     public function getSessionID(): string;
 
-    public function componentVisible(UiComponentInterface $component, DOMDocument $userInterfaceData): bool;
+    public function componentVisible(UiComponentContract $component, DOMDocument $userInterfaceData): bool;
 
-    public function componentValid(UiComponentInterface $component, DOMDocument $userInterfaceData): bool;
+    public function componentValid(UiComponentContract $component, DOMDocument $userInterfaceData): bool;
 
-    public function itemRequired(UiComponentInterface $component, DOMDocument $userInterfaceData): bool;
+    public function itemRequired(UiComponentContract $component, DOMDocument $userInterfaceData): bool;
 
-    public function itemEnabled(UiComponentInterface $component, DOMDocument $userInterfaceData): bool;
+    public function itemEnabled(UiComponentContract $component, DOMDocument $userInterfaceData): bool;
 }

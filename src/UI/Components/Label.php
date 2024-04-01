@@ -3,11 +3,11 @@
 namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
-use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\LabelComponentInterface;
-use SoftRules\PHP\Interfaces\ParameterInterface;
-use SoftRules\PHP\Interfaces\Renderable;
+use SoftRules\PHP\Contracts\Renderable;
+use SoftRules\PHP\Contracts\UI\Components\LabelComponentContract;
+use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -15,7 +15,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\LabelComponentStyle;
 
-class Label implements ComponentWithCustomProperties, LabelComponentInterface, Renderable
+class Label implements ComponentWithCustomPropertiesContract, LabelComponentContract, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -30,9 +30,9 @@ class Label implements ComponentWithCustomProperties, LabelComponentInterface, R
 
     private $displayType;
 
-    private ParameterInterface $parameter;
+    private ParameterContract $parameter;
 
-    private ExpressionInterface $visibleExpression;
+    private ExpressionContract $visibleExpression;
 
     public function __construct()
     {
@@ -89,22 +89,22 @@ class Label implements ComponentWithCustomProperties, LabelComponentInterface, R
         return $this->description;
     }
 
-    public function setParameter(ParameterInterface $parameter): void
+    public function setParameter(ParameterContract $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): ParameterInterface
+    public function getParameter(): ParameterContract
     {
         return $this->parameter;
     }
 
-    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
+    public function setVisibleExpression(ExpressionContract $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): ExpressionInterface
+    public function getVisibleExpression(): ExpressionContract
     {
         return $this->visibleExpression;
     }

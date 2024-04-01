@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../bootstrap/bootstrap.php';
 
 use SoftRules\PHP\HtmlRenderer;
-use SoftRules\PHP\Services\SoftRules;
+use SoftRules\PHP\Services\SoftRulesClient;
 use SoftRules\PHP\UI\SoftRulesForm;
 
 $product = 'softrules';
-$xml = (new SoftRules($product))->firstpage();
+$xml = SoftRulesClient::fromConfig($product)
+    ->firstPage(file_get_contents(__DIR__ . '/../examples/first-page.xml'));
 ?>
 <!DOCTYPE html>
 <html>

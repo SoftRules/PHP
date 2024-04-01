@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
 use DOMDocument;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
-interface ConditionInterface
+interface ConditionContract
 {
     public function setLogOperator(eLogOperator|string $logOperator): void;
 
@@ -17,13 +17,13 @@ interface ConditionInterface
 
     public function getOperator(): eOperator;
 
-    public function setLeftOperand(OperandInterface $leftOperand): void;
+    public function setLeftOperand(OperandContract $leftOperand): void;
 
-    public function getLeftOperand(): OperandInterface;
+    public function getLeftOperand(): OperandContract;
 
-    public function setRightOperand(OperandInterface $rightOperand): void;
+    public function setRightOperand(OperandContract $rightOperand): void;
 
-    public function getRightOperand(): OperandInterface;
+    public function getRightOperand(): OperandContract;
 
     public function copyFrom($sourceCondition): void;
 

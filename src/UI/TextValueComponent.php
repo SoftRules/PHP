@@ -3,10 +3,10 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\TextValueComponentInterface;
+use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class TextValueComponent implements TextValueComponentInterface
+class TextValueComponent implements TextValueComponentContract
 {
     use ParsedFromXml;
 

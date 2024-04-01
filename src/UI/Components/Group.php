@@ -3,12 +3,12 @@
 namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
+use SoftRules\PHP\Contracts\RenderableWrapper;
+use SoftRules\PHP\Contracts\UI\Components\GroupComponentContractProperties;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eGroupType;
-use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\GroupComponentInterface;
-use SoftRules\PHP\Interfaces\ParameterInterface;
-use SoftRules\PHP\Interfaces\RenderableWrapper;
-use SoftRules\PHP\Interfaces\UiComponentInterface;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
@@ -17,7 +17,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\GroupComponentStyle;
 
-class Group implements GroupComponentInterface, RenderableWrapper
+class Group implements GroupComponentContractProperties, RenderableWrapper
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -42,9 +42,9 @@ class Group implements GroupComponentInterface, RenderableWrapper
 
     private string $description = '';
 
-    private ExpressionInterface $visibleExpression;
+    private ExpressionContract $visibleExpression;
 
-    private ParameterInterface $parameter;
+    private ParameterContract $parameter;
 
     public function __construct()
     {
@@ -128,7 +128,7 @@ class Group implements GroupComponentInterface, RenderableWrapper
         return $this->suppressItemsWhenInvisible;
     }
 
-    public function addComponent(UiComponentInterface $component): void
+    public function addComponent(UiComponentContract $component): void
     {
         $this->components->add($component);
     }
@@ -148,12 +148,12 @@ class Group implements GroupComponentInterface, RenderableWrapper
         $this->headerItems[] = $headerItem;
     }
 
-    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
+    public function setVisibleExpression(ExpressionContract $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): ExpressionInterface
+    public function getVisibleExpression(): ExpressionContract
     {
         return $this->visibleExpression;
     }
@@ -168,12 +168,12 @@ class Group implements GroupComponentInterface, RenderableWrapper
         return $this->description;
     }
 
-    public function setParameter(ParameterInterface $parameter): void
+    public function setParameter(ParameterContract $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): ParameterInterface
+    public function getParameter(): ParameterContract
     {
         return $this->parameter;
     }

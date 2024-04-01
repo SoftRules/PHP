@@ -7,18 +7,18 @@ use Carbon\CarbonInterface;
 use DOMDocument;
 use DOMNode;
 use DOMXPath;
+use SoftRules\PHP\Contracts\UI\ConditionContract;
+use SoftRules\PHP\Contracts\UI\OperandContract;
 use SoftRules\PHP\Enums\eLogOperator;
 use SoftRules\PHP\Enums\eOperator;
 use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Interfaces\ConditionInterface;
-use SoftRules\PHP\Interfaces\OperandInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\Components\Question;
 use Throwable;
 
-class Condition implements ConditionInterface
+class Condition implements ConditionContract
 {
     use ParsedFromXml;
 
@@ -26,9 +26,9 @@ class Condition implements ConditionInterface
 
     private eOperator $operator;
 
-    private OperandInterface $leftOperand;
+    private OperandContract $leftOperand;
 
-    private OperandInterface $rightOperand;
+    private OperandContract $rightOperand;
 
     public function setLogOperator(eLogOperator|string $logOperator): void
     {
@@ -62,22 +62,22 @@ class Condition implements ConditionInterface
         return $this->operator;
     }
 
-    public function setLeftOperand(OperandInterface $leftOperand): void
+    public function setLeftOperand(OperandContract $leftOperand): void
     {
         $this->leftOperand = $leftOperand;
     }
 
-    public function getLeftOperand(): OperandInterface
+    public function getLeftOperand(): OperandContract
     {
         return $this->leftOperand;
     }
 
-    public function setRightOperand(OperandInterface $rightOperand): void
+    public function setRightOperand(OperandContract $rightOperand): void
     {
         $this->rightOperand = $rightOperand;
     }
 
-    public function getRightOperand(): OperandInterface
+    public function getRightOperand(): OperandContract
     {
         return $this->rightOperand;
     }
@@ -87,7 +87,7 @@ class Condition implements ConditionInterface
         //
     }
 
-    public function getElement(UiComponentsCollection $components, OperandInterface $operand, DOMDocument $UserInterfaceData): mixed
+    public function getElement(UiComponentsCollection $components, OperandContract $operand, DOMDocument $UserInterfaceData): mixed
     {
         foreach ($components as $component) {
             if ($component instanceof Question) {

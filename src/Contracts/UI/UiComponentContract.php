@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
 use DOMNode;
 
-interface UiComponentInterface
+interface UiComponentContract
 {
     public function setDescription(string $description): void;
 
     public function getDescription(): string;
 
-    public function setVisibleExpression(ExpressionInterface $visibleExpression): void;
+    public function setVisibleExpression(ExpressionContract $visibleExpression): void;
 
-    public function getVisibleExpression(): ExpressionInterface;
+    public function getVisibleExpression(): ExpressionContract;
 
     public function parse(DOMNode $node): static;
 

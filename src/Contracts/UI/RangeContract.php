@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
-interface RangeInterface
+interface RangeContract
 {
     public function setHighValue($highValue): void;
 

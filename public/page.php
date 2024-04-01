@@ -6,7 +6,7 @@ use GuzzleHttp\Utils;
 use SoftRules\PHP\HtmlRenderer;
 use SoftRules\PHP\UI\SoftRulesForm;
 
-if (isset($_POST['data'])) {
+if (isset($_POST['product'])) {
     $json = Utils::jsonDecode($_POST['data'], true);
     if (isset($json['XML'])) {
         header('Content-Type: text/html; charset=utf-8');

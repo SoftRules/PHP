@@ -37,21 +37,17 @@ $(document)
     });
 
 function nextPage($item) {
-    const sc = {
-        ID: $item.data("id").replace("_", "|"),
-        XML: new XMLSerializer().serializeToString($xml),
-    };
+    const xmlText = new XMLSerializer().serializeToString($xml);
+    const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/nextpage.php', sc);
+    getXML_HTML('/nextpage.php', id, xmlText);
 }
 
 function previousPage($item) {
-    const sc = {
-        ID: $item.data("id").replace("_", "|"),
-        XML: new XMLSerializer().serializeToString($xml),
-    };
+    const xmlText = new XMLSerializer().serializeToString($xml);
+    const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/previouspage.php', sc);
+    getXML_HTML('/previouspage.php', id, xmlText);
 }
 
 function updateUserInterface($item) {
@@ -61,30 +57,28 @@ function updateUserInterface($item) {
 
     //check if control is valid to update
 
-    $($xml).find(`Question > Name:contains("${name}")`).parent().find(`Question > ElementPath:contains("${path}")`).parent().children('value').text(value);
+    $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
     const xmlText = new XMLSerializer().serializeToString($xml);
-    const sc = {
-        ID: $item.data("id").replace("_", "|"),
-        XML: xmlText,
-    };
+    const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML('/updateUserInterface.php', sc);
+    getXML_HTML('/updateUserInterface.php', id, xmlText);
 }
 
-function getXML_HTML(methodUrl, sc) {
-    const form = new FormData();
-    form.append('data', JSON.stringify({
-        ...sc,
-        product,
-    }));
-
+function getXML_HTML(methodUrl, id, xml) {
     showWaitCursor();
 
     fetch(methodUrl, {
         method: 'POST',
-        body: form, //Waarom via een form? Liever direct JSON.stringify(sc)
-        dataType: "html",
+        headers: {
+            'Accept': 'text/html',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            product,
+            id,
+            xml,
+        }),
     })
         .then(async (response) => {
             if (response.ok) {
@@ -108,19 +102,19 @@ function getXML_HTML(methodUrl, sc) {
         .finally(() => hideWaitCursor());
 }
 
-function getHTML(XML) {
-    const form = new FormData();
-    form.append('data', JSON.stringify({
-        XML,
-        product,
-    }));
-
+function getHTML(xml) {
     showWaitCursor();
 
     fetch('/page.php', {
         method: 'POST',
-        body: form, //Waarom via een form? Liever direct JSON.stringify(sc)
-        dataType: "html",
+        headers: {
+            'Accept': 'text/html',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            product,
+            xml,
+        }),
     })
         .then(async (response) => {
             if (response.ok) {

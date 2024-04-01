@@ -2,9 +2,9 @@
 
 namespace SoftRules\PHP\UI;
 
-use SoftRules\PHP\Interfaces\RestrictionsInterface;
+use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 
-class Restrictions implements RestrictionsInterface
+class Restrictions implements RestrictionsContract
 {
     private $enumerationValues;
 

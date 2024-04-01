@@ -3,11 +3,11 @@
 namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
+use SoftRules\PHP\Contracts\Renderable;
+use SoftRules\PHP\Contracts\UI\Components\ButtonComponentPropertiesContract;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eButtonType;
-use SoftRules\PHP\Interfaces\ButtonComponentInterface;
-use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\ParameterInterface;
-use SoftRules\PHP\Interfaces\Renderable;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -15,7 +15,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
 
-class Button implements ButtonComponentInterface, Renderable
+class Button implements ButtonComponentPropertiesContract, Renderable
 {
     use HasCustomProperties, ParsedFromXml;
 
@@ -35,9 +35,9 @@ class Button implements ButtonComponentInterface, Renderable
 
     private $skipFormValidation;
 
-    private ExpressionInterface $visibleExpression;
+    private ExpressionContract $visibleExpression;
 
-    private ParameterInterface $parameter;
+    private ParameterContract $parameter;
 
     public function __construct()
     {
@@ -130,22 +130,22 @@ class Button implements ButtonComponentInterface, Renderable
         return $this->description;
     }
 
-    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
+    public function setVisibleExpression(ExpressionContract $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): ExpressionInterface
+    public function getVisibleExpression(): ExpressionContract
     {
         return $this->visibleExpression;
     }
 
-    public function setParameter(ParameterInterface $parameter): void
+    public function setParameter(ParameterContract $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): ParameterInterface
+    public function getParameter(): ParameterContract
     {
         return $this->parameter;
     }

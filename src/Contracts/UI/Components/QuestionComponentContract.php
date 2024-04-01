@@ -1,10 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI\Components;
 
 use Illuminate\Support\Collection;
+use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
+use SoftRules\PHP\Contracts\UI\RestrictionsContract;
+use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 
-interface QuestionComponentInterface extends UiComponentInterface
+interface QuestionComponentContract extends UiComponentContract
 {
     public function setQuestionID(string $questionID);
 
@@ -54,13 +60,13 @@ interface QuestionComponentInterface extends UiComponentInterface
 
     public function getDataType();
 
-    public function setRestrictions(RestrictionsInterface $restrictions): void;
+    public function setRestrictions(RestrictionsContract $restrictions): void;
 
-    public function getRestrictions(): RestrictionsInterface;
+    public function getRestrictions(): RestrictionsContract;
 
-    public function setParameter(ParameterInterface $parameter): void;
+    public function setParameter(ParameterContract $parameter): void;
 
-    public function getParameter(): ParameterInterface;
+    public function getParameter(): ParameterContract;
 
     public function setElementPath($elementPath): void;
 
@@ -78,30 +84,30 @@ interface QuestionComponentInterface extends UiComponentInterface
 
     public function getInvalidMessage();
 
-    public function addCustomProperty(CustomPropertyInterface $customProperty): void;
+    public function addCustomProperty(CustomPropertyContract $customProperty): void;
 
     /**
-     * @return Collection<int, CustomPropertyInterface>
+     * @return Collection<int, CustomPropertyContract>
      */
     public function getCustomProperties(): Collection;
 
-    public function setDefaultStateExpression(ExpressionInterface $defaultStateExpression): void;
+    public function setDefaultStateExpression(ExpressionContract $defaultStateExpression): void;
 
-    public function getDefaultStateExpression(): ExpressionInterface;
+    public function getDefaultStateExpression(): ExpressionContract;
 
-    public function setRequiredExpression(ExpressionInterface $requiredExpression): void;
+    public function setRequiredExpression(ExpressionContract $requiredExpression): void;
 
-    public function getRequiredExpression(): ExpressionInterface;
+    public function getRequiredExpression(): ExpressionContract;
 
-    public function setValidExpression(ExpressionInterface $validExpression): void;
+    public function setValidExpression(ExpressionContract $validExpression): void;
 
-    public function getValidExpression(): ExpressionInterface;
+    public function getValidExpression(): ExpressionContract;
 
-    public function setUpdateExpression(ExpressionInterface $updateExpression): void;
+    public function setUpdateExpression(ExpressionContract $updateExpression): void;
 
     public function setReadyForProcess($readyForProcess): void;
 
     public function getReadyForProcess();
 
-    public function addTextValue(TextValueComponentInterface $textValue): void;
+    public function addTextValue(TextValueComponentContract $textValue): void;
 }

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
-interface TextValueComponentInterface
+interface TextValueComponentContract
 {
     public function setValue(string $value): void;
 

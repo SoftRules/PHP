@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
 use DOMDocument;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
-interface ExpressionInterface
+interface ExpressionContract
 {
     public function setDescription(string $description): void;
 
@@ -15,7 +15,7 @@ interface ExpressionInterface
 
     public function getStartValue(): bool;
 
-    public function addCondition(ConditionInterface $condition): void;
+    public function addCondition(ConditionContract $condition): void;
 
     public function clean(): void;
 

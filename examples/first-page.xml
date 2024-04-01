@@ -1,0 +1,41 @@
+<SR>
+    <ActionID>nieuw</ActionID>
+    <Relatiedocument>
+        <Relatiemantel>
+            <VP>
+                <VP_ANAAM>Hans</VP_ANAAM>
+                <VP_VOORL>J.P.</VP_VOORL>
+                <VP_GESLACH>M</VP_GESLACH>
+                <VP_STRAAT>Frederik van Eedenstraat</VP_STRAAT>
+                <VP_HUISNR>21</VP_HUISNR>
+                <VP_TOEVOEG></VP_TOEVOEG>
+                <VP_PLAATS>SOMMELSDYK</VP_PLAATS>
+                <VP_PCODE>3245RL</VP_PCODE>
+                <VP_LAND>NL</VP_LAND>
+                <VP_TELNUM>06-12345678</VP_TELNUM>
+                <VP_EMAIL>hans@bienefelt.nl</VP_EMAIL>
+                <VP_GEBDAT>19690326</VP_GEBDAT>
+                <VP_GSSC>I</VP_GSSC>
+            </VP>
+        </Relatiemantel>
+        <Pakket>
+            <Mantel>
+                <PK>
+                    <PK_NUMMER/>
+                    <PK_EXTERN/>
+                    <PK_OFFERTE/>
+                    <PK_PRODUCC/>
+                </PK>
+            </Mantel>
+            <Onderdeel>
+                <PP>
+                    <PP_PRODCFG></PP_PRODCFG>
+                    <PP_NUMMER></PP_NUMMER>
+                    <PP_EXTERN></PP_EXTERN>
+                    <PP_OFFERTE></PP_OFFERTE>
+                    <PP_PRODUCC/>
+                </PP>
+            </Onderdeel>
+        </Pakket>
+    </Relatiedocument>
+</SR>

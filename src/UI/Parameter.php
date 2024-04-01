@@ -3,10 +3,10 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\ParameterInterface;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Parameter implements ParameterInterface
+class Parameter implements ParameterContract
 {
     use ParsedFromXml;
 

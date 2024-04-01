@@ -3,10 +3,10 @@
 namespace SoftRules\PHP\UI;
 
 use DOMNode;
-use SoftRules\PHP\Interfaces\CustomPropertyInterface;
+use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class CustomProperty implements CustomPropertyInterface
+class CustomProperty implements CustomPropertyContract
 {
     use ParsedFromXml;
 

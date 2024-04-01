@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts\UI;
 
 use DOMNode;
 
-interface CustomPropertyInterface
+interface CustomPropertyContract
 {
     public function setName(?string $name): void;
 

@@ -4,21 +4,21 @@ namespace SoftRules\PHP\Traits;
 
 use Illuminate\Support\Collection;
 use ReflectionProperty;
-use SoftRules\PHP\Interfaces\CustomPropertyInterface;
-use SoftRules\PHP\Interfaces\UiComponentInterface;
+use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
+use SoftRules\PHP\Contracts\UI\UiComponentContract;
 
 /**
- * @mixin UiComponentInterface
+ * @mixin UiComponentContract
  */
 trait HasCustomProperties
 {
     /**
-     * @var Collection<int, CustomPropertyInterface>
+     * @var Collection<int, CustomPropertyContract>
      */
     private Collection $customProperties;
 
     /**
-     * @return Collection<int, CustomPropertyInterface>
+     * @return Collection<int, CustomPropertyContract>
      */
     public function getCustomProperties(): Collection
     {
@@ -31,7 +31,7 @@ trait HasCustomProperties
         return $this->customProperties;
     }
 
-    public function addCustomProperty(CustomPropertyInterface $customProperty): void
+    public function addCustomProperty(CustomPropertyContract $customProperty): void
     {
         $rp = new ReflectionProperty(self::class, 'customProperties');
 
@@ -42,9 +42,9 @@ trait HasCustomProperties
         $this->customProperties->add($customProperty);
     }
 
-    public function getCustomPropertyByName(string $propertyName): ?CustomPropertyInterface
+    public function getCustomPropertyByName(string $propertyName): ?CustomPropertyContract
     {
-        return $this->getCustomProperties()->first(function (CustomPropertyInterface $customProperty) use ($propertyName): bool {
+        return $this->getCustomProperties()->first(function (CustomPropertyContract $customProperty) use ($propertyName): bool {
             return strtolower((string) $customProperty->getName()) === $propertyName;
         });
     }

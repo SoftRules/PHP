@@ -5,12 +5,12 @@ namespace SoftRules\PHP\UI;
 use DOMDocument;
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\ConditionInterface;
-use SoftRules\PHP\Interfaces\ExpressionInterface;
+use SoftRules\PHP\Contracts\UI\ConditionContract;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
-class Expression implements ExpressionInterface
+class Expression implements ExpressionContract
 {
     use ParsedFromXml;
 
@@ -19,7 +19,7 @@ class Expression implements ExpressionInterface
     private bool $startValue = true;
 
     /**
-     * @var Collection<int, ConditionInterface>
+     * @var Collection<int, ConditionContract>
      */
     public readonly Collection $conditions;
 
@@ -48,7 +48,7 @@ class Expression implements ExpressionInterface
         return $this->startValue;
     }
 
-    public function addCondition(ConditionInterface $condition): void
+    public function addCondition(ConditionContract $condition): void
     {
         $this->conditions->add($condition);
     }

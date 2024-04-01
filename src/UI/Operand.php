@@ -4,11 +4,11 @@ namespace SoftRules\PHP\UI;
 
 use DOMNode;
 use Exception;
+use SoftRules\PHP\Contracts\UI\OperandContract;
 use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Interfaces\OperandInterface;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Operand implements OperandInterface
+class Operand implements OperandContract
 {
     use ParsedFromXml;
 

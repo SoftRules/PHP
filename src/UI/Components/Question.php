@@ -4,13 +4,13 @@ namespace SoftRules\PHP\UI\Components;
 
 use DOMNode;
 use Illuminate\Support\Collection;
-use SoftRules\PHP\Interfaces\ComponentWithCustomProperties;
-use SoftRules\PHP\Interfaces\ExpressionInterface;
-use SoftRules\PHP\Interfaces\ParameterInterface;
-use SoftRules\PHP\Interfaces\QuestionComponentInterface;
-use SoftRules\PHP\Interfaces\Renderable;
-use SoftRules\PHP\Interfaces\RestrictionsInterface;
-use SoftRules\PHP\Interfaces\TextValueComponentInterface;
+use SoftRules\PHP\Contracts\Renderable;
+use SoftRules\PHP\Contracts\UI\Components\QuestionComponentContract;
+use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
+use SoftRules\PHP\Contracts\UI\ExpressionContract;
+use SoftRules\PHP\Contracts\UI\ParameterContract;
+use SoftRules\PHP\Contracts\UI\RestrictionsContract;
+use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -20,7 +20,7 @@ use SoftRules\PHP\UI\Restrictions;
 use SoftRules\PHP\UI\Style\QuestionComponentStyle;
 use SoftRules\PHP\UI\TextValueComponent;
 
-class Question implements ComponentWithCustomProperties, QuestionComponentInterface, Renderable
+class Question implements ComponentWithCustomPropertiesContract, QuestionComponentContract, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -51,9 +51,9 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
 
     private $displayOnly;
 
-    private RestrictionsInterface $restrictions;
+    private RestrictionsContract $restrictions;
 
-    private ParameterInterface $parameter;
+    private ParameterContract $parameter;
 
     private $elementPath;
 
@@ -66,19 +66,19 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
     private $coreValue;
 
     /**
-     * @var Collection<int, TextValueComponentInterface>
+     * @var Collection<int, TextValueComponentContract>
      */
     public readonly Collection $textValues;
 
-    private ExpressionInterface $validExpression;
+    private ExpressionContract $validExpression;
 
-    private ExpressionInterface $defaultStateExpression;
+    private ExpressionContract $defaultStateExpression;
 
-    private ExpressionInterface $requiredExpression;
+    private ExpressionContract $requiredExpression;
 
-    private ExpressionInterface $updateExpression;
+    private ExpressionContract $updateExpression;
 
-    private ExpressionInterface $visibleExpression;
+    private ExpressionContract $visibleExpression;
 
     public function __construct()
     {
@@ -231,22 +231,22 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
         return $this->displayOnly;
     }
 
-    public function setRestrictions(RestrictionsInterface $restrictions): void
+    public function setRestrictions(RestrictionsContract $restrictions): void
     {
         $this->restrictions = $restrictions;
     }
 
-    public function getRestrictions(): RestrictionsInterface
+    public function getRestrictions(): RestrictionsContract
     {
         return $this->restrictions;
     }
 
-    public function setParameter(ParameterInterface $parameter): void
+    public function setParameter(ParameterContract $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    public function getParameter(): ParameterInterface
+    public function getParameter(): ParameterContract
     {
         return $this->parameter;
     }
@@ -281,52 +281,52 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
         return $this->invalidMessage;
     }
 
-    public function setDefaultStateExpression(ExpressionInterface $defaultStateExpression): void
+    public function setDefaultStateExpression(ExpressionContract $defaultStateExpression): void
     {
         $this->defaultStateExpression = $defaultStateExpression;
     }
 
-    public function getDefaultStateExpression(): ExpressionInterface
+    public function getDefaultStateExpression(): ExpressionContract
     {
         return $this->defaultStateExpression;
     }
 
-    public function setRequiredExpression(ExpressionInterface $requiredExpression): void
+    public function setRequiredExpression(ExpressionContract $requiredExpression): void
     {
         $this->requiredExpression = $requiredExpression;
     }
 
-    public function getRequiredExpression(): ExpressionInterface
+    public function getRequiredExpression(): ExpressionContract
     {
         return $this->requiredExpression;
     }
 
-    public function setUpdateExpression(ExpressionInterface $updateExpression): void
+    public function setUpdateExpression(ExpressionContract $updateExpression): void
     {
         $this->updateExpression = $updateExpression;
     }
 
-    public function getUpdateExpression(): ExpressionInterface
+    public function getUpdateExpression(): ExpressionContract
     {
         return $this->updateExpression;
     }
 
-    public function setValidExpression(ExpressionInterface $validExpression): void
+    public function setValidExpression(ExpressionContract $validExpression): void
     {
         $this->validExpression = $validExpression;
     }
 
-    public function getValidExpression(): ExpressionInterface
+    public function getValidExpression(): ExpressionContract
     {
         return $this->validExpression;
     }
 
-    public function setVisibleExpression(ExpressionInterface $visibleExpression): void
+    public function setVisibleExpression(ExpressionContract $visibleExpression): void
     {
         $this->visibleExpression = $visibleExpression;
     }
 
-    public function getVisibleExpression(): ExpressionInterface
+    public function getVisibleExpression(): ExpressionContract
     {
         return $this->visibleExpression;
     }
@@ -341,7 +341,7 @@ class Question implements ComponentWithCustomProperties, QuestionComponentInterf
         return $this->readyForProcess;
     }
 
-    public function addTextValue(TextValueComponentInterface $textValue): void
+    public function addTextValue(TextValueComponentContract $textValue): void
     {
         $this->textValues->add($textValue);
     }

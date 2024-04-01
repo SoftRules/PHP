@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace SoftRules\PHP\Interfaces;
+namespace SoftRules\PHP\Contracts;
 
 interface Renderable
 {
