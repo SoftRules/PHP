@@ -13,5 +13,4 @@ interface ClientContract
     public function nextPage(string $id, string $xml): DOMDocument;
 
     public function previousPage(string $id, string $xml): DOMDocument;
-
 }
