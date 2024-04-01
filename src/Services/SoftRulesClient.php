@@ -102,7 +102,7 @@ class SoftRulesClient extends Factory implements ClientContract
             ->baseUrl($this->uri);
     }
 
-    private function createSession(): string
+    protected function createSession(): string
     {
         $response = $this->retry(3, 200)
             ->get('/getsession', [
