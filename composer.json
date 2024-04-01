@@ -5,6 +5,20 @@
     "homepage": "https://github.com/SoftRules/PHP",
     "license": "proprietary",
     "type": "library",
+    "authors": [
+        {
+            "name": "SoftRules",
+            "email": "info@softrules.com",
+            "homepage": "https://www.softrules.com/",
+            "role": "Organisation"
+        },
+        {
+            "name": "My TP - a Blinqx company",
+            "email": "info@my-tp.net",
+            "homepage": "https://my-tp.net/",
+            "role": "Organisation"
+        }
+    ],
     "prefer-stable": true,
     "minimum-stability": "stable",
     "require": {
