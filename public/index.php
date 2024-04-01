@@ -23,14 +23,13 @@ $xml = SoftRulesClient::fromConfig($product)
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="js/UpdateUserInterface.js"></script>
     <title>SoftRules PHP</title>
 </head>
 <body>
 <form id='userinterfaceForm'
       method='POST'
       style="padding: 15px;">
-    <?php echo new HtmlRenderer(SoftRulesForm::fromDomDocument($xml)); ?>
+    <?php echo new HtmlRenderer(SoftRulesForm::fromDomDocument($xml), true); ?>
 </form>
 
 <script>
