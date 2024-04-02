@@ -12,6 +12,7 @@ final class SoftRulesForm implements Stringable
     private string $previousPageRoute = '/previousPage.php';
     private string $nextPageRoute = '/nextPage.php';
     private string $initialXml = '';
+    private string $csrfProtection = '';
 
     private function __construct(public readonly string $product)
     {
@@ -26,6 +27,13 @@ final class SoftRulesForm implements Stringable
     public function withInitialXml(string $initialXml): self
     {
         $this->initialXml = rawurlencode($initialXml);
+
+        return $this;
+    }
+
+    public function withCsrfProtection(string $csrfInput): self
+    {
+        $this->csrfProtection = $csrfInput;
 
         return $this;
     }
@@ -64,6 +72,7 @@ final class SoftRulesForm implements Stringable
 <form id='userinterfaceForm'
       method='POST'
       style="padding: 15px;">Aan het laden...</form>
+      {$this->csrfProtection}
 <script>
     const config = {
         product: '{$this->product}',
