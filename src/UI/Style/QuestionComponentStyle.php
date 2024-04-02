@@ -10,7 +10,7 @@ final class QuestionComponentStyle implements UiComponentStyle
         //
     }
 
-    public static function bootstrap(): self
+    public static function bootstrap3(): self
     {
         return new self(
             // TODO

@@ -13,7 +13,7 @@ final class ButtonComponentStyle implements UiComponentStyle
         //
     }
 
-    public static function bootstrap(): self
+    public static function bootstrap3(): self
     {
         return new self(
             default: new StyleData(class: 'btn btn-default'),

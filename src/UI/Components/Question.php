@@ -98,7 +98,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function getStyle(): QuestionComponentStyle
     {
-        return self::$style ?? QuestionComponentStyle::bootstrap();
+        return self::$style ?? QuestionComponentStyle::bootstrap3();
     }
 
     public function setQuestionID(string $questionID): void

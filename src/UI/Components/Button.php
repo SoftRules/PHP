@@ -51,7 +51,7 @@ class Button implements ButtonComponentPropertiesContract, Renderable
 
     public function getStyle(): ButtonComponentStyle
     {
-        return self::$style ?? ButtonComponentStyle::bootstrap();
+        return self::$style ?? ButtonComponentStyle::bootstrap3();
     }
 
     public function setButtonID(string $buttonID): void

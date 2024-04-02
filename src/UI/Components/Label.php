@@ -46,7 +46,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function getStyle(): LabelComponentStyle
     {
-        return self::$style ?? LabelComponentStyle::bootstrap();
+        return self::$style ?? LabelComponentStyle::bootstrap3();
     }
 
     public function setLabelID(string $labelID): void

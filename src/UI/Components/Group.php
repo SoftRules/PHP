@@ -59,7 +59,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
 
     public function getStyle(): GroupComponentStyle
     {
-        return self::$style ?? GroupComponentStyle::bootstrap();
+        return self::$style ?? GroupComponentStyle::bootstrap3();
     }
 
     public function setGroupID(string $groupID): void
