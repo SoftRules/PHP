@@ -73,7 +73,7 @@ final class HtmlRenderer implements Stringable
                 $this->html .= $component->renderClosingTags();
 
                 if ($component instanceof GroupComponentContract && $component->shouldHavePagination()) {
-                    $this->html .= "<div class='row pagination-row'>";
+                    $this->html .= "<div class='row pagination-row' style='display: flex; gap: 5px;'>";
 
                     $nextPageID = $this->currentPage;
                     $previousPageID = $this->currentPage;
