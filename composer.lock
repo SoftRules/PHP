@@ -3596,12 +3596,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6900b812a02fbea68608e13e112d1e0a9b02a370"
+                "reference": "1a1c215ca42673897f4f0893141ced172149c864"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6900b812a02fbea68608e13e112d1e0a9b02a370",
-                "reference": "6900b812a02fbea68608e13e112d1e0a9b02a370",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/1a1c215ca42673897f4f0893141ced172149c864",
+                "reference": "1a1c215ca42673897f4f0893141ced172149c864",
                 "shasum": ""
             },
             "conflict": {
@@ -3671,6 +3671,7 @@
                 "cart2quote/module-quotation": ">=4.1.6,<=4.4.5|>=5,<5.4.4",
                 "cartalyst/sentry": "<=2.1.6",
                 "catfan/medoo": "<1.7.5",
+                "causal/oidc": "<2.1",
                 "cecil/cecil": "<7.47.1",
                 "centreon/centreon": "<22.10.0.0-beta1",
                 "cesnet/simplesamlphp-module-proxystatistics": "<3.1",
@@ -4331,7 +4332,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-29T21:04:02+00:00"
+            "time": "2024-04-02T10:04:50+00:00"
         }
     ],
     "aliases": [],
@@ -4350,5 +4351,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
