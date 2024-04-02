@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Traits;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 
 /**
@@ -10,8 +10,8 @@ use SoftRules\PHP\Contracts\UI\UiComponentContract;
  */
 trait ParsedFromXml
 {
-    public static function createFromDomNode(DOMNode $DOMNode): self
+    public static function createFromDomNode(DOMElement $DOMElement): self
     {
-        return (new self())->parse($DOMNode);
+        return (new self())->parse($DOMElement);
     }
 }

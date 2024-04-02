@@ -313,6 +313,7 @@ class Condition implements ConditionContract
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'LogOperator':

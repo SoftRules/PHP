@@ -348,6 +348,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'QuestionID':
@@ -450,6 +451,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     $this->setInvalidMessage($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
+                    /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
@@ -474,6 +476,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     $this->setReadyForProcess($childNode->nodeValue);
                     break;
                 case 'TextValues':
+                    /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addTextValue(TextValueComponent::createFromDomNode($grandChildNode));
                     }
@@ -499,7 +502,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <select name="{$this->getName()}"
                         class="sr-question sr-question-choice {$this->getStyle()->default->class}"
                         style="{$this->getStyle()->default->inlineStyle}">
-                    {$this->textValues->map(fn (TextValueComponent $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
+                    {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
                 </select>
                 HTML;
         } else {

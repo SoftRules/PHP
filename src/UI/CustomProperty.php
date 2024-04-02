@@ -49,13 +49,14 @@ class CustomProperty implements CustomPropertyContract
 
     public function parse(DOMElement $DOMElement): static
     {
-        foreach ($DOMElement->childNodes as $values) {
-            switch ($values->nodeName) {
+        /** @var DOMElement $childNode */
+        foreach ($DOMElement->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'Name':
-                    $this->setName($values->nodeValue);
+                    $this->setName($childNode->nodeValue);
                     break;
                 case 'Value':
-                    $this->setValue($values->nodeValue);
+                    $this->setValue($childNode->nodeValue);
                     break;
             }
         }

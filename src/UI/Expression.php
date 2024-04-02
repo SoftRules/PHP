@@ -76,6 +76,7 @@ class Expression implements ExpressionContract
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'StartValue':
@@ -85,8 +86,9 @@ class Expression implements ExpressionContract
                     $this->setDescription($childNode->nodeValue);
                     break;
                 case 'Conditions':
-                    foreach ($childNode->childNodes as $conditionNode) {
-                        $this->addCondition(Condition::createFromDomNode($conditionNode));
+                    /** @var DOMElement $grandChildNode */
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        $this->addCondition(Condition::createFromDomNode($grandChildNode));
                     }
 
                     break;

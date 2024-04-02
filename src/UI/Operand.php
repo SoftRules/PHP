@@ -84,6 +84,7 @@ class Operand implements OperandContract
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'Value':

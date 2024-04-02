@@ -111,6 +111,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'LabelID':
@@ -126,8 +127,9 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     $this->setDisplayType($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
-                    foreach ($childNode->childNodes as $cp) {
-                        $this->addCustomProperty(CustomProperty::createFromDomNode($cp));
+                    /** @var DOMElement $grandChildNode */
+                    foreach ($childNode->childNodes as $grandChildNode) {
+                        $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
 
                     break;

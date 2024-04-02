@@ -3,8 +3,7 @@
 namespace SoftRules\PHP\UI;
 
 use DOMDocument;
-use DOMNameSpaceNode;
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\SoftRulesFormContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
@@ -161,7 +160,8 @@ final class SoftRulesFormData implements SoftRulesFormContract
     public function parseUIXML(DOMDocument $xml): self
     {
         $x = $xml->documentElement;
-        /** @var DOMNode|DOMNameSpaceNode $child */
+
+        /** @var DOMElement $child */
         foreach ($x->childNodes as $child) {
             switch ($child->nodeName) {
                 case 'Page':
@@ -206,6 +206,7 @@ final class SoftRulesFormData implements SoftRulesFormContract
 
                     break;
                 case 'Questions': //this tag contains child elements, of which we only want one.
+                    /** @var DOMElement $childNode */
                     foreach ($child->childNodes as $childNode) {
                         switch ($childNode->nodeName) {
                             case 'Group':

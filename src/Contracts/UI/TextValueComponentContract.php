@@ -17,4 +17,6 @@ interface TextValueComponentContract
     public function setImageUrl(?string $imageUrl): void;
 
     public function writeXml($writer);
+
+    public function render(bool $selected): string;
 }

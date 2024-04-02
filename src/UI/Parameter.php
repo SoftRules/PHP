@@ -96,28 +96,29 @@ class Parameter implements ParameterContract
 
     public function parse(DOMElement $DOMElement): static
     {
-        foreach ($DOMElement->childNodes as $parameter) {
-            switch ($parameter->nodeName) {
+        /** @var DOMElement $childNode */
+        foreach ($DOMElement->childNodes as $childNode) {
+            switch ($childNode->nodeName) {
                 case 'Name':
-                    $this->setName($parameter->nodeValue);
+                    $this->setName($childNode->nodeValue);
                     break;
                 case 'Path':
-                    $this->setPath($parameter->nodeValue);
+                    $this->setPath($childNode->nodeValue);
                     break;
                 case 'ParentGroupID':
-                    $this->setParentGroupID($parameter->nodeValue);
+                    $this->setParentGroupID($childNode->nodeValue);
                     break;
                 case 'ParentUserinterfaceID':
-                    $this->setParentUserInterfaceID($parameter->nodeValue);
+                    $this->setParentUserInterfaceID($childNode->nodeValue);
                     break;
                 case 'ParentConfigID':
-                    $this->setParentConfigID($parameter->nodeValue);
+                    $this->setParentConfigID($childNode->nodeValue);
                     break;
                 case 'Renew':
-                    $this->setRenew($parameter->nodeValue);
+                    $this->setRenew($childNode->nodeValue);
                     break;
                 case 'UsedByEvents':
-                    $this->setUsedByEvents($parameter->nodeValue);
+                    $this->setUsedByEvents($childNode->nodeValue);
                     break;
             }
         }

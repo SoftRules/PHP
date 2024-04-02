@@ -180,6 +180,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
 
     public function parse(DOMElement $DOMElement): static
     {
+        /** @var DOMElement $childNode */
         foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'GroupID':
@@ -201,6 +202,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
                     $this->setSuppressItemsWhenInvisible($childNode->nodeValue);
                     break;
                 case 'CustomProperties':
+                    /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
@@ -217,6 +219,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
                     //no need to parse
                     break;
                 case 'HeaderItems':
+                    /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         switch ($grandChildNode->nodeName) {
                             case 'Group':
@@ -232,6 +235,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
 
                     break;
                 case 'Items':
+                    /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         switch ($grandChildNode->nodeName) {
                             case 'Group':
