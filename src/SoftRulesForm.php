@@ -8,11 +8,17 @@ use Stringable;
 final class SoftRulesForm implements Stringable
 {
     private string $firstPageRoute = '/firstPage.php';
+
     private string $renderXmlRoute = '/renderXml.php';
+
     private string $updateUserInterfaceRoute = '/updateUserInterface.php';
+
     private string $previousPageRoute = '/previousPage.php';
+
     private string $nextPageRoute = '/nextPage.php';
+
     private string $initialXml = '';
+
     private ?HtmlString $csrfProtection = null;
 
     private function __construct(public readonly string $product)
