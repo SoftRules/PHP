@@ -4,7 +4,7 @@ namespace SoftRules\PHP\UI\Components;
 
 use DOMElement;
 use SoftRules\PHP\Contracts\RenderableWrapper;
-use SoftRules\PHP\Contracts\UI\Components\GroupComponentContractProperties;
+use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
@@ -17,7 +17,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\GroupComponentStyle;
 
-class Group implements GroupComponentContractProperties, RenderableWrapper
+class Group implements GroupComponentContract, RenderableWrapper
 {
     use HasCustomProperties;
     use ParsedFromXml;

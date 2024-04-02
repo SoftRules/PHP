@@ -5,12 +5,12 @@ namespace SoftRules\PHP;
 use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
+use SoftRules\PHP\Contracts\UI\Components\ButtonComponentContract;
+use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
 use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
+use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
-use SoftRules\PHP\UI\Components\Button;
-use SoftRules\PHP\UI\Components\Group;
-use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\SoftRulesFormData;
 use Stringable;
 
@@ -48,9 +48,9 @@ final class HtmlRenderer implements Stringable
             $this->html .= '<div>';
             $this->html .= $componentName;
 
-            if ($component instanceof Button) {
+            if ($component instanceof ButtonComponentContract) {
                 $this->html .= ' Text: <b>' . $component->getText() . '</b>';
-            } elseif ($component instanceof Group) {
+            } elseif ($component instanceof GroupComponentContract) {
                 $this->html .= ' Type: <b>' . $component->getType()->value . '</b> ' . $component->getName();
             }
 
@@ -72,7 +72,7 @@ final class HtmlRenderer implements Stringable
                 $this->renderComponents($component->getComponents());
                 $this->html .= $component->renderClosingTags();
 
-                if ($component instanceof Group && $component->shouldHavePagination()) {
+                if ($component instanceof GroupComponentContract && $component->shouldHavePagination()) {
                     $this->html .= "<div class='row pagination-row'>";
 
                     $nextPageID = $this->currentPage;
@@ -107,7 +107,7 @@ final class HtmlRenderer implements Stringable
         }
 
         $description = $component->getCustomProperties()
-            ->implode(fn (CustomProperty $customProperty): string => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
+            ->implode(fn (CustomPropertyContract $customProperty): string => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
 
         return " {$component->getCustomProperties()->count()} Custom Properties ({$description})";
     }

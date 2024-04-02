@@ -7,7 +7,7 @@ use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eButtonType;
 
-interface ButtonComponentPropertiesContract extends ComponentWithCustomPropertiesContract, UiComponentContract
+interface ButtonComponentContract extends ComponentWithCustomPropertiesContract, UiComponentContract
 {
     public function setButtonID(string $buttonID): void;
 

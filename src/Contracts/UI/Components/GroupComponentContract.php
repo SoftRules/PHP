@@ -7,7 +7,7 @@ use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eGroupType;
 
-interface GroupComponentContractProperties extends ComponentWithCustomPropertiesContract, UiComponentContract
+interface GroupComponentContract extends ComponentWithCustomPropertiesContract, UiComponentContract
 {
     public function setGroupID(string $groupID): void;
 

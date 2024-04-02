@@ -4,7 +4,7 @@ namespace SoftRules\PHP\UI\Components;
 
 use DOMElement;
 use SoftRules\PHP\Contracts\Renderable;
-use SoftRules\PHP\Contracts\UI\Components\ButtonComponentPropertiesContract;
+use SoftRules\PHP\Contracts\UI\Components\ButtonComponentContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eButtonType;
@@ -15,7 +15,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
 
-class Button implements ButtonComponentPropertiesContract, Renderable
+class Button implements ButtonComponentContract, Renderable
 {
     use HasCustomProperties, ParsedFromXml;
 
