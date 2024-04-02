@@ -97,7 +97,7 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
             throw new Error('Foutmelding: ' + await response.text());
         })
         .then((data) => {
-            $('#userinterfaceForm').empty();
+            $('#softrules-form-content').empty();
 
             $xml = parseXML(data);
 
@@ -132,7 +132,7 @@ function getHTML(xml) {
             throw new Error('Foutmelding: ' + await response.text());
         })
         .then((data) => {
-            $('#userinterfaceForm').html(data);
+            $('#softrules-form-content').html(data);
         })
         .catch((error) => {
             console.log(error);

@@ -80,13 +80,16 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
-    public function __toString(): string
+    public function render(): string
     {
         return <<<EOT
-<form id='userinterfaceForm'
+<form id='softrules-form'
       method='POST'
-      style="padding: 15px;">Aan het laden...</form>
-      {$this->csrfProtection}
+      style="padding: 15px;">
+{$this->csrfProtection}
+<div id="softrules-form-content">Aan het laden...</div>
+</form>
+
 <script>
     const config = {
         product: '{$this->product}',
@@ -106,5 +109,10 @@ final class SoftRulesForm implements Stringable
     document.head.appendChild(script);
 </script>
 EOT;
+    }
+
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }
