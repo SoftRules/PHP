@@ -2,6 +2,7 @@
 
 namespace SoftRules\PHP;
 
+use Illuminate\Support\HtmlString;
 use Stringable;
 
 final class SoftRulesForm implements Stringable
@@ -12,7 +13,7 @@ final class SoftRulesForm implements Stringable
     private string $previousPageRoute = '/previousPage.php';
     private string $nextPageRoute = '/nextPage.php';
     private string $initialXml = '';
-    private string $csrfProtection = '';
+    private ?HtmlString $csrfProtection = null;
 
     private function __construct(public readonly string $product)
     {
@@ -31,7 +32,7 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
-    public function withCsrfProtection(string $csrfInput): self
+    public function withCsrfProtection(HtmlString $csrfInput): self
     {
         $this->csrfProtection = $csrfInput;
 
