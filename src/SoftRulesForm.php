@@ -80,9 +80,10 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
-    public function render(): string
+    public function render(): HtmlString
     {
-        return <<<EOT
+        return new HtmlString(
+            <<<EOT
 <form id='softrules-form'
       method='POST'
       style="padding: 15px;">
@@ -108,11 +109,12 @@ final class SoftRulesForm implements Stringable
 
     document.head.appendChild(script);
 </script>
-EOT;
+EOT
+        );
     }
 
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->toHtml();
     }
 }
