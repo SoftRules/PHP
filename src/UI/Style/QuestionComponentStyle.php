@@ -5,15 +5,17 @@ namespace SoftRules\PHP\UI\Style;
 final class QuestionComponentStyle implements UiComponentStyle
 {
     public function __construct(
-        // TODO
+        public readonly StyleData $default,
+        // TODO add specific question types
     ) {
         //
     }
 
-    public static function bootstrap3(): self
+    public static function bootstrapThree(): self
     {
         return new self(
-            // TODO
+            default: new StyleData(class: 'form-control'),
+            // TODO add specific question types
         );
     }
 }

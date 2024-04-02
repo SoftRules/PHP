@@ -11,7 +11,7 @@ final class GroupComponentStyle implements UiComponentStyle
         //
     }
 
-    public static function bootstrap3(): self
+    public static function bootstrapThree(): self
     {
         return new self(
             page: new StyleData(class: 'col-xs-12'),

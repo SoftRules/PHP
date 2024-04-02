@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
@@ -94,9 +94,9 @@ class Parameter implements ParameterContract
         return $this->usedByEvents;
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $parameter) {
+        foreach ($DOMElement->childNodes as $parameter) {
             switch ($parameter->nodeName) {
                 case 'Name':
                     $this->setName($parameter->nodeValue);

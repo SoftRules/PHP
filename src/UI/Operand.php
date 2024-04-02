@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI;
 
-use DOMNode;
+use DOMElement;
 use Exception;
 use SoftRules\PHP\Contracts\UI\OperandContract;
 use SoftRules\PHP\Enums\eValueType;
@@ -82,9 +82,9 @@ class Operand implements OperandContract
         //
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'Value':
                     $this->setValue($childNode->nodeValue);

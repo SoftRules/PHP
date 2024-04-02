@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Contracts\UI;
 
-use DOMNode;
+use DOMElement;
 
 interface CustomPropertyContract
 {
@@ -16,5 +16,5 @@ interface CustomPropertyContract
 
     public function isTrue(): bool;
 
-    public function parse(DOMNode $node): static;
+    public function parse(DOMElement $DOMElement): static;
 }

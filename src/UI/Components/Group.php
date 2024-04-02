@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI\Components;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContractProperties;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
@@ -59,7 +59,7 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
 
     public function getStyle(): GroupComponentStyle
     {
-        return self::$style ?? GroupComponentStyle::bootstrap3();
+        return self::$style ?? GroupComponentStyle::bootstrapThree();
     }
 
     public function setGroupID(string $groupID): void
@@ -178,9 +178,9 @@ class Group implements GroupComponentContractProperties, RenderableWrapper
         return $this->parameter;
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'GroupID':
                     $this->setGroupID($childNode->nodeValue);

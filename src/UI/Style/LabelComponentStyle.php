@@ -11,7 +11,7 @@ final class LabelComponentStyle implements UiComponentStyle
         //
     }
 
-    public static function bootstrap3(): self
+    public static function bootstrapThree(): self
     {
         return new self(
             default: new StyleData(class: 'control-label'),

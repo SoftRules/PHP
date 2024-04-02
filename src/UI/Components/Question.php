@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI\Components;
 
-use DOMNode;
+use DOMElement;
 use Illuminate\Support\Collection;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\UI\Components\QuestionComponentContract;
@@ -98,7 +98,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function getStyle(): QuestionComponentStyle
     {
-        return self::$style ?? QuestionComponentStyle::bootstrap3();
+        return self::$style ?? QuestionComponentStyle::bootstrapThree();
     }
 
     public function setQuestionID(string $questionID): void
@@ -346,9 +346,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->textValues->add($textValue);
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'QuestionID':
                     $this->setQuestionID($childNode->nodeValue);
@@ -491,7 +491,27 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function render(): string
     {
         $html = '<li>';
-        $html .= "Question: {$this->getDescription()}({$this->getName()}) Value: {$this->getValue()} UpdateUserinterface: {$this->getUpdateUserInterface()}{$this->getTextValuesDescription()}";
+        $html .= "<div>{$this->getDescription()} ({$this->getName()}) UpdateUserinterface: {$this->getUpdateUserInterface()}{$this->getTextValuesDescription()}</div>";
+
+        if ($this->textValues->isNotEmpty()) {
+            $html .=
+                <<<HTML
+                <select name="{$this->getName()}"
+                        class="sr-question sr-question-choice {$this->getStyle()->default->class}"
+                        style="{$this->getStyle()->default->inlineStyle}">
+                    {$this->textValues->map(fn (TextValueComponent $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
+                </select>
+                HTML;
+        } else {
+            $html .=
+                <<<HTML
+                <input type="text"
+                       name="{$this->getName()}"
+                       value="{$this->getValue()}"
+                       class="sr-question sr-question-input {$this->getStyle()->default->class}"
+                       style="{$this->getStyle()->default->inlineStyle}"/>
+                HTML;
+        }
 
         return $html . '</li>';
     }

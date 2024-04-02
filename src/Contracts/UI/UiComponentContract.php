@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\Contracts\UI;
 
-use DOMNode;
+use DOMElement;
 
 interface UiComponentContract
 {
@@ -14,7 +14,7 @@ interface UiComponentContract
 
     public function getVisibleExpression(): ExpressionContract;
 
-    public function parse(DOMNode $node): static;
+    public function parse(DOMElement $DOMElement): static;
 
     public function getStyle(): object;
 }

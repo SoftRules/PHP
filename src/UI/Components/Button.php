@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI\Components;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\UI\Components\ButtonComponentPropertiesContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
@@ -51,7 +51,7 @@ class Button implements ButtonComponentPropertiesContract, Renderable
 
     public function getStyle(): ButtonComponentStyle
     {
-        return self::$style ?? ButtonComponentStyle::bootstrap3();
+        return self::$style ?? ButtonComponentStyle::bootstrapThree();
     }
 
     public function setButtonID(string $buttonID): void
@@ -150,9 +150,9 @@ class Button implements ButtonComponentPropertiesContract, Renderable
         return $this->parameter;
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'ButtonID':
                     $this->setButtonID($childNode->nodeValue);

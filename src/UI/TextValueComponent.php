@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
@@ -46,11 +46,11 @@ class TextValueComponent implements TextValueComponentContract
         return $this->imageUrl;
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        switch ($node->nodeName) {
+        switch ($DOMElement->nodeName) {
             case 'Item':
-                foreach ($node->childNodes as $childNode) {
+                foreach ($DOMElement->childNodes as $childNode) {
                     switch ($childNode->nodeName) {
                         case 'Value':
                             $this->setValue((string) $childNode->nodeValue);
@@ -73,5 +73,15 @@ class TextValueComponent implements TextValueComponentContract
     public function writeXml($writer): void
     {
         //
+    }
+
+    public function render(bool $selected): string
+    {
+        $selectedAttribute = $selected ? 'selected' : '';
+
+        return
+            <<<HTML
+            <option value="{$this->getValue()}" {$selectedAttribute}>{$this->getText()}</option>
+            HTML;
     }
 }

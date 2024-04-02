@@ -3,7 +3,7 @@
 namespace SoftRules\PHP\UI;
 
 use DOMDocument;
-use DOMNode;
+use DOMElement;
 use Illuminate\Support\Collection;
 use SoftRules\PHP\Contracts\UI\ConditionContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
@@ -74,9 +74,9 @@ class Expression implements ExpressionContract
         //
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'StartValue':
                     $this->setStartValue($childNode->nodeValue);

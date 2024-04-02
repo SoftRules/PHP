@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
@@ -47,9 +47,9 @@ class CustomProperty implements CustomPropertyContract
         return strtolower($this->value) === 'true';
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $values) {
+        foreach ($DOMElement->childNodes as $values) {
             switch ($values->nodeName) {
                 case 'Name':
                     $this->setName($values->nodeValue);

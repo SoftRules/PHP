@@ -2,7 +2,7 @@
 
 namespace SoftRules\PHP\UI\Components;
 
-use DOMNode;
+use DOMElement;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\UI\Components\LabelComponentContract;
 use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
@@ -46,7 +46,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function getStyle(): LabelComponentStyle
     {
-        return self::$style ?? LabelComponentStyle::bootstrap3();
+        return self::$style ?? LabelComponentStyle::bootstrapThree();
     }
 
     public function setLabelID(string $labelID): void
@@ -109,9 +109,9 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         return $this->visibleExpression;
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'LabelID':
                     $this->setLabelID($childNode->nodeValue);

@@ -5,7 +5,7 @@ namespace SoftRules\PHP\UI;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DOMDocument;
-use DOMNode;
+use DOMElement;
 use DOMXPath;
 use SoftRules\PHP\Contracts\UI\ConditionContract;
 use SoftRules\PHP\Contracts\UI\OperandContract;
@@ -311,9 +311,9 @@ class Condition implements ConditionContract
         //
     }
 
-    public function parse(DOMNode $node): static
+    public function parse(DOMElement $DOMElement): static
     {
-        foreach ($node->childNodes as $childNode) {
+        foreach ($DOMElement->childNodes as $childNode) {
             switch ($childNode->nodeName) {
                 case 'LogOperator':
                     $this->setLogOperator($childNode->nodeValue);
