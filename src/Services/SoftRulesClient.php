@@ -100,7 +100,6 @@ class SoftRulesClient extends Factory implements ClientContract
         return parent::newPendingRequest()
             ->timeout((int) CarbonInterval::seconds(25)->totalSeconds)
             ->connectTimeout((int) CarbonInterval::seconds(5)->totalSeconds)
-            // TODO use some kind of config system
             ->baseUrl($this->uri);
     }
 
