@@ -53,6 +53,13 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
+    public function setFirstPageRoute(string $route): self
+    {
+        $this->firstPageRoute = $route;
+
+        return $this;
+    }
+
     public function setPreviousPageRoute(string $route): self
     {
         $this->previousPageRoute = $route;
