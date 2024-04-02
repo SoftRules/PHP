@@ -21,6 +21,8 @@ final class SoftRulesForm implements Stringable
 
     private ?HtmlString $csrfProtection = null;
 
+    private string $javascriptPath = 'js';
+
     private function __construct(public readonly string $product)
     {
         //
@@ -34,6 +36,13 @@ final class SoftRulesForm implements Stringable
     public function withInitialXml(string $initialXml): self
     {
         $this->initialXml = rawurlencode($initialXml);
+
+        return $this;
+    }
+
+    public function setJavascriptPath(string $path): self
+    {
+        $this->javascriptPath = $path;
 
         return $this;
     }
@@ -105,7 +114,7 @@ final class SoftRulesForm implements Stringable
     };
     let script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'js/UpdateUserInterface.js';
+    script.src = '{$this->javascriptPath}/UpdateUserInterface.js';
 
     document.head.appendChild(script);
 </script>
