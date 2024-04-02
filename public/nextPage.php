@@ -7,8 +7,8 @@ use SoftRules\PHP\Services\SoftRulesClient;
 if (isset($_POST['id'], $_POST['xml'], $_POST['product'])) {
     header('Content-Type: text/xml');
 
-    $xml = SoftRulesClient::fromConfig($_POST['product'])
-        ->nextPage($_POST['id'], $_POST['xml']);
+    $xml = SoftRulesClient::fromConfig(e((string) $_POST['product']))
+        ->nextPage(e((string) $_POST['id']), (string) $_POST['xml']);
 
     exit($xml->saveHTML($xml->documentElement));
 }

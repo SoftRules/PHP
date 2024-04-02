@@ -4,11 +4,11 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
 
 use SoftRules\PHP\Services\SoftRulesClient;
 
-if (isset($_POST['id'], $_POST['xml'], $_POST['product'])) {
+if (isset($_POST['xml'], $_POST['product'])) {
     header('Content-Type: text/xml');
 
     $xml = SoftRulesClient::fromConfig(e((string) $_POST['product']))
-        ->previousPage(e((string) $_POST['id']), (string) $_POST['xml']);
+        ->firstPage((string) data_get($_POST, 'xml'));
 
     exit($xml->saveHTML($xml->documentElement));
 }

@@ -13,7 +13,7 @@ use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\Components\Label;
 use SoftRules\PHP\UI\Components\Question;
 
-final class SoftRulesForm implements SoftRulesFormContract
+final class SoftRulesFormData implements SoftRulesFormContract
 {
     private DOMDocument $softRulesXml;
 

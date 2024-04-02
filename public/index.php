@@ -1,14 +1,6 @@
 <?php declare(strict_types=1);
 
 require_once __DIR__ . '/../bootstrap/bootstrap.php';
-
-use SoftRules\PHP\HtmlRenderer;
-use SoftRules\PHP\Services\SoftRulesClient;
-use SoftRules\PHP\UI\SoftRulesForm;
-
-$product = 'softrules';
-$xml = SoftRulesClient::fromConfig($product)
-    ->firstPage(file_get_contents(__DIR__ . '/../examples/first-page.xml'));
 ?>
 <!DOCTYPE html>
 <html>
@@ -26,23 +18,6 @@ $xml = SoftRulesClient::fromConfig($product)
     <title>SoftRules PHP</title>
 </head>
 <body>
-<form id='userinterfaceForm'
-      method='POST'
-      style="padding: 15px;">
-    <?php echo new HtmlRenderer(SoftRulesForm::fromDomDocument($xml), true); ?>
-</form>
-
-<script>
-    const config = {
-        product: '<?php echo $product; ?>',
-        initialXml: '<?php echo trim($xml->saveHTML($xml->documentElement)); ?>',
-        routes: {
-            renderXml: '/page.php',
-            updateUserInterface: '/updateUserInterface.php',
-            previousPage: '/previouspage.php',
-            nextPage: '/nextpage.php',
-        },
-    };
-</script>
+    <?php echo \SoftRules\PHP\SoftRulesForm::make('softrules')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
 </body>
 </html>

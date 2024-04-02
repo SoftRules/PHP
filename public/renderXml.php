@@ -3,11 +3,11 @@
 require_once __DIR__ . '/../bootstrap/bootstrap.php';
 
 use SoftRules\PHP\HtmlRenderer;
-use SoftRules\PHP\UI\SoftRulesForm;
+use SoftRules\PHP\UI\SoftRulesFormData;
 
 if (isset($_POST['xml'])) {
     header('Content-Type: text/html; charset=utf-8');
-    exit(new HtmlRenderer(SoftRulesForm::fromXmlString($_POST['xml'])));
+    exit(new HtmlRenderer(SoftRulesFormData::fromXmlString((string) $_POST['xml'])));
 }
 
 http_response_code(204);

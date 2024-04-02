@@ -148,6 +148,6 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function render(): string
     {
-        return "{$this->getText()}<br/>";
+        return "<label>{$this->getText()}</label><br/>";
     }
 }

@@ -11,7 +11,7 @@ use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\Components\Button;
 use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\CustomProperty;
-use SoftRules\PHP\UI\SoftRulesForm;
+use SoftRules\PHP\UI\SoftRulesFormData;
 use Stringable;
 
 final class HtmlRenderer implements Stringable
@@ -28,7 +28,7 @@ final class HtmlRenderer implements Stringable
 
 //    private DOMDocument $SR_XML;
 
-    public function __construct(SoftRulesForm $UIClass, bool $addScripts = false)
+    public function __construct(SoftRulesFormData $UIClass)
     {
         $this->totalPages = $UIClass->getPages();
         $this->currentPage = $UIClass->getPage();
@@ -39,19 +39,6 @@ final class HtmlRenderer implements Stringable
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
 
         $this->renderComponents($UIClass->components);
-
-        if ($addScripts) {
-            $this->html .=
-<<<'EOT'
-<script>
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'js/UpdateUserInterface.js';
-
-    document.head.appendChild(script);
-</script>
-EOT;
-        }
     }
 
     private function renderComponents(UiComponentsCollection $components): void

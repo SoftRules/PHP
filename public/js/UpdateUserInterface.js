@@ -1,7 +1,7 @@
 ﻿let $xml;
 
 $(document).ready(() => {
-    $xml = parseXML(config.initialXml);
+    getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
 });
 
 function parseXML(xml) {
@@ -40,14 +40,14 @@ function nextPage($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML(config.routes.nextPage, id, xmlText);
+    getXML_HTML(config.routes.nextPage, xmlText, id);
 }
 
 function previousPage($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML(config.routes.previousPage, id, xmlText);
+    getXML_HTML(config.routes.previousPage, xmlText, id);
 }
 
 function updateUserInterface($item) {
@@ -62,19 +62,28 @@ function updateUserInterface($item) {
     const xmlText = new XMLSerializer().serializeToString($xml);
     const id = $item.data('id').replace('_', '|');
 
-    getXML_HTML(config.routes.updateUserInterface, id, xmlText);
+    getXML_HTML(config.routes.updateUserInterface, xmlText, id);
 }
 
-function getXML_HTML(methodUrl, id, xml) {
+function objectToFormData(object) {
+    const formData = new FormData();
+
+    Object.entries(object).forEach(([key, value]) => {
+        formData.append(key, String(value));
+    });
+
+    return formData;
+}
+
+function getXML_HTML(methodUrl, xml, id = undefined) {
     showWaitCursor();
 
     fetch(methodUrl, {
         method: 'POST',
         headers: {
-            'Accept': 'text/html',
-            'Content-Type': 'application/json',
+            'Accept': 'application/xml',
         },
-        body: JSON.stringify({
+        body: objectToFormData({
             product: config.product,
             id,
             xml,
@@ -109,9 +118,8 @@ function getHTML(xml) {
         method: 'POST',
         headers: {
             'Accept': 'text/html',
-            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+        body: objectToFormData({
             product: config.product,
             xml,
         }),

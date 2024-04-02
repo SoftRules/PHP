@@ -22,6 +22,8 @@ class SoftRulesClient extends Factory implements ClientContract
 
     public static function fromConfig(string $product): self
     {
+        $product = e($product);
+
         $config = collect((require __DIR__ . '/../../config/softrules.php')['forms'])
             ->firstWhere('product', $product);
 
