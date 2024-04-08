@@ -12,10 +12,10 @@ use SoftRules\PHP\Contracts\ClientContract;
 class SoftRulesClient extends Factory implements ClientContract
 {
     public function __construct(
-        public readonly string  $product,
-        private readonly string $uri,
-        private readonly string $username,
-        private readonly string $password,
+        public readonly string    $product,
+        protected readonly string $uri,
+        protected readonly string $username,
+        private readonly string   $password,
     ) {
         parent::__construct();
     }
