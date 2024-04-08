@@ -106,7 +106,9 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
             getHTML(xmlText); //generate HTML in html.php
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
+
+            alert(error);
         })
         .finally(() => hideWaitCursor());
 }
@@ -135,7 +137,9 @@ function getHTML(xml) {
             $('#softrules-form-content').html(data);
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
+
+            alert(error);
         })
         .finally(() => hideWaitCursor());
 }

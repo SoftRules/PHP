@@ -19,6 +19,22 @@ class SoftRulesClient extends Factory implements ClientContract
         private readonly string   $password,
     ) {
         parent::__construct();
+
+        if (! $this->uri) {
+            $this->throwError('URI provided for SoftRulesClient should not be empty');
+        }
+
+        if (! filter_var($this->uri, FILTER_VALIDATE_URL)) {
+            $this->throwError('URI provided for SoftRulesClient is not a valid URL');
+        }
+
+        if (! $this->username) {
+            $this->throwError('username provided for SoftRulesClient should not be empty');
+        }
+
+        if (! $this->password) {
+            $this->throwError('password provided for SoftRulesClient should not be empty');
+        }
     }
 
     public static function fromConfig(string $product): self
@@ -52,8 +68,8 @@ class SoftRulesClient extends Factory implements ClientContract
             ->withBody($xml, 'application/xml')
             ->post($url);
 
-        if ($response->badRequest()) {
-            throw new AuthorizationException("Could not connect to {$this->uri}{$url} with the provided credentials");
+        if ($response->clientError()) {
+            $this->throwError("Could not connect to {$this->uri}{$url} with the provided credentials");
         }
 
         $response->throw();
@@ -122,14 +138,33 @@ class SoftRulesClient extends Factory implements ClientContract
                 'password' => $this->password,
             ]);
 
-        if ($response->badRequest()) {
-            throw new AuthorizationException("Could not connect to {$this->uri}/getsession with the provided credentials");
+        if ($response->clientError()) {
+            $this->throwError("Could not connect to {$this->uri}/getsession with the provided credentials");
         }
 
         $response->throw();
 
         $xml = simplexml_load_string(trim($response->body()));
 
-        return $xml->Session->SessionID?->__toString() ?? '';
+        $sessionId = $xml->Session->SessionID?->__toString() ?? '';
+
+        if (! $sessionId) {
+            $this->throwError(($xml->Result->ResultDescription?->__toString() ?? '') . " (Could not connect to {$this->uri}/getsession with the provided credentials.)");
+        }
+
+        return $sessionId;
+    }
+
+    protected function throwError(string $message): never
+    {
+        http_response_code(400);
+
+        if ($_SERVER['HTTP_ACCEPT'] === 'application/xml') {
+            header('Content-Type: application/xml');
+
+            exit('<error>' . $message . '</error>');
+        }
+
+        throw new AuthorizationException($message);
     }
 }
