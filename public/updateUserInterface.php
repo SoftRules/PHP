@@ -5,10 +5,10 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
 use SoftRules\PHP\Services\SoftRulesClient;
 
 if (isset($_POST['id'], $_POST['xml'], $_POST['product'])) {
-    header('Content-Type: text/xml');
-
     $xml = SoftRulesClient::fromConfig(e((string) $_POST['product']))
         ->updateUserInterface(e((string) $_POST['id']), (string) $_POST['xml']);
+
+    header('Content-Type: application/xml');
 
     exit($xml->saveHTML($xml->documentElement));
 }
