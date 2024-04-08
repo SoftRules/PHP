@@ -4,6 +4,7 @@ namespace SoftRules\PHP\Services;
 
 use Carbon\CarbonInterval;
 use DOMDocument;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use RuntimeException;
@@ -41,11 +42,21 @@ class SoftRulesClient extends Factory implements ClientContract
 
     public function firstPage(string $xml): DOMDocument
     {
+        $session = $this->createSession();
+
+        $url = "/userinterface/{$this->product}/firstpage/{$session}";
+
         $response = $this
-            ->retry(3, 300)
+            ->retry(3, 300, throw: false)
             ->accept('application/xml')
             ->withBody($xml, 'application/xml')
-            ->post("/userinterface/{$this->product}/firstpage/{$this->createSession()}");
+            ->post($url);
+
+        if ($response->badRequest()) {
+            throw new AuthorizationException("Could not connect to {$this->uri}{$url} with the provided credentials");
+        }
+
+        $response->throw();
 
         $responseXml = new DOMDocument();
         $responseXml->loadXML($response->body());
@@ -105,11 +116,17 @@ class SoftRulesClient extends Factory implements ClientContract
 
     protected function createSession(): string
     {
-        $response = $this->retry(3, 200)
+        $response = $this->retry(3, 200, throw: false)
             ->get('/getsession', [
                 'username' => $this->username,
                 'password' => $this->password,
             ]);
+
+        if ($response->badRequest()) {
+            throw new AuthorizationException("Could not connect to {$this->uri}/getsession with the provided credentials");
+        }
+
+        $response->throw();
 
         $xml = simplexml_load_string(trim($response->body()));
 
