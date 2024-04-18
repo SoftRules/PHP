@@ -8,6 +8,8 @@ use SoftRules\PHP\Contracts\UI\Components\ButtonComponentContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eButtonType;
+use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eStyleType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -31,7 +33,7 @@ class Button implements ButtonComponentContract, Renderable
 
     private string $description;
 
-    private $displayType;
+    private ?eDisplayType $displayType = null;
 
     private $skipFormValidation;
 
@@ -100,12 +102,18 @@ class Button implements ButtonComponentContract, Renderable
         return $this->type;
     }
 
-    public function setDisplayType($displayType): void
+    public function setDisplayType(eDisplayType|string $displayType): void
     {
-        $this->displayType = $displayType;
+        if ($displayType instanceof eDisplayType) {
+            $this->displayType = $displayType;
+
+            return;
+        }
+
+        $this->displayType = eDisplayType::from(strtolower($displayType));
     }
 
-    public function getDisplayType()
+    public function getDisplayType(): eDisplayType
     {
         return $this->displayType;
     }
@@ -200,10 +208,6 @@ class Button implements ButtonComponentContract, Renderable
 
     public function render(): string
     {
-        if (strtolower((string) $this->getDisplayType()) === 'tile') {
-            $tile = true;
-        }
-
         foreach ($this->getCustomProperties() as $customProperty) {
             switch (strtolower((string) $customProperty->getName())) {
                 case 'nextpage':
@@ -227,11 +231,7 @@ class Button implements ButtonComponentContract, Renderable
         }
 
         $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
-        $buttonStyle = match ($styleType) {
-            // TODO: Hans wat zijn de mogelijke styleTypes? Zullen we hier een enum voor maken?
-            'danger' => $this->getStyle()->danger,
-            default => $this->getStyle()->default,
-        };
+        $buttonStyle = $this->getStyle()->default;
 
         $buttonFunction = match ($this->getType()) {
             eButtonType::submit => 'processButton',
@@ -240,8 +240,18 @@ class Button implements ButtonComponentContract, Renderable
         };
 
         $html = '<div>';
-        $html .= "<button type='button' class='sr-button sr-button-{$styleType} {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
-
-        return $html . '</div>';
+        if ($this->getDisplayType() === eDisplayType::tile) {
+            $hint = $this->getHint();
+            $width = $this->getCustomPropertyByName('width')?->getValue() ?? '';
+            $height = $this->getCustomPropertyByName('height')?->getValue() ?? '';
+            $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
+            $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
+ 
+        } else {
+       
+        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+                
+        }
+        return $html .= '</div>';
     }
 }
