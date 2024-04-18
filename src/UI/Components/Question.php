@@ -366,7 +366,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 case 'Placeholder':
                     $this->setPlaceholder($childNode->nodeValue);
                     break;
-                case 'Tooltip':
+                case 'ToolTip':
                     $this->setTooltip($childNode->nodeValue);
                     break;
                 case 'HelpText':
