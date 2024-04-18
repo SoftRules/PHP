@@ -222,7 +222,7 @@ class Group implements GroupComponentContract, RenderableWrapper
                     /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
                         switch ($grandChildNode->nodeName) {
-                            case 'Group':
+                            case 'Label':
                                 $this->addHeaderItem(self::createFromDomNode($grandChildNode));
                                 break;
                             case 'Question':
