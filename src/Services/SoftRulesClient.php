@@ -121,7 +121,7 @@ class SoftRulesClient extends Factory implements ClientContract
 
         return $responseXml;
     }
-
+    
     protected function newPendingRequest(): PendingRequest
     {
         return parent::newPendingRequest()

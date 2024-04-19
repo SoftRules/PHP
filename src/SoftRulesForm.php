@@ -14,8 +14,8 @@ final class SoftRulesForm implements Stringable
     private string $updateUserInterfaceRoute = '/updateUserInterface.php';
 
     private string $previousPageRoute = '/previousPage.php';
-
     private string $nextPageRoute = '/nextPage.php';
+    private string $scriptActionsRoute = '/scriptActions.php';
 
     private string $initialXml = '';
 
@@ -89,6 +89,13 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
+    public function setScriptActionsRoute(string $route): self
+    {
+        $this->scriptActionsRoute = $route;
+
+        return $this;
+    }
+
     public function render(): HtmlString
     {
         return new HtmlString(
@@ -110,6 +117,7 @@ final class SoftRulesForm implements Stringable
             updateUserInterface: '{$this->updateUserInterfaceRoute}',
             previousPage: '{$this->previousPageRoute}',
             nextPage: '{$this->nextPageRoute}',
+            scriptactions: '{$this->scriptActionsRoute}',
         },
     };
     let script = document.createElement('script');

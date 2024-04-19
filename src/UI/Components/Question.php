@@ -57,7 +57,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $elementPath;
 
-    private $updateUserInterface;
+    private bool $updateUserInterface = false;
 
     private $invalidMessage;
 
@@ -263,7 +263,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function setUpdateUserInterface($updateUserInterface): void
     {
-        $this->updateUserInterface = $updateUserInterface;
+        if (is_string($updateUserInterface)) $this->updateUserInterface = strtolower($updateUserInterface) === 'true' ?? $this->updateUserInterface = false;
     }
 
     public function getUpdateUserInterface()
@@ -494,7 +494,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function render(): string
     {
         $html = '<li>';
-        $html .= "<div>{$this->getDescription()} ({$this->getName()}) UpdateUserinterface: {$this->getUpdateUserInterface()}{$this->getTextValuesDescription()}</div>";
+        $html .= "<div>{$this->getDescription()} ({$this->getName()}) {$this->getTextValuesDescription()}</div>";
+
+        $update = " onblur='updateControls($(this))'";
+        if ($this->getUpdateUserInterface() === true) {
+        //if (strtolower($this->getUpdateUserInterface()) === 'true') {
+            $update = " onblur='updateUserInterface($(this))'";
+        }
 
         if ($this->textValues->isNotEmpty()) {
             $html .=
@@ -509,10 +515,14 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $html .=
                 <<<HTML
                 <input type="text"
-                       name="{$this->getName()}"
+                       id="{$this->getName()}"
                        value="{$this->getValue()}"
+                       data-id="{$this->getQuestionID()}"
+                       data-elementpath="{$this->getElementPath()}"
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
-                       style="{$this->getStyle()->default->inlineStyle}"/>
+                       style="{$this->getStyle()->default->inlineStyle}"
+                       {$update}
+                       />
                 HTML;
         }
 

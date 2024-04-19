@@ -65,6 +65,16 @@ function updateUserInterface($item) {
     getXML_HTML(config.routes.updateUserInterface, xmlText, id);
 }
 
+function updateControls($item) {
+    const value = $item.val();
+    const name = $item.attr('id');
+    const path = $item.data('elementpath');
+
+    $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
+
+    scriptActions();
+}
+
 function objectToFormData(object) {
     const formData = new FormData();
 
@@ -135,6 +145,36 @@ function getHTML(xml) {
         })
         .then((data) => {
             $('#softrules-form-content').html(data);
+        })
+        .catch((error) => {
+            console.error(error);
+
+            alert(error);
+        })
+        .finally(() => hideWaitCursor());
+}
+
+function scriptActions() {
+    const xml = new XMLSerializer().serializeToString($xml);
+    
+    fetch(config.routes.scriptactions, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/xml',
+        },
+        body: objectToFormData({
+            xml,
+        }),
+    })
+        .then(async (response) => {
+            if (response.ok) {
+                return response.text();
+            }
+
+            throw new Error('Foutmelding: ' + await response.text());
+        })
+        .then((data) => {
+            console.log('scriptactions');
         })
         .catch((error) => {
             console.error(error);

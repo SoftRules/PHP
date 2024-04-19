@@ -15,4 +15,5 @@ enum eDisplayType: string
     case raty = 'raty';
     case tile = 'tile';
     case toggle = 'toggle';
+    case none = '';
 }

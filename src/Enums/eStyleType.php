@@ -37,4 +37,5 @@ enum eStyleType: string
 	case tweekeuzes = 'tweekeuzes';
 	case driekeuzes = 'driekeuzes';
 	case nolabel = 'nolabel';
+	case none = '';
 }
