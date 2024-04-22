@@ -45,7 +45,7 @@ final class HtmlRenderer implements Stringable
     {
         foreach ($components as $component) {
             $componentName = class_basename($component);
-            $this->html .= '<div>';
+/*             $this->html .= '<div>';
             $this->html .= $componentName;
 
             if ($component instanceof ButtonComponentContract) {
@@ -65,7 +65,7 @@ final class HtmlRenderer implements Stringable
             }
 
             $this->html .= $VisibleText . '<br>';
-            $this->html .= '</div>';
+            $this->html .= '</div>' */;
 
             if ($component instanceof RenderableWrapper) {
                 $this->html .= $component->renderOpeningTags();

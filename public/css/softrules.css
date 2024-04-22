@@ -1,0 +1,17 @@
+.card-body {
+    padding: 20px;
+    background-color: rgb(245, 245, 245);
+}
+.card-header {   
+    color: #172d5d;
+    font-size: large;
+    padding: 10px 0 !important;
+    height: 60px;
+    font-weight: bold;
+    text-align: left;   
+  }
+
+  .sr-label{
+    font-size: 14px;
+    font-weight: 100;
+  }

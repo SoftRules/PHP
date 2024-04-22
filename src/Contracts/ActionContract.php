@@ -3,8 +3,9 @@
 namespace SoftRules\PHP\Contracts;
 
 use DOMDocument;
+use Illuminate\Contracts\Support\Jsonable;
 
-interface ActionContract
+interface ActionContract extends \JsonSerializable
 {
     public function setItemID(string $itemID): void;
 

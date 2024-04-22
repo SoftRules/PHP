@@ -51,7 +51,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function setLabelID(string $labelID): void
     {
-        $this->labelID = $labelID;
+        $this->labelID = str_replace('|', '_', $labelID);
     }
 
     public function getLabelID(): string
@@ -150,6 +150,13 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function render(): string
     {
-        return "<label>{$this->getText()}</label><br/>";
+        $html =
+                <<<HTML
+                <label data-id="{$this->getLabelID()}"
+                       class="sr-label {$this->getStyle()->default->class}"
+                       style="{$this->getStyle()->default->inlineStyle}">
+                       {$this->getText()}                       
+                HTML;
+    return $html;
     }
 }

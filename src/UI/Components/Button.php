@@ -58,7 +58,7 @@ class Button implements ButtonComponentContract, Renderable
 
     public function setButtonID(string $buttonID): void
     {
-        $this->buttonID = $buttonID;
+        $this->buttonID = str_replace('|', '_', $buttonID);
     }
 
     public function getButtonID(): string

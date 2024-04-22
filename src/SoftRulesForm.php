@@ -22,6 +22,7 @@ final class SoftRulesForm implements Stringable
     private ?HtmlString $csrfProtection = null;
 
     private string $javascriptPath = 'js';
+    private string $cssPath = 'css';
 
     private function __construct(public readonly string $product)
     {
@@ -43,6 +44,13 @@ final class SoftRulesForm implements Stringable
     public function setJavascriptPath(string $path): self
     {
         $this->javascriptPath = $path;
+
+        return $this;
+    }
+
+    public function setCSSPath(string $path): self
+    {
+        $this->cssPath = $path;
 
         return $this;
     }
@@ -123,9 +131,15 @@ final class SoftRulesForm implements Stringable
     let script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = '{$this->javascriptPath}/UpdateUserInterface.js';
-
     document.head.appendChild(script);
+
+    var link  = document.createElement('link');   
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = '{$this->cssPath}/softrules.css';  
+    document.head.appendChild(link);
 </script>
+
 EOT
         );
     }

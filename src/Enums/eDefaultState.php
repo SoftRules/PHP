@@ -2,8 +2,8 @@
 
 namespace SoftRules\PHP\Enums;
 
-enum eDefaultState: int
+enum eDefaultState: string
 {
-    case Editable = 0;
-    case Readonly = 1;
+    case Editable = "editable";
+    case Readonly = "readonly";
 }

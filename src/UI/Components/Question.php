@@ -19,6 +19,8 @@ use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Restrictions;
 use SoftRules\PHP\UI\Style\QuestionComponentStyle;
 use SoftRules\PHP\UI\TextValueComponent;
+use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eDefaultState;
 
 class Question implements ComponentWithCustomPropertiesContract, QuestionComponentContract, Renderable
 {
@@ -47,7 +49,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $dataType;
 
-    private $displayType;
+    private ?eDisplayType $displayType = null;
 
     private $displayOnly;
 
@@ -103,7 +105,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function setQuestionID(string $questionID): void
     {
-        $this->questionID = $questionID;
+        $this->questionID = str_replace('|', '_', $questionID);
     }
 
     public function getQuestionID(): string
@@ -171,12 +173,18 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->helpText;
     }
 
-    public function setDefaultState($defaultState): void
+    public function setDefaultState(eDefaultState|string $defaultState): void
     {
-        $this->defaultState = $defaultState;
+        if ($defaultState instanceof eDefaultState) {
+            $this->defaultState = $defaultState;
+
+            return;
+        }
+
+        $this->defaultState = eDefaultState::from(strtolower($defaultState));
     }
 
-    public function getDefaultState()
+    public function getDefaultState() : eDefaultState
     {
         return $this->defaultState;
     }
@@ -211,12 +219,18 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->dataType;
     }
 
-    public function setDisplayType($displayType): void
+    public function setDisplayType(eDisplayType|string $displayType): void
     {
-        $this->displayType = $displayType;
+        if ($displayType instanceof eDisplayType) {
+            $this->displayType = $displayType;
+
+            return;
+        }
+
+        $this->displayType = eDisplayType::from(strtolower($displayType));
     }
 
-    public function getDisplayType()
+    public function getDisplayType(): eDisplayType
     {
         return $this->displayType;
     }
@@ -493,25 +507,39 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function render(): string
     {
-        $html = '<li>';
-        $html .= "<div>{$this->getDescription()} ({$this->getName()}) {$this->getTextValuesDescription()}</div>";
+        $html = "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
+        $html .= "<div class='col-sm-4'>";
+        $html .= "<label class='sr-label control-label align-self-center' for={$this->getName()} id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
+        $html .= "</div>";
 
-        $update = " onblur='updateControls($(this))'";
-        if ($this->getUpdateUserInterface() === true) {
-        //if (strtolower($this->getUpdateUserInterface()) === 'true') {
-            $update = " onblur='updateUserInterface($(this))'";
-        }
+        $html .= "<div class='col-sm-7'>";
 
         if ($this->textValues->isNotEmpty()) {
+            $update = " onchange='updateControls($(this))'";
+            if ($this->getUpdateUserInterface() === true) {
+                $update = " onchange='updateUserInterface($(this))'";
+            }
+
             $html .=
                 <<<HTML
                 <select name="{$this->getName()}"
+                        id="{$this->getName()}"
                         class="sr-question sr-question-choice {$this->getStyle()->default->class}"
-                        style="{$this->getStyle()->default->inlineStyle}">
+                        style="{$this->getStyle()->default->inlineStyle}"
+                        data-id="{$this->getQuestionID()}"
+                        data-elementpath="{$this->getElementPath()}"
+                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
+                        {$update}
+                       >
                     {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
                 </select>
                 HTML;
         } else {
+            $update = " onblur='updateControls($(this))'";
+            if ($this->getUpdateUserInterface() === true) {
+                $update = " onblur='updateUserInterface($(this))'";
+            }
+    
             $html .=
                 <<<HTML
                 <input type="text"
@@ -525,8 +553,16 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        />
                 HTML;
         }
+        $html .= "</div>"; //control
 
-        return $html . '</li>';
+        $html .= "<div class='col-sm-1'>";
+        if ($this->getHelpText() !== "") {
+            //nog default bootstrap maken
+            $html .= "<span style='font-size: 14pt; margin-top: 6px; color: #888; cursor: pointer;' data-html='true' class='fa fa-info-circle' data-toggle='tooltip' data-placement='right' title='' aria-hidden='true' data-original-title={$this->getHelpText()}></span>";
+        }
+        $html .= "</div>";
+
+        return $html . '</div>'; //form-group
     }
 
     private function getTextValuesDescription(): string

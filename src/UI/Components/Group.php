@@ -282,36 +282,6 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function renderOpeningTags(): string
     {
-//        foreach ($this->getCustomProperties() as $customproperty) {
-//            switch (strtolower($customproperty->getName())) {
-//                case "styletype":
-//                    $StyleType = " data-styleType='" . $customproperty->getValue() . "'";
-//                    break;
-//                case "pagenum":
-//                    $PageNum = " data-pagenum='" . $customproperty->getValue() . "'";
-//                    break;
-//                case "numpages":
-//                    $NumPages = " data-numpages='" . $customproperty->getValue() . "'";
-//                    break;
-//                case "hidebutton":
-//                    $HideButton = " data-hidebutton='" . $customproperty->getValue() . "'";
-//                    break;
-//                case "noborder":
-//                    break;
-//                case "headertext":
-//                    break;
-//                case "defaultexpandablebehaviour":
-//                    break;
-//                case "rowselect":
-//                    break;
-//                case "tabelsorteeropties":
-//                    break;
-//                default:
-//                    echo "Group customproperty not implemented " . $customproperty->getName() . "<br>";
-//                    break;
-//            }
-//        }
-
         $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
 
         $style = match ($this->getType()) {
@@ -319,23 +289,88 @@ class Group implements GroupComponentContract, RenderableWrapper
             default => null,
         };
 
-        $html = "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+        $html = "";
 
         return $html . match ($this->getType()) {
-            eGroupType::page => '<ul>',
-            eGroupType::box, eGroupType::expandable, eGroupType::table, eGroupType::grid, eGroupType::gridrow, eGroupType::gridcolumn, eGroupType::row => '<ul>',
+            eGroupType::page => $this->getPageOpeningsTag($style, $styleType),
+            eGroupType::box => $this->getBoxOpeningsTag($style, $styleType),
+            eGroupType::grid => $this->getGridOpeningsTag($style, $styleType),
+            eGroupType::gridrow => $this->getGridRowOpeningsTag($style, $styleType),
+            eGroupType::gridcolumn => $this->getGridColumnOpeningsTag($style, $styleType),
+            eGroupType::expandable, eGroupType::table, eGroupType::row => "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>",
             default => 'Group Type not implemented ' . $this->getType()->value . '<br>',
         };
+    }
+
+    public function getPageOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+
+        if ($this->getName() !== "")
+        {
+            $html .= "<div class='card-header'>";
+            $html .= "<div class='col-sm-11 header-col'>";
+            $html .= "<span>{$this->getName()}</span>";
+            $html .= "</div>";
+            $html .= "</div>";
+        }
+         
+        $html .= "<div class='show'>";
+        $html .= "<div class='card-body'>";
+
+        return $html;
+    }
+
+    public function getBoxOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id={$this->getGroupID()}>";
+
+        if ($this->getName() !== "")
+        {
+            $html .= "<div class='card-header'>";
+            $html .= "<div class='col-sm-11 header-col'>";
+            $html .= "<span>{$this->getName()}</span>";
+            $html .= "</div>";
+            $html .= "</div>";
+        }
+         
+        $html .= "<div class='show'>";
+        $html .= "<div class='card-body'>";
+
+        return $html;
+    }
+
+    public function getGridOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='minimal grid sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+        return $html;
+    }
+
+    public function getGridRowOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='row sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+        return $html;
+    }
+
+    public function getGridColumnOpeningsTag($style, $styleType)
+    {
+        $columnwidth = $this->getCustomPropertyByName('columnwidth')?->getValue() ?? '12';
+        $html = "<div class='col-sm-{$columnwidth} sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-columnwidth={$columnwidth}>";
+        return $html;
     }
 
     public function renderClosingTags(): string
     {
         $html = match ($this->getType()) {
-            eGroupType::page => '</ul>',
-            eGroupType::box, eGroupType::expandable, eGroupType::table, eGroupType::grid, eGroupType::gridrow, eGroupType::gridcolumn, eGroupType::row => '</ul>',
-            default => '',
+            eGroupType::page => '</div></div>',
+            eGroupType::box => '</div>',
+            eGroupType::grid => '</div>',
+            eGroupType::gridrow =>'</div>',
+            eGroupType::gridcolumn => '</div>',
+            eGroupType::expandable, eGroupType::table, eGroupType::row => '</div>',
+            default => '</div>',
         };
 
-        return $html . '</div>';
+        return $html;
     }
 }

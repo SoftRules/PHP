@@ -2,22 +2,7 @@
 
 namespace SoftRules\PHP\UI;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterface;
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use SoftRules\PHP\Contracts\ActionContract;
-use SoftRules\PHP\Contracts\UI\ConditionContract;
-use SoftRules\PHP\Contracts\UI\OperandContract;
-use SoftRules\PHP\Enums\eLogOperator;
-use SoftRules\PHP\Enums\eOperator;
-use SoftRules\PHP\Enums\eValueType;
-use SoftRules\PHP\Traits\ParsedFromXml;
-use SoftRules\PHP\UI\Collections\UiComponentsCollection;
-use SoftRules\PHP\UI\Components\Group;
-use SoftRules\PHP\UI\Components\Question;
-use Throwable;
 
 class Action implements ActionContract
 { 
@@ -60,4 +45,13 @@ class Action implements ActionContract
         $this->command = $command;
         $this->value = $value;
     }
+
+    public function jsonSerialize():Array
+    {
+        return [
+            'ItemID' => $this->itemID,
+            'Command' => $this->command,
+            'Value' => $this->value,            
+        ];
+    } // jsonSerialize
 }

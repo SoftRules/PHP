@@ -174,10 +174,46 @@ function scriptActions() {
             throw new Error('Foutmelding: ' + await response.text());
         })
         .then((data) => {
-            console.log('scriptactions');
+            
+            const obj = JSON.parse(data);
+
+            for (i = 0; i < obj.length; i++) {
+                if (obj[i].Command == 'Hide') {
+                    $('[data-id=' + obj[i].ItemID + ']').hide();                  
+                }
+                else if (obj[i].Command == 'Show') {
+                    $('[data-id=' + obj[i].ItemID + ']').show();                  
+                }
+                else if (obj[i].Command == 'Valid') {
+                    $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
+                }
+                else if (obj[i].Command == 'Invalid') {
+                    $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', false);
+                }
+                else if (obj[i].Command == 'Required') {
+                    $('[data-id=' + obj[i].ItemID + ']').prop('required', true);
+                }
+                else if (obj[i].Command == 'NotRequired') {
+                    $('[data-id=' + obj[i].ItemID + ']').prop('required', false);
+                }
+                else if (obj[i].Command == 'Enabled') {
+                    $('[data-id=' + obj[i].ItemID + ']').prop('disabled', false);
+                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch'))
+                    {
+                        $('[data-id=' + obj[i].ItemID + ']').parent().removeClass('disabled');
+                    }
+                }
+                else if (obj[i].Command == 'Disabled') {
+                    $('[data-id=' + obj[i].ItemID + ']').prop('disabled', true);
+                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch'))
+                    {
+                        $('[data-id=' + obj[i].ItemID + ']').parent().addClass('disabled');
+                    }
+                }                              
+            }
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
 
             alert(error);
         })
