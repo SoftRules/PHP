@@ -45,6 +45,7 @@ class Group implements GroupComponentContract, RenderableWrapper
     private ExpressionContract $visibleExpression;
 
     private ParameterContract $parameter;
+    private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
     {
@@ -130,6 +131,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function addComponent(UiComponentContract $component): void
     {
+        $component->setParentGroupType($this->getType());
         $this->components->add($component);
     }
 
@@ -176,6 +178,15 @@ class Group implements GroupComponentContract, RenderableWrapper
     public function getParameter(): ParameterContract
     {
         return $this->parameter;
+    }  
+    public function setParentGroupType(eGroupType $parentGroupType): void
+    {
+        $this->parentGroupType = $parentGroupType;
+    }
+    
+    public function getParentGroupType(): ?eGroupType
+    {
+        return $this->parentGroupType;
     }
 
     public function parse(DOMElement $DOMElement): static
@@ -297,11 +308,13 @@ class Group implements GroupComponentContract, RenderableWrapper
             eGroupType::grid => $this->getGridOpeningsTag($style, $styleType),
             eGroupType::gridrow => $this->getGridRowOpeningsTag($style, $styleType),
             eGroupType::gridcolumn => $this->getGridColumnOpeningsTag($style, $styleType),
-            eGroupType::expandable, eGroupType::table, eGroupType::row => "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>",
+            eGroupType::table => $this->getTableOpeningsTag($style, $styleType),
+            eGroupType::row => $this->getTableRowOpeningsTag($style, $styleType),
+            eGroupType::expandable  => "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>",
             default => 'Group Type not implemented ' . $this->getType()->value . '<br>',
         };
     }
-
+ 
     public function getPageOpeningsTag($style, $styleType)
     {
         $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
@@ -323,7 +336,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function getBoxOpeningsTag($style, $styleType)
     {
-        $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id={$this->getGroupID()}>";
+        $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>";
 
         if ($this->getName() !== "")
         {
@@ -348,26 +361,55 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function getGridRowOpeningsTag($style, $styleType)
     {
-        $html = "<div class='row sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}'>";
+        $html = "<div class='row sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>";
         return $html;
     }
 
     public function getGridColumnOpeningsTag($style, $styleType)
     {
         $columnwidth = $this->getCustomPropertyByName('columnwidth')?->getValue() ?? '12';
-        $html = "<div class='col-sm-{$columnwidth} sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-columnwidth={$columnwidth}>";
+        $html = "<div class='col-sm-{$columnwidth} sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-columnwidth={$columnwidth} data-id='{$this->getGroupID()}'>";
         return $html;
     }
+
+    public function getTableOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='table-container sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>";
+        $html .= "<table class='table sr-table'>";
+
+        if ($this->getHeaderItems() !== null)
+        {   $html .= "<thead class='sr-table-thead'><tr>";
+
+            foreach ($this->getHeaderItems() as $item)
+            {
+                $html .= "<th class='sr-table-th'>{$item->getText()}</th>";
+            }
+            
+            $html .= "</tr></thead>";
+        }
+        $html .= "<tbody class='sr-table-tbody'>";
+
+        return $html;
+    }
+
+    public function getTableRowOpeningsTag($style, $styleType)
+    {
+        $html = "<tr class='sr-table-tr group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>";
+        return $html;
+    }
+
 
     public function renderClosingTags(): string
     {
         $html = match ($this->getType()) {
-            eGroupType::page => '</div></div>',
-            eGroupType::box => '</div>',
+            eGroupType::page => '</div></div></div>',
+            eGroupType::box => '</div></div></div>',
             eGroupType::grid => '</div>',
             eGroupType::gridrow =>'</div>',
             eGroupType::gridcolumn => '</div>',
-            eGroupType::expandable, eGroupType::table, eGroupType::row => '</div>',
+            eGroupType::table => '</tbody></table></div>',
+            eGroupType::row => '</tr>',
+            eGroupType::expandable => '</div>',
             default => '</div>',
         };
 

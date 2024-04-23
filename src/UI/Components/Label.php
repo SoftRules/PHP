@@ -14,6 +14,7 @@ use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\LabelComponentStyle;
+use SoftRules\PHP\Enums\eGroupType;
 
 class Label implements ComponentWithCustomPropertiesContract, LabelComponentContract, Renderable
 {
@@ -33,7 +34,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
     private ParameterContract $parameter;
 
     private ExpressionContract $visibleExpression;
-
+    private ?eGroupType $parentGroupType = eGroupType::none;
     public function __construct()
     {
         $this->setVisibleExpression(new Expression());
@@ -108,7 +109,15 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
     {
         return $this->visibleExpression;
     }
-
+    public function setParentGroupType(eGroupType $parentGroupType): void
+    {
+        $this->parentGroupType = $parentGroupType;
+    }
+    
+    public function getParentGroupType(): ?eGroupType
+    {
+        return $this->parentGroupType;
+    }
     public function parse(DOMElement $DOMElement): static
     {
         /** @var DOMElement $childNode */
@@ -150,13 +159,38 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function render(): string
     {
-        $html =
+        $html = "";
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "<td class='sr-table-td'>";
+        }
+        
+        //alignment
+        $align = "";
+        $valign = "";
+        if ($this->getCustomPropertyByName('align')?->getValue() !== null)
+        {
+            $align = "sr-align-{$this->getCustomPropertyByName('align')?->getValue()}";
+        }
+        if ($this->getCustomPropertyByName('valign')?->getValue() !== null)
+        {
+            $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')?->getValue()}";
+        }
+
+        $html .=
                 <<<HTML
-                <label data-id="{$this->getLabelID()}"
-                       class="sr-label {$this->getStyle()->default->class}"
+                <span data-id="{$this->getLabelID()}"
+                       class="sr-label {$this->getStyle()->default->class} {$align} {$valign}"
                        style="{$this->getStyle()->default->inlineStyle}">
-                       {$this->getText()}                       
+                       {$this->getText()}            
+                </span>              
                 HTML;
+
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "</td>";
+        }
+
     return $html;
     }
 }

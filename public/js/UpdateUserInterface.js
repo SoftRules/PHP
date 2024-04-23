@@ -1,7 +1,11 @@
 ﻿let $xml;
 
 $(document).ready(() => {
-    getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
+    getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));   
+    
+    //Deze worden (te vroeg of niet) uitgevoerd. Nu in final van getXML_HTML
+    $('[data-toggle="tooltip"]').tooltip();
+    scriptActions();
 });
 
 function parseXML(xml) {
@@ -73,6 +77,7 @@ function updateControls($item) {
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
     scriptActions();
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 function objectToFormData(object) {
@@ -120,7 +125,11 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
 
             alert(error);
         })
-        .finally(() => hideWaitCursor());
+        .finally(() => { 
+            scriptActions(); 
+            $('[data-toggle="tooltip"]').tooltip();
+            hideWaitCursor();
+        });
 }
 
 function getHTML(xml) {
@@ -179,7 +188,7 @@ function scriptActions() {
 
             for (i = 0; i < obj.length; i++) {
                 if (obj[i].Command == 'Hide') {
-                    $('[data-id=' + obj[i].ItemID + ']').hide();                  
+                    $('[data-id=' + obj[i].ItemID + ']').hide();                                   
                 }
                 else if (obj[i].Command == 'Show') {
                     $('[data-id=' + obj[i].ItemID + ']').show();                  

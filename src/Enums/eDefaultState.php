@@ -6,4 +6,5 @@ enum eDefaultState: string
 {
     case Editable = "editable";
     case Readonly = "readonly";
+    case none = '';
 }

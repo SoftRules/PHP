@@ -11,6 +11,7 @@ use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
+use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -43,13 +44,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $helpText;
 
-    private $defaultState;
+    private ?eDefaultState $defaultState = eDefaultState::none;
 
     private $includeInvisibleQuestion;
 
-    private $dataType;
+    private $dataType; // nog enum van maken
 
-    private ?eDisplayType $displayType = null;
+    private ?eDisplayType $displayType =  eDisplayType::none;
 
     private $displayOnly;
 
@@ -66,6 +67,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $readyForProcess;
 
     private $coreValue;
+    private ?eGroupType $parentGroupType = eGroupType::none;
 
     /**
      * @var Collection<int, TextValueComponentContract>
@@ -118,7 +120,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -128,7 +130,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -211,7 +213,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function setDataType($dataType): void
     {
-        $this->dataType = $dataType;
+        $this->dataType = strtolower($dataType);
     }
 
     public function getDataType()
@@ -270,7 +272,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->elementPath = $elementPath;
     }
 
-    public function getElementPath()
+    public function getElementPath(): string
     {
         return $this->elementPath;
     }
@@ -359,6 +361,17 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $this->textValues->add($textValue);
     }
+
+    public function setParentGroupType(eGroupType $parentGroupType): void
+    {
+        $this->parentGroupType = $parentGroupType;
+    }
+    
+    public function getParentGroupType(): ?eGroupType
+    {
+        return $this->parentGroupType;
+    }
+
 
     public function parse(DOMElement $DOMElement): static
     {
@@ -507,14 +520,20 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function render(): string
     {
-        $html = "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
+        $html = "";
+        if ($this->getParentGroupType() === eGroupType::row) // indien parent een table row betreft, dan <td></td> plaatsen
+        {
+            $html .= "<td class='sr-table-td'>";
+        }        
+        
+        $html .= "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
         $html .= "<div class='col-sm-4'>";
         $html .= "<label class='sr-label control-label align-self-center' for={$this->getName()} id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
         $html .= "</div>";
 
         $html .= "<div class='col-sm-7'>";
 
-        if ($this->textValues->isNotEmpty()) {
+        if ($this->textValues->isNotEmpty()) { //selectbox
             $update = " onchange='updateControls($(this))'";
             if ($this->getUpdateUserInterface() === true) {
                 $update = " onchange='updateUserInterface($(this))'";
@@ -534,15 +553,63 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
                 </select>
                 HTML;
-        } else {
+        } else { //input
             $update = " onblur='updateControls($(this))'";
             if ($this->getUpdateUserInterface() === true) {
                 $update = " onblur='updateUserInterface($(this))'";
             }
-    
-            $html .=
-                <<<HTML
-                <input type="text"
+                
+            $html .= "<div class='sr-input-group input-group'>"; 
+            
+            $html .= match ($this->getDataType()) {
+                "currency"=> "<span class='input-group-addon'>&euro;</span>",
+                "date"=> "<span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span>",
+                default => "",
+            };
+
+            $type = match ($this->getDataType()) {
+                "date" => "type=date ",
+                "time" => "type=time ",
+                "integer" => "type=integer ",
+                "currency" => "type=currency ",
+                "decimal" => "type=number ",
+                "string" => "type=text ",                
+                default=> "",
+            };
+            
+            if ($this->getDisplayType() === eDisplayType::password) { // overwrite $type
+                $type = "type=password ";
+            };
+                
+            $html .= match ($this->getDisplayType()) {                
+                default => $this->getDefaultInputControl($type, $update, $this->getDisplayType()->value),
+            };
+
+            $html .= "</div>"; //input group
+        }
+       
+        $html .= "</div>"; //control
+
+        $html .= "<div class='col-sm-1'>";
+        if ($this->getHelpText() !== null) {
+            $html .= "<i class='fa fa-info-circle sr-question-help' data-toggle='tooltip' aria-hidden='true' data-original-title='{$this->getHelpText()}'></i>";
+        }
+        $html .= "</div>";
+        $html .= "</div>"; //form-group
+        
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "</td>";
+        }  
+
+        return $html;
+    }
+
+    public function getDefaultInputControl($type, $update, $displayType)
+    {
+        return 
+        <<<HTML
+                <input {$type}
                        id="{$this->getName()}"
                        value="{$this->getValue()}"
                        data-id="{$this->getQuestionID()}"
@@ -550,19 +617,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
                        {$update}
+                       data-displaytype={$displayType}
                        />
                 HTML;
-        }
-        $html .= "</div>"; //control
-
-        $html .= "<div class='col-sm-1'>";
-        if ($this->getHelpText() !== "") {
-            //nog default bootstrap maken
-            $html .= "<span style='font-size: 14pt; margin-top: 6px; color: #888; cursor: pointer;' data-html='true' class='fa fa-info-circle' data-toggle='tooltip' data-placement='right' title='' aria-hidden='true' data-original-title={$this->getHelpText()}></span>";
-        }
-        $html .= "</div>";
-
-        return $html . '</div>'; //form-group
     }
 
     private function getTextValuesDescription(): string

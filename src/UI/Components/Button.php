@@ -16,6 +16,7 @@ use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
+use SoftRules\PHP\Enums\eGroupType;
 
 class Button implements ButtonComponentContract, Renderable
 {
@@ -40,6 +41,7 @@ class Button implements ButtonComponentContract, Renderable
     private ExpressionContract $visibleExpression;
 
     private ParameterContract $parameter;
+    private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
     {
@@ -157,6 +159,15 @@ class Button implements ButtonComponentContract, Renderable
     {
         return $this->parameter;
     }
+    public function setParentGroupType(eGroupType $parentGroupType): void
+    {
+        $this->parentGroupType = $parentGroupType;
+    }
+    
+    public function getParentGroupType(): ?eGroupType
+    {
+        return $this->parentGroupType;
+    }
 
     public function parse(DOMElement $DOMElement): static
     {
@@ -239,7 +250,13 @@ class Button implements ButtonComponentContract, Renderable
             default => '',
         };
 
-        $html = '<div>';
+        $html = "";
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "<td class='sr-table-td'>";
+        }
+
+        $html .= '<div>';
         if ($this->getDisplayType() === eDisplayType::tile) {
             $hint = $this->getHint();
             $width = $this->getCustomPropertyByName('width')?->getValue() ?? '';
@@ -251,6 +268,11 @@ class Button implements ButtonComponentContract, Renderable
        
         $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
                 
+        }
+        
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "</td>";
         }
         return $html .= '</div>';
     }

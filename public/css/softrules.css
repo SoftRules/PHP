@@ -15,3 +15,49 @@
     font-size: 14px;
     font-weight: 100;
   }
+
+  .sr-question-help {
+    font-size: 14pt; 
+    margin-top: 6px; 
+    color: #888; 
+    cursor: pointer;
+  }
+
+  .sr-table-td {
+    border-top: 0px;
+  }
+
+.sr-align-left {
+  text-align: left;
+}
+
+.sr-align-right {
+  text-align: right;
+}
+.sr-align-center {
+  text-align: center;
+}
+
+[data-displaytype="kenteken"] {
+  background-color: #FECD23 !important;
+  background-image: url(https://www.comparity.nl/img/kenteken_NL.svg) !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: left !important;
+  outline: none;
+  box-shadow: none !important;
+  padding-left: 25px;
+  height: 32px;
+  padding-bottom: 5px;
+  text-transform: uppercase !important;
+  color: #000;
+  font-weight: 700;
+  overflow: hidden;
+  border-radius: 3px !important;
+  text-align: center !important;
+  font-size: 11pt !important;
+  width: 148px !important;
+  flex: unset !important
+}
+
+
