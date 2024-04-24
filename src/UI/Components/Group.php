@@ -3,8 +3,10 @@
 namespace SoftRules\PHP\UI\Components;
 
 use DOMElement;
+use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
+use SoftRules\PHP\Contracts\UI\Components\LabelComponentContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
@@ -147,6 +149,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function addHeaderItem($headerItem): void
     {
+        $headerItem->setParentGroupType(eGroupType::tableheader);
         $this->headerItems[] = $headerItem;
     }
 
@@ -382,7 +385,10 @@ class Group implements GroupComponentContract, RenderableWrapper
 
             foreach ($this->getHeaderItems() as $item)
             {
-                $html .= "<th class='sr-table-th'>{$item->getText()}</th>";
+                if ($item instanceof Renderable)
+                {
+                    $html .= $item->render();
+                }
             }
             
             $html .= "</tr></thead>";

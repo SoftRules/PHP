@@ -37,6 +37,7 @@ final class HtmlRenderer implements Stringable
         $this->allComponents = $UIClass->components;
 
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
+        $this->html .= "<div class='errorContainer alert alert-danger' style='margin-top: 2px; display:none' data-type='Danger' id='messageAlert'></div>";
 
         $this->renderComponents($UIClass->components);
     }
@@ -45,27 +46,6 @@ final class HtmlRenderer implements Stringable
     {
         foreach ($components as $component) {
             $componentName = class_basename($component);
-/*             $this->html .= '<div>';
-            $this->html .= $componentName;
-
-            if ($component instanceof ButtonComponentContract) {
-                $this->html .= ' Text: <b>' . $component->getText() . '</b>';
-            } elseif ($component instanceof GroupComponentContract) {
-                $this->html .= ' Type: <b>' . $component->getType()->value . '</b> ' . $component->getName();
-            }
-
-            if ($component instanceof ComponentWithCustomPropertiesContract) {
-                $this->html .= $this->getCustomPropertyDescriptions($component);
-            }
-
-            $VisibleText = '';
-
-            if (! $this->itemVisible($component)) {
-                $VisibleText = ' Niet tonen (invisible)';
-            }
-
-            $this->html .= $VisibleText . '<br>';
-            $this->html .= '</div>' */;
 
             if ($component instanceof RenderableWrapper) {
                 $this->html .= $component->renderOpeningTags();

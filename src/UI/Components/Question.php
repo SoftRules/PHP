@@ -11,6 +11,7 @@ use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
+use SoftRules\PHP\Enums\eDataType;
 use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
@@ -48,8 +49,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $includeInvisibleQuestion;
 
-    private $dataType; // nog enum van maken
-
+    private $dataType = eDataType::none;
     private ?eDisplayType $displayType =  eDisplayType::none;
 
     private $displayOnly;
@@ -211,12 +211,18 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->includeInvisibleQuestion;
     }
 
-    public function setDataType($dataType): void
+    public function setDataType(eDataType|string $dataType): void
     {
-        $this->dataType = strtolower($dataType);
+        if ($dataType instanceof eDataType) {
+            $this->dataType = $dataType;
+
+            return;
+        }
+
+        $this->dataType = eDataType::from(strtolower($dataType));
     }
 
-    public function getDataType()
+    public function getDataType(): eDataType
     {
         return $this->dataType;
     }
@@ -521,82 +527,58 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function render(): string
     {
         $html = "";
-        if ($this->getParentGroupType() === eGroupType::row) // indien parent een table row betreft, dan <td></td> plaatsen
+
+        // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
+        if ($this->getParentGroupType() === eGroupType::row) 
         {
             $html .= "<td class='sr-table-td'>";
         }        
         
-        $html .= "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
-        $html .= "<div class='col-sm-4'>";
-        $html .= "<label class='sr-label control-label align-self-center' for={$this->getName()} id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
-        $html .= "</div>";
+        if ($this->getDisplayType() === eDisplayType::switch) {
+            $html .= $this->getSwitchControl();
+        } else 
+        if ($this->getDisplayType() === eDisplayType::raty) {
+            //$html .= $this->getToggleControl();
+        } else {
 
-        $html .= "<div class='col-sm-7'>";
+            $html .= "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
+            $html .= "<div class='col-sm-4'>";
+            $html .= "<label class='sr-label control-label align-self-center' for={$this->getName()} id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
+            $html .= "</div>";
 
-        if ($this->textValues->isNotEmpty()) { //selectbox
-            $update = " onchange='updateControls($(this))'";
-            if ($this->getUpdateUserInterface() === true) {
-                $update = " onchange='updateUserInterface($(this))'";
-            }
-
-            $html .=
-                <<<HTML
-                <select name="{$this->getName()}"
-                        id="{$this->getName()}"
-                        class="sr-question sr-question-choice {$this->getStyle()->default->class}"
-                        style="{$this->getStyle()->default->inlineStyle}"
-                        data-id="{$this->getQuestionID()}"
-                        data-elementpath="{$this->getElementPath()}"
-                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
-                        {$update}
-                       >
-                    {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
-                </select>
-                HTML;
-        } else { //input
-            $update = " onblur='updateControls($(this))'";
-            if ($this->getUpdateUserInterface() === true) {
-                $update = " onblur='updateUserInterface($(this))'";
-            }
-                
+            $html .= "<div class='col-sm-7'>";
             $html .= "<div class='sr-input-group input-group'>"; 
-            
+                
             $html .= match ($this->getDataType()) {
-                "currency"=> "<span class='input-group-addon'>&euro;</span>",
-                "date"=> "<span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span>",
+                eDataType::currency => "<span class='input-group-addon'>&euro;</span>",
+                eDataType::date => "<span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span>",
                 default => "",
             };
 
-            $type = match ($this->getDataType()) {
-                "date" => "type=date ",
-                "time" => "type=time ",
-                "integer" => "type=integer ",
-                "currency" => "type=currency ",
-                "decimal" => "type=number ",
-                "string" => "type=text ",                
-                default=> "",
-            };
-            
-            if ($this->getDisplayType() === eDisplayType::password) { // overwrite $type
-                $type = "type=password ";
-            };
-                
-            $html .= match ($this->getDisplayType()) {                
-                default => $this->getDefaultInputControl($type, $update, $this->getDisplayType()->value),
-            };
+            if ($this->textValues->isNotEmpty()) { //selectbox
+
+                if ($this->getDisplayType() === eDisplayType::toggle) {
+                    $html .= $this->getToggleControl();
+                } else {
+                    $html .= $this->getDefaultSelectBoxControl();
+                }
+
+            } else { //input
+                                    
+                $html .= $this->getDefaultInputControl();           
+            }
 
             $html .= "</div>"; //input group
-        }
-       
-        $html .= "</div>"; //control
+            $html .= "</div>"; //control
 
-        $html .= "<div class='col-sm-1'>";
-        if ($this->getHelpText() !== null) {
-            $html .= "<i class='fa fa-info-circle sr-question-help' data-toggle='tooltip' aria-hidden='true' data-original-title='{$this->getHelpText()}'></i>";
+            $html .= "<div class='col-sm-1'>";
+            if ($this->getHelpText() !== null) {
+                $html .= "<i class='fa fa-info-circle sr-question-help' data-toggle='tooltip' data-html='true' data-placement=right auto' title='{$this->getHelpText()}'></i>";            
+            }
+            $html .= "</div>";
+            $html .= "</div>"; //form-group
         }
-        $html .= "</div>";
-        $html .= "</div>"; //form-group
-        
+
         if ($this->getParentGroupType() === eGroupType::row)
         {
             $html .= "</td>";
@@ -605,21 +587,170 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $html;
     }
 
-    public function getDefaultInputControl($type, $update, $displayType)
+    public function getDefaultInputControl()
     {
+        //data-styletype
+        $styleType = "";
+        if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
+            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+        }
+
+        //update
+        $update = " onblur='updateControls($(this))'";
+        if ($this->getUpdateUserInterface() === true) {
+            $update = " onblur='updateUserInterface($(this))'";
+        }
+            
+        //type depends on DataType or DisplayType
+        $type = match ($this->getDataType()) {
+            eDataType::date => "type=date ",
+            eDataType::time => "type=time ",
+            eDataType::integer => "type=integer ",
+            eDataType::currency => "type=currency ",
+            eDataType::decimal => "type=number ",
+            eDataType::string => "type=text ",                
+            default=> "",
+        };
+        
+        if ($this->getDisplayType() === eDisplayType::password) { // overwrite $type
+            $type = "type=password ";
+        };
+
+        //format date
+        $value = $this->getValue();
+        if ($this->getDataType() == eDataType::date) {
+            $date = date_create($value);
+            $value = date_format($date, 'Y-m-d');
+        }
+
         return 
         <<<HTML
                 <input {$type}
                        id="{$this->getName()}"
-                       value="{$this->getValue()}"
+                       value="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
                        {$update}
-                       data-displaytype={$displayType}
+                       data-displaytype="{$this->getDisplayType()?->value}"
+                       {$styleType}
                        />
                 HTML;
+    }
+
+    public function getDefaultSelectBoxControl()
+    {
+        //data-styletype
+        $styleType = "";
+        if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
+            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+        }
+
+        $update = " onchange='updateControls($(this))'";
+            if ($this->getUpdateUserInterface() === true) {
+                $update = " onchange='updateUserInterface($(this))'";
+            }
+
+        return
+            <<<HTML
+            <select name="{$this->getName()}"
+                    id="{$this->getName()}"
+                    class="sr-question sr-question-choice {$this->getStyle()->default->class}"
+                    style="{$this->getStyle()->default->inlineStyle}"
+                    data-id="{$this->getQuestionID()}"
+                    data-elementpath="{$this->getElementPath()}"
+                    class="sr-question sr-question-selectbox {$this->getStyle()->default->class}"
+                    {$update}
+                    {$styleType}
+                    data-displaytype="{$this->getDisplayType()?->value}"
+                    >
+                {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
+            </select>
+            HTML;
+    }
+
+    public function getSwitchControl()
+    {
+        $html = "";
+        $data_on="";
+        $data_off="";
+        $checked = ""; //not yet implemented
+
+        $updateuserinterface = 'false';
+        if ($this->getUpdateUserInterface()) {
+            $updateuserinterface = 'true';
+        }
+
+        if ($this->textValues->count() === 2) {
+            $data_on = $this->textValues->first()->getValue();
+            $data_off = $this->textValues->last()->getValue();
+        }
+
+         $html .= 
+         <<<HTML
+            <div class='sr-switch'>
+
+            <input  type='hidden'
+                    value='{$this->getValue()}'
+                    name='sr_{$this->getQuestionID()}'>
+            
+            <label  class='switch'>
+
+            <input  type='checkbox' 
+                    id='{$this->getName()}'
+                    name='sr_{$this->getQuestionID()}'
+                    value='{$this->getValue()}' 
+                    data-elementpath="{$this->getElementPath()}"
+                    data-updateinterface='{$updateuserinterface}'
+                    {$checked} 
+                    data-toggle='toggle' 
+                    data-onvalue='{$data_on}' 
+                    data-offvalue='{$data_off}' 
+                    data-toggle='toggle' 
+                    data-id='{$this->getQuestionID()}'
+                    onchange='setSwitchValue(this);'>
+            
+            <span class='slider round'></span>
+            </label>
+            </div>    
+            HTML;
+
+            return $html;
+    }
+
+    public function getToggleControl()
+    {
+        //data-styletype
+        $styleType = "";
+        if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
+            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+        }
+
+        $html = "";
+        $html .= "<div class='form-group sr-togglefield row'>";
+        //add question
+        $html .= "<input type='hidden' class='togglefield-hidden' data-id='{$this->getQuestionID()}' id='{$this->getName()}' value='{$this->getValue()}' data-styletype='{$styleType}' data-elementpath='{$this->getElementPath()}'>";
+        $html .= "<div class='btn-group btn-radio'>";
+
+        $updateuserinterface = 'false';
+        if ($this->getUpdateUserInterface()) {
+            $updateuserinterface = 'true';
+        }
+
+        $active = ""; 
+        foreach($this->textValues as $textValue) {
+            if ($textValue->getValue() === $this->getValue())
+            {
+                $active = " active";
+            }
+            $html .= "<button type='button' class='sr btn btn-secondary grouptooltip {$active}' data-id='{$this->getQuestionID()}' data-updateinterface='{$updateuserinterface}' data-value='{$textValue->getValue()}' data-name='{$this->getName()}' onclick='toggleClick(this)'>{$textValue->getText()}</button>";
+        }
+        
+        $html .= "</div>";
+        $html .= "</div>";
+
+        return $html;
     }
 
     private function getTextValuesDescription(): string

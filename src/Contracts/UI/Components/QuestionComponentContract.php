@@ -11,6 +11,7 @@ use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eDisplayType;
 use SoftRules\PHP\Enums\eDefaultState;
+use SoftRules\PHP\Enums\eDataType;
 
 interface QuestionComponentContract extends UiComponentContract
 {
@@ -50,7 +51,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function getIncludeInvisibleQuestion();
 
-    public function setDataType($dataType): void;
+    public function setDataType(eDataType|string $dataType): void;
 
     public function getDisplayType();
 

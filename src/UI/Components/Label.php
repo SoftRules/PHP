@@ -8,6 +8,7 @@ use SoftRules\PHP\Contracts\UI\Components\LabelComponentContract;
 use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
+use SoftRules\PHP\Enums\eDisplayType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -70,12 +71,18 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         return $this->text;
     }
 
-    public function setDisplayType($displayType): void
+    public function setDisplayType(eDisplayType|string $displayType): void
     {
-        $this->displayType = $displayType;
+        if ($displayType instanceof eDisplayType) {
+            $this->displayType = $displayType;
+
+            return;
+        }
+
+        $this->displayType = eDisplayType::from(strtolower($displayType));
     }
 
-    public function getDisplayType()
+    public function getDisplayType(): eDisplayType
     {
         return $this->displayType;
     }
@@ -159,38 +166,51 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function render(): string
     {
+        //displaytypes: Attention, Informationbutton
+        //custum properties: align en valign. StyleTypes, HelpText? 
+        //custom properties depricated: columnwidth, columnwidth_unit
         $html = "";
-        if ($this->getParentGroupType() === eGroupType::row)
-        {
-            $html .= "<td class='sr-table-td'>";
-        }
         
-        //alignment
-        $align = "";
-        $valign = "";
-        if ($this->getCustomPropertyByName('align')?->getValue() !== null)
+        $html .= match($this->getParentGroupType())
         {
-            $align = "sr-align-{$this->getCustomPropertyByName('align')?->getValue()}";
+            eGroupType::row => "<td class='sr-table-td'>",
+            eGroupType::tableheader => "<th class='sr-table-th'>",
+            default => '',
+        };
+
+        if ($this->getDisplayType() === eDisplayType::informationbutton) {
+            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg' data-toggle='tooltip' data-html='true' data-placement='right auto' title='{$this->getText()}'></i></span>";
+        } 
+        else {
+            //alignment
+            $align = "";
+            $valign = "";
+            if ($this->getCustomPropertyByName('align')?->getValue() !== null)
+            {
+                $align = "sr-align-{$this->getCustomPropertyByName('align')?->getValue()}";
+            }
+            if ($this->getCustomPropertyByName('valign')?->getValue() !== null)
+            {
+                $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')?->getValue()}";
+            }
+
+            $html .=
+                    <<<HTML
+                    <span data-id="{$this->getLabelID()}"
+                        class="sr-label {$this->getStyle()->default->class} {$align} {$valign}"
+                        style="{$this->getStyle()->default->inlineStyle}">
+                        {$this->getText()}            
+                    </span>              
+                    HTML;
         }
-        if ($this->getCustomPropertyByName('valign')?->getValue() !== null)
+    
+        $html .= match($this->getParentGroupType())
         {
-            $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')?->getValue()}";
-        }
-
-        $html .=
-                <<<HTML
-                <span data-id="{$this->getLabelID()}"
-                       class="sr-label {$this->getStyle()->default->class} {$align} {$valign}"
-                       style="{$this->getStyle()->default->inlineStyle}">
-                       {$this->getText()}            
-                </span>              
-                HTML;
-
-        if ($this->getParentGroupType() === eGroupType::row)
-        {
-            $html .= "</td>";
-        }
-
-    return $html;
+            eGroupType::row => "</td>",
+            eGroupType::tableheader => "</th>",
+            default => '',
+        };
+    
+        return $html;
     }
 }

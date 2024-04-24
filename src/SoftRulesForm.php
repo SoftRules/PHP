@@ -128,10 +128,15 @@ final class SoftRulesForm implements Stringable
             scriptactions: '{$this->scriptActionsRoute}',
         },
     };
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = '{$this->javascriptPath}/UpdateUserInterface.js';
-    document.head.appendChild(script);
+    let script_update = document.createElement('script');
+    script_update.type = 'text/javascript';
+    script_update.src = '{$this->javascriptPath}/UpdateUserInterface.js';
+    document.head.appendChild(script_update);
+
+    let script_val = document.createElement('script');
+    script_val.type = 'text/javascript';
+    script_val.src = '{$this->javascriptPath}/Validation.js';
+    document.head.appendChild(script_val);
 
     var link  = document.createElement('link');   
     link.rel  = 'stylesheet';

@@ -2,9 +2,8 @@
 
 $(document).ready(() => {
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));   
-    
-    //Deze worden (te vroeg of niet) uitgevoerd. Nu in final van getXML_HTML
     $('[data-toggle="tooltip"]').tooltip();
+    //Deze wordt (te vroeg of niet) uitgevoerd. Nu ook in final van getXML_HTML
     scriptActions();
 });
 
@@ -77,7 +76,7 @@ function updateControls($item) {
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
     scriptActions();
-    $('[data-toggle="tooltip"]').tooltip();
+    //$('[data-toggle="tooltip"]').tooltip();
 }
 
 function objectToFormData(object) {
@@ -127,7 +126,6 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
         })
         .finally(() => { 
             scriptActions(); 
-            $('[data-toggle="tooltip"]').tooltip();
             hideWaitCursor();
         });
 }
@@ -227,4 +225,43 @@ function scriptActions() {
             alert(error);
         })
         .finally(() => hideWaitCursor());
+}
+
+function toggleClick(item) {
+	var value = $(item).data('value');
+	var name = $(item).data('name');
+	$('#'+name).val(value);
+	$(item).siblings().removeClass('active');
+    $(item).addClass('active');
+	
+	var update = $('#'+name).data('updateinterface');
+	if (update == true)
+	{
+		UpdateUserInterface($('#'+name));        
+	}
+	else
+	{
+		updateControls($('#'+name));
+	}
+}
+
+function setSwitchValue(item) {
+    var name = $(item).data('name');
+    
+    if ($(item).prop('checked')) {
+        $(item).val($(item).data('onvalue'));
+    }
+    else {
+        $(item).val($(item).data('offvalue'));
+    }
+
+    var update = $('#'+name).data('updateinterface');
+	if (update == true)
+	{
+		UpdateUserInterface($('#'+name));        
+	}
+	else
+	{
+		updateControls($('#'+name));
+	}
 }
