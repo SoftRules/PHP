@@ -205,6 +205,8 @@ class Button implements ButtonComponentContract, Renderable
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
+                case 'Path':
+                    break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;

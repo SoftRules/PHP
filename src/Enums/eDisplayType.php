@@ -18,5 +18,6 @@ enum eDisplayType: string
     case password = 'password';
     case daterange = 'daterange';
     case iban = 'iban';
+    case image = 'image';
     case none = '';
 }

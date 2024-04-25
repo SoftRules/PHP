@@ -17,21 +17,21 @@ function restoreValidation() {
     FailedSelects.forEach(fieldRestoreFailed);
 }
 
-function fieldRestoreSucces(item, index) {
-    ValidationSucces(item, 0);
+function fieldRestoreSucces($item, index) {
+    ValidationSucces($item, 0);
 }
 
-function selectRestoreSucces(item, index) {
-    SelectSucces(item);
+function selectRestoreSucces($item, index) {
+    SelectSucces($item);
 }
 
-function fieldRestoreFailed(item, index) {
-    ValidationFail(item);
+function fieldRestoreFailed($item, index) {
+    ValidationFail($item);
 }
 
-function isReadonly(ObjectID) {
+function isReadonly($item) {
     var isReadonly = false;
-    var attr = $(ObjectID).attr('readonly');
+    var attr = $item.attr('readonly');
 
     // For some browsers, `attr` is undefined; for others, `attr` is false. Check for both.
     if (typeof attr !== typeof undefined && attr !== false) {
@@ -40,14 +40,14 @@ function isReadonly(ObjectID) {
     return false;
 }
 
-function checkPattern(objectID) {
-    var patt = $(objectID).attr('pattern');
+function checkPattern($item) {
+    var patt = $item.attr('pattern');
 
     // For some browsers, `patt` is undefined; for others, `patt` is false. Check for both.
     if (typeof patt !== typeof undefined && patt !== false) {
-        var Regex = $(objectID).attr('pattern');
+        var Regex = $item.attr('pattern');
         var pattern = new RegExp(Regex);
-        if (pattern.test($(objectID).val())) {
+        if (pattern.test($item.val())) {
             return true;
         }
         else {
@@ -165,8 +165,8 @@ function checkWhiteSpace(objectID) {
     return true;
 }
 
-function hasInvalidMessage(ObjectID) {
-    var invalidMSG = $(ObjectID).data('invalidmessage');
+function hasInvalidMessage($item) {
+    var invalidMSG = $item.data('invalidmessage');
 
     // For some browsers, `invalidMSG` is undefined; for others, `invalidMSG` is false. Check for both.
     if (typeof invalidMSG !== typeof undefined && invalidMSG !== false) {
@@ -175,37 +175,12 @@ function hasInvalidMessage(ObjectID) {
     return false;
 }
 
-function ValidationSucces(objectID, isGroup) {
-    var oID = "#" + $(objectID).attr('id');
-	var row = '#sr_'+ $(objectID).data('id') + 'Row';
-	
-    if (FailedFields.indexOf(oID) != -1) {
-        //console.log(oID + ' zit in failed fields');
-        index = FailedFields.indexOf(oID);
-        //console.log(oID + ' verwijderd van failedfields');
-        FailedFields.splice(index, 1);
-    }
+function ValidationSucces($item, isGroup) {
+    var row = $item.data('id') + '_row';
+    $(row).removeClass('has-error');
 
-    if (SuccesFields.indexOf(oID) == -1) {
-        SuccesFields.push(oID);
-        //console.log(oID + ' is succesvol');
-    }
-
-    name = $(objectID).attr('name');
-    id = "#" + $(objectID).data('id') + "-Validation";
-    validationid = "#" + $(objectID).data('id') + "ValidationMessage";
-    if ($(objectID).data('activehiddenfield') == true || $(objectID).data('hiddenfield') == 0) {
-        //$(id).html("<i class='fa fa-check fa-2x ValSucces' aria-hidden='true'></i>");
-		
-		if ((isGroup) == 0)
-		{
-			$(messageAlert).hide();
-		}
-		$(row).removeClass('has-error');
-    }
-    if ($(validationid).length != 0) {
-        $(validationid).html('');
-    }
+    $(messageAlert).html('');
+    $(messageAlert).hide(); 
 }
 
 function SelectSucces(objectID) {
@@ -228,55 +203,33 @@ function SelectSucces(objectID) {
     }
 }
 
-function ValidationFail(objectID, failMessage, isGroup) {
-    var invalidMessage = "Question " + $(objectID).attr('id') + " is invalid.";
-	var row = '#sr_'+ $(objectID).data('id') + 'Row';
+function ValidationFail($item, failMessage, isGroup) {
+    var invalidMessage = "Question " + $item.attr('id') + " is invalid.";
+	var row = '#'+ $item.data('id') + '_row';
 	
-    if (hasInvalidMessage(objectID)) {
-        invalidMessage = $(objectID).data('invalidmessage')
+    if (hasInvalidMessage($item)) {
+        invalidMessage = $item.data('invalidmessage')
     }
 
     if (failMessage.length != 0) {
         invalidMessage = failMessage;
     }
 
-    if (SuccesFields.indexOf("#" + $(objectID).attr('id')) != -1) {
-        index = SuccesFields.indexOf("#" + $(objectID).attr('id'));
-        SuccesFields.splice(index, 1);
-    }
-    if (FailedFields.indexOf("#" + $(objectID).attr('id')) == -1) {
-        FailedFields.push("#" + $(objectID).attr('id'));
-    }
-
-    fail = true;
-    name = $(objectID).attr('id');
-
-    id = $(objectID).data('id') + "-Validation";
-    divID = $(objectID).data('id') + "div";
-    if ($(objectID).data('activehiddenfield') == true || $(objectID).data('hiddenfield') == 0) {
-        //$("#" + id).html("<i class='fa fa-times fa-2x ValError' aria-hidden='true'></i>");
-		$(row).addClass('has-error');
-        validationid = $(objectID).data('id') + "ValidationMessage";
-        //console.log($(validationid).length);
-        if (invalidMessage.length != 0) {
-            if ($("#" + validationid).length == 0) {
-                $("#" + divID).after("<div class='invalidmessage' id='" + validationid + "'></div>");
-            }
-
-			if ($(messageAlert).html() == '')
-			{
-				$(messageAlert).html(invalidMessage);	
-			}
-			else
-			{
-				$(messageAlert).append('<br>');
-				$(messageAlert).append(invalidMessage);
-			}
-			
-			$(messageAlert).show();
+    if (isGroup) {
+        if ($(messageAlert).html() == '')
+        {
+            $(messageAlert).html(invalidMessage);	
         }
+        else
+        {
+            $(messageAlert).append('<br>');
+            $(messageAlert).append(invalidMessage);
+        }
+    } else {
+        $(messageAlert).html(invalidMessage);	
     }
-    fail_log += name + " is niet succesvol \n";
+    
+    $(messageAlert).show();    
 }
 
 function ProcessValidation() {
@@ -423,37 +376,39 @@ function ValidateGroup(GroupID) {
     }
 }
 
-function ValidateField(FieldID) {
+function ValidateField($item) {
     fail = false;
     fail_log = '';
     var errorMessage = "";
 
-    if ($(FieldID).is('textarea, input')) {
+    if ($item.is('textarea, input')) {
 
-        if (!$(FieldID).prop('required') || $(FieldID).data('hiddenfield') == true || isReadonly($(FieldID))) {
+        if (!$item.prop('required') || isReadonly($item)) {
 
-            if ($(FieldID).attr('type') == 'number') {
-                if (!$(FieldID).val()) {
-                    fail = true;
-                }
-            }
-
-            if ($(FieldID).attr('data-isvalid') == "false") {
+            if ($item.attr('data-isvalid') == "false") {
                 fail = true;
             }
         }
         else {
-            if (!$(FieldID).val()) {
+            if (!$item.val()) {
                 fail = true;
             }
 
-            if ($(FieldID).attr('data-isvalid') == "false") {
+            if ($item.attr('type') == 'integer') {
+                if (isNaN(parseInt($item.val())))
+                {
+                    errorMessage = "Vul een geheel getal in";
+                    fail = true;
+                }
+            }
+
+            if ($item.attr('data-isvalid') == "false") {
                 fail = true;
             }
 
-            if ($(FieldID).val()) {
-                if (!checkFractionDigits($(FieldID))) {
-                    var digits = $(FieldID).data('fractiondigits');
+            if ($item.val()) {
+                if (!checkFractionDigits($item)) {
+                    var digits = $item.data('fractiondigits');
                     var errorString = "The value can have only up to " + digits + " digits in the fractional portion. <br/>";
 
                     if (digits == 1) {
@@ -467,64 +422,60 @@ function ValidateField(FieldID) {
                     fail = true;
                 }
 
-                if (!checkPattern($(FieldID))) {
+                if (!checkPattern($item)) {
                     //fail = true;
                 }
 
-                if (!checkMinExclusive($(FieldID))) {
-                    var value = $(FieldID).data('minexclusive');
+                if (!checkMinExclusive($item)) {
+                    var value = $item.data('minexclusive');
                     errorMessage += "Please enter a value greater than " + value + ". <br/>";
                     fail = true
                 }
 
-                if (!checkMinInclusive($(FieldID))) {
-                    var value = $(FieldID).data('mininclusive');
+                if (!checkMinInclusive($item)) {
+                    var value = $item.data('mininclusive');
                     errorMessage += "Please enter a value greater than or equal to " + value + ". <br/>";
                     fail = true
                 }
 
-                if (!checkMaxExclusive($(FieldID))) {
-                    var value = $(FieldID).data('maxexclusive');
+                if (!checkMaxExclusive($item)) {
+                    var value = $item.data('maxexclusive');
                     errorMessage += "Please enter a value less than " + value + ". <br/>";
                     fail = true
                 }
 
-                if (!checkMaxInclusive($(FieldID))) {
-                    var value = $(FieldID).data('maxinclusive');
+                if (!checkMaxInclusive($item)) {
+                    var value = $item.data('maxinclusive');
                     errorMessage += "Please enter a value less than or equal to " + value + ". <br/>";
                     fail = true
                 }
             }
 
-            if (!$(this).prop('required') || $(this).data('activehiddenfield') === false || isReadonly($(FieldID))) {
+            if (!$(this).prop('required') || $(this).data('activehiddenfield') === false || isReadonly($item)) {
 
             }
         }
     }
-    if ($(FieldID).is('select')) {
-        if ($(FieldID).attr('data-isvalid') == "false") {
+    if ($item.is('select')) {
+        if ($item.attr('data-isvalid') == "false") {
             fail = true;
         }
 
         else {
-            //console.log($(FieldID).attr('id') + ' is succesvol')
-            SelectSucces($(FieldID));
+            //console.log($item.attr('id') + ' is succesvol')
+            SelectSucces($item);
         }
     }
 
     //submit if fail never got set to true
     if (!fail) {
-        ValidationSucces($(FieldID), 0);
+        ValidationSucces($item, 0);
         return true;
-    }
-    if (IgnoreValidation === true) {
-        ValidationSucces($(FieldID));
-        return true;
-    }
-    else {
-		console.log('ValidateField: ' + $(FieldID).attr('id')) + ' failed';
-        ValidationFail($(FieldID), errorMessage, 0);
+    } else {
+        console.log('ValidateField: ' + $item.attr('id')) + ' failed';
+        ValidationFail($item, errorMessage, 0);
         return false;
     }
+    
 }
 

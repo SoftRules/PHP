@@ -212,6 +212,9 @@ class Group implements GroupComponentContract, RenderableWrapper
                 case 'PageID':
                     $this->setPageID($childNode->nodeValue);
                     break;
+                case 'DisplayType':
+                        //not used anymore
+                        break;
                 case 'SuppressItemsWhenInvisible':
                     $this->setSuppressItemsWhenInvisible($childNode->nodeValue);
                     break;

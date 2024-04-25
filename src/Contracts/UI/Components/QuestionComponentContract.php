@@ -85,7 +85,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function setInvalidMessage($invalidMessage): void;
 
-    public function getInvalidMessage();
+    public function getInvalidMessage(): string;
 
     public function addCustomProperty(CustomPropertyContract $customProperty): void;
 

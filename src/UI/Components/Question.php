@@ -62,7 +62,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private bool $updateUserInterface = false;
 
-    private $invalidMessage;
+    private $invalidMessage = '';
 
     private $readyForProcess;
 
@@ -298,7 +298,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->invalidMessage = $invalidMessage;
     }
 
-    public function getInvalidMessage()
+    public function getInvalidMessage(): string
     {
         return $this->invalidMessage;
     }
@@ -541,7 +541,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             //$html .= $this->getToggleControl();
         } else {
 
-            $html .= "<div class='form-group row sr-question' data-id='{$this->getQuestionID()}'>";
+            $html .= "<div class='form-group row sr-question' data-row='{$this->getQuestionID()}'>";
             $html .= "<div class='col-sm-4'>";
             $html .= "<label class='sr-label control-label align-self-center' for={$this->getName()} id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
             $html .= "</div>";
@@ -607,7 +607,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             eDataType::time => "type=time ",
             eDataType::integer => "type=integer ",
             eDataType::currency => "type=currency ",
-            eDataType::decimal => "type=number ",
+            eDataType::decimal => "type=decimal ",
             eDataType::string => "type=text ",                
             default=> "",
         };
@@ -626,14 +626,16 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return 
         <<<HTML
                 <input {$type}
+                       class="sr-question sr-question-input {$this->getStyle()->default->class}"       
+                       style="{$this->getStyle()->default->inlineStyle}"
                        id="{$this->getName()}"
                        value="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
-                       class="sr-question sr-question-input {$this->getStyle()->default->class}"
-                       style="{$this->getStyle()->default->inlineStyle}"
-                       {$update}
                        data-displaytype="{$this->getDisplayType()?->value}"
+                       data-invalidmessage = "{$this->getInvalidMessage()}"
+                       data-isvalid='false'
+                       {$update}
                        {$styleType}
                        />
                 HTML;
@@ -654,16 +656,17 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         return
             <<<HTML
-            <select name="{$this->getName()}"
-                    id="{$this->getName()}"
-                    class="sr-question sr-question-choice {$this->getStyle()->default->class}"
+            <select class="sr-question sr-question-choice {$this->getStyle()->default->class}"
                     style="{$this->getStyle()->default->inlineStyle}"
+                    id="{$this->getName()}"
+                    name="{$this->getName()}"
                     data-id="{$this->getQuestionID()}"
                     data-elementpath="{$this->getElementPath()}"
-                    class="sr-question sr-question-selectbox {$this->getStyle()->default->class}"
+                    data-displaytype="{$this->getDisplayType()?->value}"
+                    data-invalidmessage = "{$this->getInvalidMessage()}"
+                    data-isvalid='false'
                     {$update}
                     {$styleType}
-                    data-displaytype="{$this->getDisplayType()?->value}"
                     >
                 {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
             </select>
@@ -699,7 +702,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
             <input  type='checkbox' 
                     id='{$this->getName()}'
-                    name='sr_{$this->getQuestionID()}'
                     value='{$this->getValue()}' 
                     data-elementpath="{$this->getElementPath()}"
                     data-updateinterface='{$updateuserinterface}'

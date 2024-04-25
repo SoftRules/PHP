@@ -147,10 +147,11 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
-
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
+                    break;
+                case 'Path':
                     break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
@@ -180,8 +181,12 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
         if ($this->getDisplayType() === eDisplayType::informationbutton) {
             $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg' data-toggle='tooltip' data-html='true' data-placement='right auto' title='{$this->getText()}'></i></span>";
-        } 
-        else {
+        }  else if ($this->getDisplayType() === eDisplayType::image) {
+            $url=$this->getCustomPropertyByName("imageurl")?->getValue();
+            $width = $this->getCustomPropertyByName("width")?->getValue();
+            $height = $this->getCustomPropertyByName("height")?->getValue();
+            $html .= "<img alt='{$this->getText()}' class=no-pointer-events src='{$url}' max-width={$width}; height={$height};>";
+        } else {
             //alignment
             $align = "";
             $valign = "";

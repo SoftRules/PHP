@@ -4,7 +4,7 @@ $(document).ready(() => {
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));   
     $('[data-toggle="tooltip"]').tooltip();
     //Deze wordt (te vroeg of niet) uitgevoerd. Nu ook in final van getXML_HTML
-    scriptActions();
+    //scriptActions();
 });
 
 function parseXML(xml) {
@@ -76,6 +76,7 @@ function updateControls($item) {
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
     scriptActions();
+    ValidateField($item);
     //$('[data-toggle="tooltip"]').tooltip();
 }
 
@@ -229,7 +230,7 @@ function scriptActions() {
 
 function toggleClick(item) {
 	var value = $(item).data('value');
-	var name = $(item).data('name');
+	var name = $(item).attr('id');
 	$('#'+name).val(value);
 	$(item).siblings().removeClass('active');
     $(item).addClass('active');
@@ -237,16 +238,16 @@ function toggleClick(item) {
 	var update = $('#'+name).data('updateinterface');
 	if (update == true)
 	{
-		UpdateUserInterface($('#'+name));        
+		UpdateUserInterface($(item));        
 	}
 	else
 	{
-		updateControls($('#'+name));
+		updateControls($(item));
 	}
 }
 
 function setSwitchValue(item) {
-    var name = $(item).data('name');
+    var name = $(item).attr('id');
     
     if ($(item).prop('checked')) {
         $(item).val($(item).data('onvalue'));
@@ -258,10 +259,10 @@ function setSwitchValue(item) {
     var update = $('#'+name).data('updateinterface');
 	if (update == true)
 	{
-		UpdateUserInterface($('#'+name));        
+		UpdateUserInterface($(item));        
 	}
 	else
 	{
-		updateControls($('#'+name));
+		updateControls($(item));
 	}
 }
