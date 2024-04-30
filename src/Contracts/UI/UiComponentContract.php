@@ -3,6 +3,7 @@
 namespace SoftRules\PHP\Contracts\UI;
 
 use DOMElement;
+use SoftRules\PHP\Enums\eGroupType;
 
 interface UiComponentContract
 {
@@ -13,8 +14,11 @@ interface UiComponentContract
     public function setVisibleExpression(ExpressionContract $visibleExpression): void;
 
     public function getVisibleExpression(): ExpressionContract;
+    public function setParentGroupType(eGroupType $parentGroupType): void;
+    public function getParentGroupType(): ?eGroupType;
 
     public function parse(DOMElement $DOMElement): static;
 
     public function getStyle(): object;
+
 }

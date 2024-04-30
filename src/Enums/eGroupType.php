@@ -9,9 +9,12 @@ enum eGroupType: string
     case expandable = 'expandable';
     case column = 'column';
     case table = 'table';
+    case tableheader = 'tableheader';
     case row = 'row';
     case popup = 'popup';
     case grid = 'grid';
     case gridcolumn = 'gridcolumn';
     case gridrow = 'gridrow';
+    
+    case none = '';
 }

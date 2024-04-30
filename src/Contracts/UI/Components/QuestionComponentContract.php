@@ -9,6 +9,9 @@ use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
+use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eDefaultState;
+use SoftRules\PHP\Enums\eDataType;
 
 interface QuestionComponentContract extends UiComponentContract
 {
@@ -40,7 +43,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function getHelpText();
 
-    public function setDefaultState($defaultState): void;
+    public function setDefaultState(eDefaultState|string $defaultState): void;
 
     public function getDefaultState();
 
@@ -48,11 +51,11 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function getIncludeInvisibleQuestion();
 
-    public function setDataType($dataType): void;
+    public function setDataType(eDataType|string $dataType): void;
 
     public function getDisplayType();
 
-    public function setDisplayType($displayType): void;
+    public function setDisplayType(eDisplayType|string $displayType): void;
 
     public function setDisplayOnly($displayOnly): void;
 
@@ -82,7 +85,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function setInvalidMessage($invalidMessage): void;
 
-    public function getInvalidMessage();
+    public function getInvalidMessage(): string;
 
     public function addCustomProperty(CustomPropertyContract $customProperty): void;
 

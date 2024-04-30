@@ -14,14 +14,15 @@ final class SoftRulesForm implements Stringable
     private string $updateUserInterfaceRoute = '/updateUserInterface.php';
 
     private string $previousPageRoute = '/previousPage.php';
-
     private string $nextPageRoute = '/nextPage.php';
+    private string $scriptActionsRoute = '/scriptActions.php';
 
     private string $initialXml = '';
 
     private ?HtmlString $csrfProtection = null;
 
     private string $javascriptPath = 'js';
+    private string $cssPath = 'css';
 
     private function __construct(public readonly string $product)
     {
@@ -43,6 +44,13 @@ final class SoftRulesForm implements Stringable
     public function setJavascriptPath(string $path): self
     {
         $this->javascriptPath = $path;
+
+        return $this;
+    }
+
+    public function setCSSPath(string $path): self
+    {
+        $this->cssPath = $path;
 
         return $this;
     }
@@ -89,6 +97,13 @@ final class SoftRulesForm implements Stringable
         return $this;
     }
 
+    public function setScriptActionsRoute(string $route): self
+    {
+        $this->scriptActionsRoute = $route;
+
+        return $this;
+    }
+
     public function render(): HtmlString
     {
         return new HtmlString(
@@ -110,14 +125,26 @@ final class SoftRulesForm implements Stringable
             updateUserInterface: '{$this->updateUserInterfaceRoute}',
             previousPage: '{$this->previousPageRoute}',
             nextPage: '{$this->nextPageRoute}',
+            scriptactions: '{$this->scriptActionsRoute}',
         },
     };
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = '{$this->javascriptPath}/UpdateUserInterface.js';
+    let script_update = document.createElement('script');
+    script_update.type = 'text/javascript';
+    script_update.src = '{$this->javascriptPath}/UpdateUserInterface.js';
+    document.head.appendChild(script_update);
 
-    document.head.appendChild(script);
+    let script_val = document.createElement('script');
+    script_val.type = 'text/javascript';
+    script_val.src = '{$this->javascriptPath}/Validation.js';
+    document.head.appendChild(script_val);
+
+    var link  = document.createElement('link');   
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = '{$this->cssPath}/softrules.css';  
+    document.head.appendChild(link);
 </script>
+
 EOT
         );
     }

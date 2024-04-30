@@ -8,12 +8,15 @@ use SoftRules\PHP\Contracts\UI\Components\ButtonComponentContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eButtonType;
+use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eStyleType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
+use SoftRules\PHP\Enums\eGroupType;
 
 class Button implements ButtonComponentContract, Renderable
 {
@@ -31,13 +34,14 @@ class Button implements ButtonComponentContract, Renderable
 
     private string $description;
 
-    private $displayType;
+    private ?eDisplayType $displayType = null;
 
     private $skipFormValidation;
 
     private ExpressionContract $visibleExpression;
 
     private ParameterContract $parameter;
+    private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
     {
@@ -56,7 +60,7 @@ class Button implements ButtonComponentContract, Renderable
 
     public function setButtonID(string $buttonID): void
     {
-        $this->buttonID = $buttonID;
+        $this->buttonID = str_replace('|', '_', $buttonID);
     }
 
     public function getButtonID(): string
@@ -100,12 +104,18 @@ class Button implements ButtonComponentContract, Renderable
         return $this->type;
     }
 
-    public function setDisplayType($displayType): void
+    public function setDisplayType(eDisplayType|string $displayType): void
     {
-        $this->displayType = $displayType;
+        if ($displayType instanceof eDisplayType) {
+            $this->displayType = $displayType;
+
+            return;
+        }
+
+        $this->displayType = eDisplayType::from(strtolower($displayType));
     }
 
-    public function getDisplayType()
+    public function getDisplayType(): eDisplayType
     {
         return $this->displayType;
     }
@@ -149,6 +159,15 @@ class Button implements ButtonComponentContract, Renderable
     {
         return $this->parameter;
     }
+    public function setParentGroupType(eGroupType $parentGroupType): void
+    {
+        $this->parentGroupType = $parentGroupType;
+    }
+    
+    public function getParentGroupType(): ?eGroupType
+    {
+        return $this->parentGroupType;
+    }
 
     public function parse(DOMElement $DOMElement): static
     {
@@ -186,6 +205,8 @@ class Button implements ButtonComponentContract, Renderable
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
                     break;
+                case 'Path':
+                    break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
                     break;
@@ -200,10 +221,6 @@ class Button implements ButtonComponentContract, Renderable
 
     public function render(): string
     {
-        if (strtolower((string) $this->getDisplayType()) === 'tile') {
-            $tile = true;
-        }
-
         foreach ($this->getCustomProperties() as $customProperty) {
             switch (strtolower((string) $customProperty->getName())) {
                 case 'nextpage':
@@ -227,11 +244,7 @@ class Button implements ButtonComponentContract, Renderable
         }
 
         $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
-        $buttonStyle = match ($styleType) {
-            // TODO: Hans wat zijn de mogelijke styleTypes? Zullen we hier een enum voor maken?
-            'danger' => $this->getStyle()->danger,
-            default => $this->getStyle()->default,
-        };
+        $buttonStyle = $this->getStyle()->default;
 
         $buttonFunction = match ($this->getType()) {
             eButtonType::submit => 'processButton',
@@ -239,9 +252,30 @@ class Button implements ButtonComponentContract, Renderable
             default => '',
         };
 
-        $html = '<div>';
-        $html .= "<button type='button' class='sr-button sr-button-{$styleType} {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+        $html = "";
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "<td class='sr-table-td'>";
+        }
 
-        return $html . '</div>';
+        $html .= '<div>';
+        if ($this->getDisplayType() === eDisplayType::tile) {
+            $hint = $this->getHint();
+            $width = $this->getCustomPropertyByName('width')?->getValue() ?? '';
+            $height = $this->getCustomPropertyByName('height')?->getValue() ?? '';
+            $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
+            $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
+ 
+        } else {
+       
+        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+                
+        }
+        
+        if ($this->getParentGroupType() === eGroupType::row)
+        {
+            $html .= "</td>";
+        }
+        return $html .= '</div>';
     }
 }
