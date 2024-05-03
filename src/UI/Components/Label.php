@@ -171,11 +171,18 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         //custum properties: align en valign. StyleTypes, HelpText? 
         //custom properties depricated: columnwidth, columnwidth_unit
         $html = "";
+        $labelclass = "sr-label";
         
+        if ($this->getParentGroupType() === eGroupType::tableheader)
+        {
+            $labelclass = "sr-label-th";
+        }
+
         $html .= match($this->getParentGroupType())
         {
             eGroupType::row => "<td class='sr-table-td'>",
             eGroupType::tableheader => "<th class='sr-table-th'>",
+
             default => '',
         };
 
@@ -202,7 +209,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
             $html .=
                     <<<HTML
                     <span data-id="{$this->getLabelID()}"
-                        class="sr-label {$this->getStyle()->default->class} {$align} {$valign}"
+                        class="{$labelclass} {$this->getStyle()->default->class} {$align} {$valign}"
                         style="{$this->getStyle()->default->inlineStyle}">
                         {$this->getText()}            
                     </span>              

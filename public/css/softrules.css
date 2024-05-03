@@ -19,11 +19,18 @@
     width:40px;
 }
 
+.sr-group-gridrow  {
+  padding: 5px;
+}
+
 .sr-label{
     font-size: 14px;
     font-weight: 100;
  }
-
+ 
+ .sr-label-th{
+  font-weight: bold;
+}
 .sr-question-help {
     font-size: 14pt; 
     margin-top: 6px; 

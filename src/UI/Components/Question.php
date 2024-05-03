@@ -61,6 +61,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $elementPath;
 
     private bool $updateUserInterface = false;
+    private bool $updateQuestionOnly = false;
 
     private $invalidMessage = '';
 
@@ -283,6 +284,15 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->elementPath;
     }
 
+    public function setUpdateQuestionOnly($updateQuestionOnly): void
+    {
+        if (is_string($updateQuestionOnly)) $this->updateQuestionOnly = strtolower($updateQuestionOnly) === 'true' ?? $this->updateQuestionOnly = false;
+    }
+
+    public function getUpdateQuestionOnly()
+    {
+        return $this->updateQuestionOnly;
+    }
     public function setUpdateUserInterface($updateUserInterface): void
     {
         if (is_string($updateUserInterface)) $this->updateUserInterface = strtolower($updateUserInterface) === 'true' ?? $this->updateUserInterface = false;
@@ -292,7 +302,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         return $this->updateUserInterface;
     }
-
     public function setInvalidMessage($invalidMessage): void
     {
         $this->invalidMessage = $invalidMessage;
@@ -479,6 +488,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     break;
                 case 'UpdateUserInterface':
                     $this->setUpdateUserInterface($childNode->nodeValue);
+                    if ($childNode->attributes->getNamedItem("QuestionOnly") !== null) {
+                        $this->setUpdateQuestionOnly($childNode->attributes->getNamedItem("QuestionOnly"));
+                    }                    
                     break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($childNode->nodeValue);

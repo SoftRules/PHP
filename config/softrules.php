@@ -11,9 +11,9 @@ return [
         ],
         [
             'product' => 'testpagina',
-            'uri' => env('SOFTRULES_MYTP_TESTPAGINA_URI'),
-            'username' => env('SOFTRULES_MYTP_TESTPAGINA_USERNAME'),
-            'password' => env('SOFTRULES_MYTP_TESTPAGINA_PASSWORD'),
+            'uri' => env('SOFTRULES_VOLMACHTPRODUCTEN_URI'),
+            'username' => env('SOFTRULES_VOLMACHTPRODUCTEN_USERNAME'),
+            'password' => env('SOFTRULES_VOLMACHTPRODUCTEN_PASSWORD'),
         ],        
         [
             'product' => 'volmachtproducten',

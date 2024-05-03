@@ -21,6 +21,6 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
     <title>SoftRules PHP</title>
 </head>
 <body>
-    <?php echo \SoftRules\PHP\SoftRulesForm::make('softrules')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
+    <?php echo \SoftRules\PHP\SoftRulesForm::make('volmachtproducten')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
 </body>
 </html>
