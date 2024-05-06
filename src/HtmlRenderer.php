@@ -36,6 +36,7 @@ final class HtmlRenderer implements Stringable
 //        $this->SR_XML = $UIClass->getSoftRulesXml();
         $this->allComponents = $UIClass->components;
 
+        $this->html .= $this->WaitScreen();
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
         $this->html .= "<div class='errorContainer alert alert-danger' style='margin-top: 2px; display:none' data-type='Danger' id='messageAlert'></div>";
 
@@ -138,5 +139,21 @@ final class HtmlRenderer implements Stringable
     public function __toString(): string
     {
         return $this->html;
+    }
+
+    public function WaitScreen(): string{
+        return @"<div id='waitScreen' class='waitScreen' style='display: none;'>
+        <div class='loadingscreen_div'><img src='https://www.softrules.com/wp-content/themes/softrules/assets/logo.jpg' alt='My Tp / SoftRules©' style='text-align: center; width:250;height:166px;'>
+        <div id='squaresWaveG'>
+                     <div id='squaresWaveG_1' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_2' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_3' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_4' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_5' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_6' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_7' class='squaresWaveG'></div>
+                     <div id='squaresWaveG_8' class='squaresWaveG'></div>
+     </div></div></div>";
+
     }
 }

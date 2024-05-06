@@ -10,7 +10,26 @@
     font-weight: bold;
     text-align: left;   
  }
+ .card-header[data-target][data-toggle="collapse"] {
+  cursor: pointer;
+}
 
+.card-header[data-target][data-toggle="collapse"] .header-col {
+      padding-left: 0;
+}
+
+.card-header[data-target][data-toggle="collapse"] .header-col .fas {
+      padding-right: 5px;
+      min-width: 25px;
+}
+
+.card-header[data-toggle="collapse"] .header-col .fas:before {
+  content: "\2228";
+}
+
+.card-header[data-toggle="collapse"].collapsed .header-col .fas:before {
+  content: "\003e";
+}
 .input-group {   
     width: 100%;
 }
@@ -51,6 +70,16 @@
 }
 .sr-align-center {
   text-align: center;
+}
+
+.waitScreen {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba( 255, 255, 255, .8 );
 }
 
 [data-displaytype="kenteken"] {

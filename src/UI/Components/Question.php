@@ -572,12 +572,21 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 if ($this->getDisplayType() === eDisplayType::toggle) {
                     $html .= $this->getToggleControl();
                 } else {
-                    $html .= $this->getDefaultSelectBoxControl();
+                    if ($this->getDisplayType() === eDisplayType::slider) {
+                        $html .= $this->getSliderControl();
+                    }
+                    else {
+                        $html .= $this->getDefaultSelectBoxControl();
+                    }
                 }
 
             } else { //input
-                                    
-                $html .= $this->getDefaultInputControl();           
+                if ($this->getDisplayType() === eDisplayType::slider) {
+                    $html .= $this->getSliderControl();
+                }
+                else {              
+                    $html .= $this->getDefaultInputControl();           
+                }
             }
 
             $html .= "</div>"; //input group
@@ -690,7 +699,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $html = "";
         $data_on="";
         $data_off="";
-        $checked = ""; //not yet implemented
+        $checked = ""; 
 
         $updateuserinterface = 'false';
         if ($this->getUpdateUserInterface()) {
@@ -702,35 +711,28 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $data_off = $this->textValues->last()->getValue();
         }
 
-         $html .= 
-         <<<HTML
-            <div class='sr-switch'>
-
-            <input  type='hidden'
-                    value='{$this->getValue()}'
-                    name='sr_{$this->getQuestionID()}'>
-            
-            <label  class='switch'>
-
-            <input  type='checkbox' 
+        if ($this->getValue() === $data_on)
+        {
+            $checked = " checked ";
+        }
+        
+        $html .=    
+        <<<HTML
+                    <input type='checkbox' 
+                    data-toggle='toggle'
                     id='{$this->getName()}'
-                    value='{$this->getValue()}' 
-                    data-elementpath="{$this->getElementPath()}"
-                    data-updateinterface='{$updateuserinterface}'
+                    value='{$this->getValue()}'
                     {$checked} 
-                    data-toggle='toggle' 
+                    data-elementpath='{$this->getElementPath()}'
+                    data-updateinterface='{$updateuserinterface}'                    
                     data-onvalue='{$data_on}' 
                     data-offvalue='{$data_off}' 
-                    data-toggle='toggle' 
                     data-id='{$this->getQuestionID()}'
                     onchange='setSwitchValue(this);'>
-            
-            <span class='slider round'></span>
-            </label>
-            </div>    
-            HTML;
+            HTML; 
 
-            return $html;
+
+        return $html;
     }
 
     public function getToggleControl()
@@ -766,6 +768,29 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         return $html;
     }
+
+public function getSliderControl()
+{ 
+    //data-styletype
+    $styleType = "";
+    if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
+        $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+    }
+    
+    $minValue = str_replace(',', '.', $this->getCustomPropertyByName('minvalue')?->getValue());
+    $maxValue = str_replace(',', '.', $this->getCustomPropertyByName('maxvalue')?->getValue());
+    $stepSize = str_replace(',', '.', $this->getCustomPropertyByName('stepsize')?->getValue());
+    $labelValue = str_replace(',', '.', $this->getValue());
+    
+    $html = "";
+    $html .= "<div class='range'>";
+    //data-toggle='tooltip' title='{$this->getValue()}' 
+    $html .= "<input type='range' data-id='{$this->getQuestionID()}' id='{$this->getName()}' value='{$this->getValue()}' data-styletype='{$styleType}' min='{$minValue}' max='{$maxValue}' value='{$this->getValue()}' step='{$stepSize}' data-elementpath='{$this->getElementPath()}' onchange='setSliderValue(this)' />";
+    //$html .= "<output id='sr_{$this->getName()}'>{$labelValue}</output>";
+    $html .= "</div>";
+    $html .= "<span id='sr_{$this->getName()}' class='input-group-addon'>{$labelValue}</span>";
+    return $html;
+}
 
     private function getTextValuesDescription(): string
     {

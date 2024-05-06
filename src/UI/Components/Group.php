@@ -316,7 +316,7 @@ class Group implements GroupComponentContract, RenderableWrapper
             eGroupType::gridcolumn => $this->getGridColumnOpeningsTag($style, $styleType),
             eGroupType::table => $this->getTableOpeningsTag($style, $styleType),
             eGroupType::row => $this->getTableRowOpeningsTag($style, $styleType),
-            eGroupType::expandable  => "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>",
+            eGroupType::expandable => $this->getExpandableOpeningsTag($style, $styleType),
             default => 'Group Type not implemented ' . $this->getType()->value . '<br>',
         };
     }
@@ -407,6 +407,20 @@ class Group implements GroupComponentContract, RenderableWrapper
         return $html;
     }
 
+    public function getExpandableOpeningsTag($style, $styleType)
+    {
+        $html = "<div class='container sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' data-styleType='{$styleType}' data-id='{$this->getGroupID()}'>";
+        $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body'>";
+        $html .= "<div class='col-sm-11 header-col'>";
+        $html .= "<span class='fas'/>";
+        $html .= "<span id='sr_{$this->getGroupID()}Header'>{$this->getName()}</span>";
+        $html .= "</div>"; // header-col
+        $html .= "</div>"; // card-header
+        $html .= "<div id='sr_{$this->getGroupID()}Body' class='collapse'>";
+        $html .= "<div class='card-body'>";
+       
+        return $html;
+    }
 
     public function renderClosingTags(): string
     {
@@ -418,7 +432,7 @@ class Group implements GroupComponentContract, RenderableWrapper
             eGroupType::gridcolumn => '</div>',
             eGroupType::table => '</tbody></table></div>',
             eGroupType::row => '</tr>',
-            eGroupType::expandable => '</div>',
+            eGroupType::expandable => '</div></div></div>',
             default => '</div>',
         };
 

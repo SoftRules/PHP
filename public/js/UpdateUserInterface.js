@@ -3,9 +3,18 @@
 $(document).ready(() => {
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));   
     $('[data-toggle="tooltip"]').tooltip();
+    hideWaitScreen();
     //Deze wordt (te vroeg of niet) uitgevoerd. Nu ook in final van getXML_HTML
     //scriptActions();
 });
+
+function showWaitScreen() {
+    $('#waitScreen').show();
+}
+
+function hideWaitScreen(){
+    $('waitScreen').hide();
+}
 
 function parseXML(xml) {
     try {
@@ -77,7 +86,6 @@ function updateControls($item) {
 
     scriptActions();
     ValidateField($item);
-    //$('[data-toggle="tooltip"]').tooltip();
 }
 
 function objectToFormData(object) {
@@ -91,7 +99,7 @@ function objectToFormData(object) {
 }
 
 function getXML_HTML(methodUrl, xml, id = undefined) {
-    showWaitCursor();
+    showWaitScreen();
 
     fetch(methodUrl, {
         method: 'POST',
@@ -127,12 +135,12 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
         })
         .finally(() => { 
             scriptActions(); 
-            hideWaitCursor();
+            hideWaitScreen();
         });
 }
 
 function getHTML(xml) {
-    showWaitCursor();
+    showWaitScreen();
 
     fetch(config.routes.renderXml, {
         method: 'POST',
@@ -159,7 +167,7 @@ function getHTML(xml) {
 
             alert(error);
         })
-        .finally(() => hideWaitCursor());
+        .finally(() => hideWaitScreen());
 }
 
 function scriptActions() {
@@ -227,7 +235,7 @@ function scriptActions() {
 
             alert(error);
         })
-        .finally(() => hideWaitCursor());
+        .finally(() => hideWaitScreen());
 }
 
 function toggleClick(item) {
@@ -246,6 +254,14 @@ function toggleClick(item) {
 	{
 		updateControls($(item));
 	}
+}
+
+function setSliderValue(item) {
+    var name = $(item).attr('id');
+    var value = $(item).val();
+    $('#sr_'+name).html(value);
+
+    updateControls($(item));
 }
 
 function setSwitchValue(item) {
