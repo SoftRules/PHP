@@ -5,7 +5,6 @@ namespace SoftRules\PHP;
 use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
-use SoftRules\PHP\Contracts\UI\Components\ButtonComponentContract;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
 use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
 use SoftRules\PHP\Contracts\UI\CustomPropertyContract;

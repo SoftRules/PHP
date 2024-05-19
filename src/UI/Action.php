@@ -5,7 +5,7 @@ namespace SoftRules\PHP\UI;
 use SoftRules\PHP\Contracts\ActionContract;
 
 class Action implements ActionContract
-{ 
+{
     private string $itemID;
     private string $command;
     private string $value;
@@ -24,6 +24,7 @@ class Action implements ActionContract
     {
         $this->itemID = $itemID;
     }
+
     public function getItemID(): string
     {
         return $this->itemID;
@@ -46,12 +47,12 @@ class Action implements ActionContract
         $this->value = $value;
     }
 
-    public function jsonSerialize():Array
+    public function jsonSerialize(): array
     {
         return [
             'ItemID' => $this->itemID,
             'Command' => $this->command,
-            'Value' => $this->value,            
+            'Value' => $this->value,
         ];
     } // jsonSerialize
 }

@@ -15,6 +15,6 @@ enum eGroupType: string
     case grid = 'grid';
     case gridcolumn = 'gridcolumn';
     case gridrow = 'gridrow';
-    
+
     case none = '';
 }
