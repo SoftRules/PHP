@@ -81,7 +81,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function setUpdateUserInterface($updateUserInterface): void;
 
-    public function getUpdateUserInterface();
+    public function getUpdateUserInterface(): bool;
 
     public function setInvalidMessage($invalidMessage): void;
 

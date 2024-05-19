@@ -6,10 +6,6 @@ use SoftRules\PHP\Contracts\ActionContract;
 
 class Action implements ActionContract
 {
-    private string $itemID;
-    private string $command;
-    private string $value;
-
     public function setCommand(string $command): void
     {
         $this->command = $command;
@@ -40,11 +36,8 @@ class Action implements ActionContract
         return $this->value;
     }
 
-    public function __construct(string $itemID, string $command, string $value)
+    public function __construct(private string $itemID, private string $command, private string $value)
     {
-        $this->itemID = $itemID;
-        $this->command = $command;
-        $this->value = $value;
     }
 
     public function jsonSerialize(): array

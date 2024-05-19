@@ -49,7 +49,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $includeInvisibleQuestion;
 
-    private $dataType = eDataType::none;
+    private \SoftRules\PHP\Enums\eDataType $dataType = eDataType::none;
+
     private ?eDisplayType $displayType = eDisplayType::none;
 
     private $displayOnly;
@@ -62,11 +63,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private bool $updateUserInterface = false;
 
-    private $invalidMessage = '';
+    private string $invalidMessage = '';
 
     private $readyForProcess;
 
     private $coreValue;
+
     private ?eGroupType $parentGroupType = eGroupType::none;
 
     /**
@@ -286,11 +288,11 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function setUpdateUserInterface($updateUserInterface): void
     {
         if (is_string($updateUserInterface)) {
-        $this->updateUserInterface = strtolower($updateUserInterface) === 'true' ?? $this->updateUserInterface = false;
+            $this->updateUserInterface = strtolower($updateUserInterface) === 'true';
         }
     }
 
-    public function getUpdateUserInterface()
+    public function getUpdateUserInterface(): bool
     {
         return $this->updateUserInterface;
     }
@@ -574,6 +576,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             if ($this->getHelpText() !== null) {
                 $html .= "<i class='fa fa-info-circle sr-question-help' data-toggle='tooltip' data-html='true' data-placement=right auto' title='{$this->getHelpText()}'></i>";
             }
+
             $html .= '</div>';
             $html .= '</div>'; //form-group
         }
@@ -585,12 +588,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $html;
     }
 
-    public function getDefaultInputControl()
+    public function getDefaultInputControl(): string
     {
         //data-styletype
         $styleType = '';
         if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
-            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')->getValue()}";
         }
 
         //update
@@ -616,21 +619,21 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         //format date
         $value = $this->getValue();
-        if ($this->getDataType() == eDataType::date) {
+        if ($this->getDataType() === eDataType::date) {
             $date = date_create($value);
             $value = date_format($date, 'Y-m-d');
         }
 
         return
-        <<<HTML
+            <<<HTML
                 <input {$type}
-                       class="sr-question sr-question-input {$this->getStyle()->default->class}"       
+                       class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
                        id="{$this->getName()}"
                        value="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
-                       data-displaytype="{$this->getDisplayType()?->value}"
+                       data-displaytype="{$this->getDisplayType()->value}"
                        data-invalidmessage = "{$this->getInvalidMessage()}"
                        data-isvalid='false'
                        {$update}
@@ -639,18 +642,15 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 HTML;
     }
 
-    public function getDefaultSelectBoxControl()
+    public function getDefaultSelectBoxControl(): string
     {
         //data-styletype
-        $styleType = '';
-        if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
-            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
-        }
+        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? '';
 
         $update = " onchange='updateControls($(this))'";
-            if ($this->getUpdateUserInterface() === true) {
-                $update = " onchange='updateUserInterface($(this))'";
-            }
+        if ($this->getUpdateUserInterface()) {
+            $update = " onchange='updateUserInterface($(this))'";
+        }
 
         return
             <<<HTML
@@ -660,7 +660,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     name="{$this->getName()}"
                     data-id="{$this->getQuestionID()}"
                     data-elementpath="{$this->getElementPath()}"
-                    data-displaytype="{$this->getDisplayType()?->value}"
+                    data-displaytype="{$this->getDisplayType()->value}"
                     data-invalidmessage = "{$this->getInvalidMessage()}"
                     data-isvalid='false'
                     {$update}
@@ -671,96 +671,86 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             HTML;
     }
 
-    public function getSwitchControl()
+    public function getSwitchControl(): string
     {
-        $html = '';
         $data_on = '';
         $data_off = '';
         $checked = ''; //not yet implemented
 
-        $updateuserinterface = 'false';
-        if ($this->getUpdateUserInterface()) {
-            $updateuserinterface = 'true';
-        }
+        $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
 
         if ($this->textValues->count() === 2) {
             $data_on = $this->textValues->first()->getValue();
             $data_off = $this->textValues->last()->getValue();
         }
 
-         $html .=
-         <<<HTML
+        return
+            <<<HTML
             <div class='sr-switch'>
+                <input type='hidden'
+                        value='{$this->getValue()}'
+                        name='sr_{$this->getQuestionID()}'>
 
-            <input  type='hidden'
-                    value='{$this->getValue()}'
-                    name='sr_{$this->getQuestionID()}'>
-            
-            <label  class='switch'>
+                <label class='switch'>
+                    <input type='checkbox'
+                            id='{$this->getName()}'
+                            value='{$this->getValue()}'
+                            data-elementpath="{$this->getElementPath()}"
+                            data-updateinterface='{$updateuserinterface}'
+                            {$checked}
+                            data-toggle='toggle'
+                            data-onvalue='{$data_on}'
+                            data-offvalue='{$data_off}'
+                            data-toggle='toggle'
+                            data-id='{$this->getQuestionID()}'
+                            onchange='setSwitchValue(this);'>
 
-            <input  type='checkbox' 
-                    id='{$this->getName()}'
-                    value='{$this->getValue()}' 
-                    data-elementpath="{$this->getElementPath()}"
-                    data-updateinterface='{$updateuserinterface}'
-                    {$checked} 
-                    data-toggle='toggle' 
-                    data-onvalue='{$data_on}' 
-                    data-offvalue='{$data_off}' 
-                    data-toggle='toggle' 
-                    data-id='{$this->getQuestionID()}'
-                    onchange='setSwitchValue(this);'>
-            
-            <span class='slider round'></span>
-            </label>
-            </div>    
+                    <span class='slider round'></span>
+                </label>
+            </div>
             HTML;
-
-            return $html;
     }
 
-    public function getToggleControl()
+    public function getToggleControl(): string
     {
         //data-styletype
-        $styleType = '';
-        if ($this->getCustomPropertyByName('styletype')?->getValue() !== null) {
-            $styleType = "data-styletype={$this->getCustomPropertyByName('styletype')?->getValue()}";
+        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? '';
+
+        $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
+
+        $values = '';
+        foreach ($this->textValues as $textValue) {
+            $active = $textValue->getValue() === $this->getValue() ? 'active' : '';
+
+            $values .= <<<HTML
+            <button type='button'
+                    class='sr btn btn-secondary grouptooltip
+                    {$active}'
+                    data-id='{$this->getQuestionID()}'
+                    data-updateinterface='{$updateuserinterface}'
+                    data-value='{$textValue->getValue()}'
+                    data-name='{$this->getName()}'
+                    onclick='toggleClick(this)'>
+                {$textValue->getText()}
+            </button>
+            HTML;
         }
 
-        $html = '';
-        $html .= "<div class='form-group sr-togglefield row'>";
-        //add question
-        $html .= "<input type='hidden' class='togglefield-hidden' data-id='{$this->getQuestionID()}' id='{$this->getName()}' value='{$this->getValue()}' data-styletype='{$styleType}' data-elementpath='{$this->getElementPath()}'>";
-        $html .= "<div class='btn-group btn-radio'>";
+        return
+            <<<HTML
+            <div class='form-group sr-togglefield row'>
+                <input type='hidden'
+                       class='togglefield-hidden'
+                       data-id='{$this->getQuestionID()}'
+                       id='{$this->getName()}'
+                       value='{$this->getValue()}'
+                       data-styletype='{$styleType}'
+                       data-elementpath='{$this->getElementPath()}'/>
 
-        $updateuserinterface = 'false';
-        if ($this->getUpdateUserInterface()) {
-            $updateuserinterface = 'true';
-        }
-
-        $active = '';
-        foreach($this->textValues as $textValue) {
-            if ($textValue->getValue() === $this->getValue()) {
-                $active = ' active';
-            }
-            $html .= "<button type='button' class='sr btn btn-secondary grouptooltip {$active}' data-id='{$this->getQuestionID()}' data-updateinterface='{$updateuserinterface}' data-value='{$textValue->getValue()}' data-name='{$this->getName()}' onclick='toggleClick(this)'>{$textValue->getText()}</button>";
-        }
-
-        $html .= '</div>';
-        $html .= '</div>';
-
-        return $html;
-    }
-
-    private function getTextValuesDescription(): string
-    {
-        if ($this->textValues->isEmpty()) {
-            return '';
-        }
-
-        $items = $this->textValues
-            ->implode(fn (TextValueComponent $textValueItem): string => "{$textValueItem->getValue()}-{$textValueItem->getText()}", ', ');
-
-        return " Aantal TextValues: {$this->textValues->count()} ({$items})";
+                <div class='btn-group btn-radio'>
+                    {$values}
+                </div>
+            </div>
+            HTML;
     }
 }

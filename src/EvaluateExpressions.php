@@ -19,14 +19,10 @@ use Stringable;
 
 final class EvaluateExpressions implements Stringable
 {
-    private string $html = '';
-
-    private int $currentPage;
-
-    public readonly int $totalPages;
-
     public readonly DOMDocument $userInterfaceData;
+
     private readonly UiComponentsCollection $allComponents;
+
     public readonly ActionCollection $actionList;
 
     public function __construct(SoftRulesFormData $UIClass)
@@ -34,13 +30,12 @@ final class EvaluateExpressions implements Stringable
         $this->actionList = new ActionCollection();
         $this->userInterfaceData = $UIClass->getUserInterfaceData();
         $this->allComponents = $UIClass->components;
-        $this->EvaluateExpressions($UIClass->components);
+        $this->evaluateExpressions($UIClass->components);
     }
 
-    private function EvaluateExpressions(UiComponentsCollection $components): void
+    private function evaluateExpressions(UiComponentsCollection $components): void
     {
         foreach ($components as $component) {
-
             if ($component instanceof GroupComponentContract) {
                 //Visible expression
                 if ($component->getType() !== eGroupType::page) {
@@ -52,9 +47,8 @@ final class EvaluateExpressions implements Stringable
                 }
 
                 if ($component instanceof RenderableWrapper) {
-                    $this->EvaluateExpressions($component->getComponents());
+                    $this->evaluateExpressions($component->getComponents());
                 }
-
             } elseif ($component instanceof QuestionComponentContract) {
                 //Visible expression
                 $visible = $this->itemVisible($component);
@@ -86,7 +80,6 @@ final class EvaluateExpressions implements Stringable
                 } else {
                     $this->actionList->add(new Action($component->getQuestionID(), 'Disabled', ''));
                 }
-
             } elseif ($component instanceof LabelComponentContract) {
                 //Visible expression
                 if ($this->itemVisible($component)) {
@@ -113,20 +106,12 @@ final class EvaluateExpressions implements Stringable
 
     public function itemEnabled(QuestionComponentContract $component): bool
     {
-        $defaultstateExpression = $component->getDefaultStateExpression()->value($this->allComponents, $this->userInterfaceData);
         if ($component->getDefaultState() === eDefaultState::Readonly) {
-            if ($defaultstateExpression) {
-                return false;
-            } else {
-                return true;
-            }
+            return ! $component->getDefaultStateExpression()->value($this->allComponents, $this->userInterfaceData);
+        }
 
-        } elseif ($component->getDefaultState() === eDefaultState::Editable) {
-            if ($defaultstateExpression) {
-                return true;
-            } else {
-                return false;
-            }
+        if ($component->getDefaultState() === eDefaultState::Editable) {
+            return $component->getDefaultStateExpression()->value($this->allComponents, $this->userInterfaceData);
         }
 
         return true;

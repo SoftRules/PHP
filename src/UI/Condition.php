@@ -94,7 +94,7 @@ class Condition implements ConditionContract
                 if ($component->getName() == $operand->getValue()) {
                     //Tussen accolades staat de instantie van de node in het xml. Staat er niets, dan impliceert dat de eerste instantie zijnde {1}
                     //Door {1} te vervangen door niets, kunnen de strings met elkaar vergeleken worden.
-                    $itemPath = str_replace('{1}', '', (string) $component->getElementPath());
+                    $itemPath = str_replace('{1}', '', $component->getElementPath());
                     $operandPath = str_replace('{1}', '', $operand->getElementPath());
 
                     if ($itemPath === $operandPath) {

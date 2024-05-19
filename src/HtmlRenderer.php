@@ -6,9 +6,6 @@ use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
-use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
-use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
-use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\SoftRulesFormData;
 use Stringable;
@@ -23,17 +20,11 @@ final class HtmlRenderer implements Stringable
 
     public readonly DOMDocument $userInterfaceData;
 
-    private readonly UiComponentsCollection $allComponents;
-
-//    private DOMDocument $SR_XML;
-
     public function __construct(SoftRulesFormData $UIClass)
     {
         $this->totalPages = $UIClass->getPages();
         $this->currentPage = $UIClass->getPage();
         $this->userInterfaceData = $UIClass->getUserInterfaceData();
-//        $this->SR_XML = $UIClass->getSoftRulesXml();
-        $this->allComponents = $UIClass->components;
 
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
         $this->html .= "<div class='errorContainer alert alert-danger' style='margin-top: 2px; display:none' data-type='Danger' id='messageAlert'></div>";
@@ -44,8 +35,6 @@ final class HtmlRenderer implements Stringable
     private function renderComponents(UiComponentsCollection $components): void
     {
         foreach ($components as $component) {
-            $componentName = class_basename($component);
-
             if ($component instanceof RenderableWrapper) {
                 $this->html .= $component->renderOpeningTags();
                 $this->renderComponents($component->getComponents());
@@ -77,23 +66,6 @@ final class HtmlRenderer implements Stringable
                 $this->html .= $component->render();
             }
         }
-    }
-
-    private function getCustomPropertyDescriptions(ComponentWithCustomPropertiesContract $component): string
-    {
-        if ($component->getCustomProperties()->isEmpty()) {
-            return '';
-        }
-
-        $description = $component->getCustomProperties()
-            ->implode(fn (CustomPropertyContract $customProperty): string => "{$customProperty->getName()}={$customProperty->getValue()}", ', ');
-
-        return " {$component->getCustomProperties()->count()} Custom Properties ({$description})";
-    }
-
-    public function itemVisible(UiComponentContract $component): bool
-    {
-        return $component->getVisibleExpression()->value($this->allComponents, $this->userInterfaceData);
     }
 
     private function hasPreviousPage(): bool

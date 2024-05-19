@@ -40,6 +40,7 @@ class Button implements ButtonComponentContract, Renderable
     private ExpressionContract $visibleExpression;
 
     private ParameterContract $parameter;
+
     private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()

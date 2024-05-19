@@ -14,7 +14,9 @@ final class SoftRulesForm implements Stringable
     private string $updateUserInterfaceRoute = '/updateUserInterface.php';
 
     private string $previousPageRoute = '/previousPage.php';
+
     private string $nextPageRoute = '/nextPage.php';
+
     private string $scriptActionsRoute = '/scriptActions.php';
 
     private string $initialXml = '';
@@ -22,6 +24,7 @@ final class SoftRulesForm implements Stringable
     private ?HtmlString $csrfProtection = null;
 
     private string $javascriptPath = 'js';
+
     private string $cssPath = 'css';
 
     private function __construct(public readonly string $product)

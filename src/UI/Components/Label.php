@@ -30,11 +30,12 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     private string $description;
 
-    private $displayType;
+    private ?\SoftRules\PHP\Enums\eDisplayType $displayType = null;
 
     private ParameterContract $parameter;
 
     private ExpressionContract $visibleExpression;
+
     private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
@@ -150,6 +151,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
+
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
@@ -173,9 +175,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         //displaytypes: Attention, Informationbutton
         //custum properties: align en valign. StyleTypes, HelpText?
         //custom properties depricated: columnwidth, columnwidth_unit
-        $html = '';
-
-        $html .= match($this->getParentGroupType()) {
+        $html = match($this->getParentGroupType()) {
             eGroupType::row => "<td class='sr-table-td'>",
             eGroupType::tableheader => "<th class='sr-table-th'>",
             default => '',
@@ -193,10 +193,11 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
             $align = '';
             $valign = '';
             if ($this->getCustomPropertyByName('align')?->getValue() !== null) {
-                $align = "sr-align-{$this->getCustomPropertyByName('align')?->getValue()}";
+                $align = "sr-align-{$this->getCustomPropertyByName('align')->getValue()}";
             }
+
             if ($this->getCustomPropertyByName('valign')?->getValue() !== null) {
-                $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')?->getValue()}";
+                $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')->getValue()}";
             }
 
             $html .=
@@ -204,17 +205,15 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     <span data-id="{$this->getLabelID()}"
                         class="sr-label {$this->getStyle()->default->class} {$align} {$valign}"
                         style="{$this->getStyle()->default->inlineStyle}">
-                        {$this->getText()}            
-                    </span>              
+                        {$this->getText()}
+                    </span>
                     HTML;
         }
 
-        $html .= match($this->getParentGroupType()) {
+        return $html . match($this->getParentGroupType()) {
             eGroupType::row => '</td>',
             eGroupType::tableheader => '</th>',
             default => '',
         };
-
-        return $html;
     }
 }
