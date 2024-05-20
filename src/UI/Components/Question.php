@@ -708,9 +708,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private function getSwitchControl(): string
     {
-        $data_on = '';
-        $data_off = '';
-        $checked = ''; //not yet implemented
+        $data_on = '1';
+        $data_off = '0';
 
         $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
 
@@ -718,6 +717,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $data_on = $this->textValues->first()->getValue();
             $data_off = $this->textValues->last()->getValue();
         }
+
+        $checked = $this->getValue() === $data_on ? 'checked' : ''; //not yet implemented
 
         return
             <<<HTML
@@ -729,7 +730,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <label class='switch'>
                     <input type='checkbox'
                             id='{$this->getName()}'
-                            value='{$this->getValue()}'
+                            name='{$this->getName()}'
+                            value='{$data_on}'
                             data-elementpath="{$this->getElementPath()}"
                             data-updateinterface='{$updateuserinterface}'
                             {$checked}

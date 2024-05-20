@@ -56,10 +56,10 @@ function previousPage($item) {
     getXML_HTML(config.routes.previousPage, xmlText, id);
 }
 
-function updateUserInterface($item) {
+window.updateUserInterface = function ($item) {
     const value = $item.val();
 
-    if ($item.data('prevValue') === value) {
+    if (! $item.is('button') && $item.data('prevValue') === value) {
         return;
     }
 
@@ -78,7 +78,7 @@ function updateUserInterface($item) {
     getXML_HTML(config.routes.updateUserInterface, xmlText, id);
 }
 
-function updateControls($item) {
+window.updateControls = function ($item) {
     const value = $item.val();
     const name = $item.attr('id');
     const path = $item.data('elementpath');
@@ -243,7 +243,7 @@ function toggleClick(item) {
     }
 }
 
-function setSwitchValue(item) {
+window.setSwitchValue = function (item) {
     var name = $(item).attr('id');
 
     if ($(item).prop('checked')) {
