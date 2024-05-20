@@ -1,9 +1,9 @@
-﻿let $xml;
+﻿import './rSlider.min.js';
+
+let $xml;
 
 $(document).ready(() => {
-    getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));   
-    $('[data-toggle="tooltip"]').tooltip();
-    //Deze wordt (te vroeg of niet) uitgevoerd. Nu ook in final van getXML_HTML
+    getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
     //scriptActions();
 });
 
@@ -37,6 +37,9 @@ $(document)
     .on('click', '.previousButton', e => {
         // no validation check needed
         previousPage($(e.currentTarget));
+    })
+    .on('focus', ':input', e => {
+        $(e.currentTarget).data('prevValue', $(e.currentTarget).val());
     });
 
 function nextPage($item) {
@@ -55,6 +58,13 @@ function previousPage($item) {
 
 function updateUserInterface($item) {
     const value = $item.val();
+
+    if ($item.data('prevValue') === value) {
+        return;
+    }
+
+    $item.data('prevValue', value);
+
     const name = $item.attr('id');
     const path = $item.data('elementpath');
 
@@ -76,8 +86,7 @@ function updateControls($item) {
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
     scriptActions();
-    ValidateField($item);
-    //$('[data-toggle="tooltip"]').tooltip();
+    validateField($item);
 }
 
 function objectToFormData(object) {
@@ -125,8 +134,8 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
 
             alert(error);
         })
-        .finally(() => { 
-            scriptActions(); 
+        .finally(() => {
+            scriptActions();
             hideWaitCursor();
         });
 }
@@ -153,6 +162,8 @@ function getHTML(xml) {
         })
         .then((data) => {
             $('#softrules-form-content').html(data);
+
+            tippy('.sr-tooltip');
         })
         .catch((error) => {
             console.error(error);
@@ -164,7 +175,7 @@ function getHTML(xml) {
 
 function scriptActions() {
     const xml = new XMLSerializer().serializeToString($xml);
-    
+
     fetch(config.routes.scriptactions, {
         method: 'POST',
         headers: {
@@ -182,42 +193,32 @@ function scriptActions() {
             throw new Error('Foutmelding: ' + await response.text());
         })
         .then((data) => {
-            
             const obj = JSON.parse(data);
 
-            for (i = 0; i < obj.length; i++) {
-                if (obj[i].Command == 'Hide') {
-                    $('[data-id=' + obj[i].ItemID + ']').hide();                                   
-                }
-                else if (obj[i].Command == 'Show') {
-                    $('[data-id=' + obj[i].ItemID + ']').show();                  
-                }
-                else if (obj[i].Command == 'Valid') {
+            for (let i = 0; i < obj.length; i++) {
+                if (obj[i].Command === 'Hide') {
+                    $('[data-id=' + obj[i].ItemID + ']').hide();
+                } else if (obj[i].Command === 'Show') {
+                    $('[data-id=' + obj[i].ItemID + ']').show();
+                } else if (obj[i].Command === 'Valid') {
                     $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
-                }
-                else if (obj[i].Command == 'Invalid') {
+                } else if (obj[i].Command === 'Invalid') {
                     $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', false);
-                }
-                else if (obj[i].Command == 'Required') {
+                } else if (obj[i].Command === 'Required') {
                     $('[data-id=' + obj[i].ItemID + ']').prop('required', true);
-                }
-                else if (obj[i].Command == 'NotRequired') {
+                } else if (obj[i].Command === 'NotRequired') {
                     $('[data-id=' + obj[i].ItemID + ']').prop('required', false);
-                }
-                else if (obj[i].Command == 'Enabled') {
+                } else if (obj[i].Command === 'Enabled') {
                     $('[data-id=' + obj[i].ItemID + ']').prop('disabled', false);
-                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch'))
-                    {
+                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
                         $('[data-id=' + obj[i].ItemID + ']').parent().removeClass('disabled');
                     }
-                }
-                else if (obj[i].Command == 'Disabled') {
+                } else if (obj[i].Command === 'Disabled') {
                     $('[data-id=' + obj[i].ItemID + ']').prop('disabled', true);
-                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch'))
-                    {
+                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
                         $('[data-id=' + obj[i].ItemID + ']').parent().addClass('disabled');
                     }
-                }                              
+                }
             }
         })
         .catch((error) => {
@@ -229,40 +230,31 @@ function scriptActions() {
 }
 
 function toggleClick(item) {
-	var value = $(item).data('value');
-	var name = $(item).attr('id');
-	$('#'+name).val(value);
-	$(item).siblings().removeClass('active');
+    var value = $(item).data('value');
+    var name = $(item).attr('id');
+    $('#' + name).val(value);
+    $(item).siblings().removeClass('active');
     $(item).addClass('active');
-	
-	var update = $('#'+name).data('updateinterface');
-	if (update == true)
-	{
-		UpdateUserInterface($(item));        
-	}
-	else
-	{
-		updateControls($(item));
-	}
+
+    if ($('#' + name).data('updateinterface')) {
+        updateUserInterface($(item));
+    } else {
+        updateControls($(item));
+    }
 }
 
 function setSwitchValue(item) {
     var name = $(item).attr('id');
-    
+
     if ($(item).prop('checked')) {
         $(item).val($(item).data('onvalue'));
-    }
-    else {
+    } else {
         $(item).val($(item).data('offvalue'));
     }
 
-    var update = $('#'+name).data('updateinterface');
-	if (update == true)
-	{
-		UpdateUserInterface($(item));        
-	}
-	else
-	{
-		updateControls($(item));
-	}
+    if ($('#' + name).data('updateinterface')) {
+        updateUserInterface($(item));
+    } else {
+        updateControls($(item));
+    }
 }

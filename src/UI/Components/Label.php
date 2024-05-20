@@ -182,12 +182,12 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         };
 
         if ($this->getDisplayType() === eDisplayType::informationbutton) {
-            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg' data-toggle='tooltip' data-html='true' data-placement='right auto' title='{$this->getText()}'></i></span>";
+            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg sr-tooltip' data-tippy-content='{$this->getText()}'></i></span>";
         } elseif ($this->getDisplayType() === eDisplayType::image) {
             $url = $this->getCustomPropertyByName('imageurl')?->getValue();
             $width = $this->getCustomPropertyByName('width')?->getValue();
             $height = $this->getCustomPropertyByName('height')?->getValue();
-            $html .= "<img alt='{$this->getText()}' class=no-pointer-events src='{$url}' max-width={$width}; height={$height};>";
+            $html .= "<img alt='{$this->getText()}' class='no-pointer-events' src='{$url}' style='max-width={$width}; height={$height};'>";
         } else {
             //alignment
             $align = '';

@@ -244,7 +244,6 @@ class Button implements ButtonComponentContract, Renderable
             }
         }
 
-        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
         $buttonStyle = $this->getStyle()->default;
 
         $buttonFunction = match ($this->getType()) {
@@ -268,7 +267,7 @@ class Button implements ButtonComponentContract, Renderable
 
         } else {
 
-        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
 
         }
 

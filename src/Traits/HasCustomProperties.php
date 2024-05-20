@@ -45,7 +45,18 @@ trait HasCustomProperties
     public function getCustomPropertyByName(string $propertyName): ?CustomPropertyContract
     {
         return $this->getCustomProperties()->first(function (CustomPropertyContract $customProperty) use ($propertyName): bool {
-            return strtolower((string) $customProperty->getName()) === $propertyName;
+            return strtolower((string) $customProperty->getName()) === strtolower($propertyName);
         });
+    }
+
+    public function styleTypeProperty(?string $default = null): string
+    {
+        $value = $this->getCustomPropertyByName('styletype')?->getValue() ?? $default;
+
+        if ($value === null) {
+            return '';
+        }
+
+        return 'data-styletype="' . $value . '"';
     }
 }
