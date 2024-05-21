@@ -4,7 +4,6 @@ namespace SoftRules\PHP\Services;
 
 use Carbon\CarbonInterval;
 use DOMDocument;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use RuntimeException;
@@ -121,7 +120,7 @@ class SoftRulesClient extends Factory implements ClientContract
 
         return $responseXml;
     }
-    
+
     protected function newPendingRequest(): PendingRequest
     {
         return parent::newPendingRequest()
@@ -165,6 +164,6 @@ class SoftRulesClient extends Factory implements ClientContract
             exit('<error>' . $message . '</error>');
         }
 
-        throw new AuthorizationException($message);
+        throw new RuntimeException($message);
     }
 }

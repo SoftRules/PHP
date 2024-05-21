@@ -9,14 +9,13 @@ use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eButtonType;
 use SoftRules\PHP\Enums\eDisplayType;
-use SoftRules\PHP\Enums\eStyleType;
+use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
-use SoftRules\PHP\Enums\eGroupType;
 
 class Button implements ButtonComponentContract, Renderable
 {
@@ -41,6 +40,7 @@ class Button implements ButtonComponentContract, Renderable
     private ExpressionContract $visibleExpression;
 
     private ParameterContract $parameter;
+
     private ?eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
@@ -159,11 +159,12 @@ class Button implements ButtonComponentContract, Renderable
     {
         return $this->parameter;
     }
+
     public function setParentGroupType(eGroupType $parentGroupType): void
     {
         $this->parentGroupType = $parentGroupType;
     }
-    
+
     public function getParentGroupType(): ?eGroupType
     {
         return $this->parentGroupType;
@@ -243,7 +244,6 @@ class Button implements ButtonComponentContract, Renderable
             }
         }
 
-        $styleType = $this->getCustomPropertyByName('styletype')?->getValue() ?? 'default';
         $buttonStyle = $this->getStyle()->default;
 
         $buttonFunction = match ($this->getType()) {
@@ -252,9 +252,8 @@ class Button implements ButtonComponentContract, Renderable
             default => '',
         };
 
-        $html = "";
-        if ($this->getParentGroupType() === eGroupType::row)
-        {
+        $html = '';
+        if ($this->getParentGroupType() === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
         }
 
@@ -265,17 +264,17 @@ class Button implements ButtonComponentContract, Renderable
             $height = $this->getCustomPropertyByName('height')?->getValue() ?? '';
             $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
             $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
- 
+
         } else {
-       
-        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' data-styleType='{$styleType}' data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
-                
+
+        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+
         }
-        
-        if ($this->getParentGroupType() === eGroupType::row)
-        {
-            $html .= "</td>";
+
+        if ($this->getParentGroupType() === eGroupType::row) {
+            $html .= '</td>';
         }
+
         return $html .= '</div>';
     }
 }

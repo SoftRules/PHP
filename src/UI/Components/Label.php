@@ -9,13 +9,13 @@ use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
 use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\LabelComponentStyle;
-use SoftRules\PHP\Enums\eGroupType;
 
 class Label implements ComponentWithCustomPropertiesContract, LabelComponentContract, Renderable
 {
@@ -30,12 +30,14 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     private string $description;
 
-    private $displayType;
+    private ?\SoftRules\PHP\Enums\eDisplayType $displayType = null;
 
     private ParameterContract $parameter;
 
     private ExpressionContract $visibleExpression;
+
     private ?eGroupType $parentGroupType = eGroupType::none;
+
     public function __construct()
     {
         $this->setVisibleExpression(new Expression());
@@ -116,15 +118,17 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
     {
         return $this->visibleExpression;
     }
+
     public function setParentGroupType(eGroupType $parentGroupType): void
     {
         $this->parentGroupType = $parentGroupType;
     }
-    
+
     public function getParentGroupType(): ?eGroupType
     {
         return $this->parentGroupType;
     }
+
     public function parse(DOMElement $DOMElement): static
     {
         /** @var DOMElement $childNode */
@@ -147,6 +151,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
+
                     break;
                 case 'Parameter':
                     $this->setParameter(Parameter::createFromDomNode($childNode));
@@ -168,18 +173,15 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
     public function render(): string
     {
         //displaytypes: Attention, Informationbutton
-        //custum properties: align en valign. StyleTypes, HelpText? 
+        //custum properties: align en valign. StyleTypes, HelpText?
         //custom properties depricated: columnwidth, columnwidth_unit
-        $html = "";
-        $labelclass = "sr-label";
-        
-        if ($this->getParentGroupType() === eGroupType::tableheader)
-        {
-            $labelclass = "sr-label-th";
+        $labelClass = 'sr-label';
+
+        if ($this->getParentGroupType() === eGroupType::tableheader) {
+            $labelClass .= ' sr-label-th';
         }
 
-        $html .= match($this->getParentGroupType())
-        {
+        $html = match($this->getParentGroupType()) {
             eGroupType::row => "<td class='sr-table-td'>",
             eGroupType::tableheader => "<th class='sr-table-th'>",
 
@@ -187,42 +189,38 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         };
 
         if ($this->getDisplayType() === eDisplayType::informationbutton) {
-            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg' data-toggle='tooltip' data-html='true' data-placement='right auto' title='{$this->getText()}'></i></span>";
-        }  else if ($this->getDisplayType() === eDisplayType::image) {
-            $url=$this->getCustomPropertyByName("imageurl")?->getValue();
-            $width = $this->getCustomPropertyByName("width")?->getValue();
-            $height = $this->getCustomPropertyByName("height")?->getValue();
-            $html .= "<img alt='{$this->getText()}' class=no-pointer-events src='{$url}' max-width={$width}; height={$height};>";
+            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg sr-tooltip' data-tippy-content='{$this->getText()}'></i></span>";
+        } elseif ($this->getDisplayType() === eDisplayType::image) {
+            $url = $this->getCustomPropertyByName('imageurl')?->getValue();
+            $width = $this->getCustomPropertyByName('width')?->getValue();
+            $height = $this->getCustomPropertyByName('height')?->getValue();
+            $html .= "<img alt='{$this->getText()}' class='no-pointer-events' src='{$url}' style='max-width={$width}; height={$height};'>";
         } else {
             //alignment
-            $align = "";
-            $valign = "";
-            if ($this->getCustomPropertyByName('align')?->getValue() !== null)
-            {
-                $align = "sr-align-{$this->getCustomPropertyByName('align')?->getValue()}";
+            $align = '';
+            $valign = '';
+            if ($this->getCustomPropertyByName('align')?->getValue() !== null) {
+                $align = "sr-align-{$this->getCustomPropertyByName('align')->getValue()}";
             }
-            if ($this->getCustomPropertyByName('valign')?->getValue() !== null)
-            {
-                $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')?->getValue()}";
+
+            if ($this->getCustomPropertyByName('valign')?->getValue() !== null) {
+                $valign = " sr-vertical-align-{$this->getCustomPropertyByName('valign')->getValue()}";
             }
 
             $html .=
                     <<<HTML
                     <span data-id="{$this->getLabelID()}"
-                        class="{$labelclass} {$this->getStyle()->default->class} {$align} {$valign}"
+                        class="{$labelClass} {$this->getStyle()->default->class} {$align} {$valign}"
                         style="{$this->getStyle()->default->inlineStyle}">
-                        {$this->getText()}            
-                    </span>              
+                        {$this->getText()}
+                    </span>
                     HTML;
         }
-    
-        $html .= match($this->getParentGroupType())
-        {
-            eGroupType::row => "</td>",
-            eGroupType::tableheader => "</th>",
+
+        return $html . match($this->getParentGroupType()) {
+            eGroupType::row => '</td>',
+            eGroupType::tableheader => '</th>',
             default => '',
         };
-    
-        return $html;
     }
 }

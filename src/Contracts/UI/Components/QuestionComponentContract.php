@@ -9,9 +9,9 @@ use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
-use SoftRules\PHP\Enums\eDisplayType;
-use SoftRules\PHP\Enums\eDefaultState;
 use SoftRules\PHP\Enums\eDataType;
+use SoftRules\PHP\Enums\eDefaultState;
+use SoftRules\PHP\Enums\eDisplayType;
 
 interface QuestionComponentContract extends UiComponentContract
 {
@@ -81,7 +81,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function setUpdateUserInterface($updateUserInterface): void;
 
-    public function getUpdateUserInterface();
+    public function getUpdateUserInterface(): bool;
 
     public function setUpdateQuestionOnly($updateQuestionOnly): void;
 

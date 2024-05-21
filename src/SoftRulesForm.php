@@ -14,7 +14,9 @@ final class SoftRulesForm implements Stringable
     private string $updateUserInterfaceRoute = '/updateUserInterface.php';
 
     private string $previousPageRoute = '/previousPage.php';
+
     private string $nextPageRoute = '/nextPage.php';
+
     private string $scriptActionsRoute = '/scriptActions.php';
 
     private string $initialXml = '';
@@ -22,6 +24,7 @@ final class SoftRulesForm implements Stringable
     private ?HtmlString $csrfProtection = null;
 
     private string $javascriptPath = 'js';
+
     private string $cssPath = 'css';
 
     private function __construct(public readonly string $product)
@@ -129,7 +132,7 @@ final class SoftRulesForm implements Stringable
         },
     };
     let script_update = document.createElement('script');
-    script_update.type = 'text/javascript';
+    script_update.type = 'module';
     script_update.src = '{$this->javascriptPath}/UpdateUserInterface.js';
     document.head.appendChild(script_update);
 
@@ -138,10 +141,10 @@ final class SoftRulesForm implements Stringable
     script_val.src = '{$this->javascriptPath}/Validation.js';
     document.head.appendChild(script_val);
 
-    var link  = document.createElement('link');   
+    var link  = document.createElement('link');
     link.rel  = 'stylesheet';
     link.type = 'text/css';
-    link.href = '{$this->cssPath}/softrules.css';  
+    link.href = '{$this->cssPath}/softrules.css';
     document.head.appendChild(link);
 </script>
 
