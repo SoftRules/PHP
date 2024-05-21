@@ -49,7 +49,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $includeInvisibleQuestion;
 
-    private \SoftRules\PHP\Enums\eDataType $dataType = eDataType::none;
+    private eDataType $dataType = eDataType::none;
 
     private ?eDisplayType $displayType = eDisplayType::none;
 
@@ -62,6 +62,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $elementPath;
 
     private bool $updateUserInterface = false;
+
     private bool $updateQuestionOnly = false;
 
     private string $invalidMessage = '';
@@ -289,11 +290,11 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function setUpdateQuestionOnly($updateQuestionOnly): void
     {
         if (is_string($updateQuestionOnly)) {
-            $this->updateQuestionOnly = strtolower($updateQuestionOnly) === 'true' ?? $this->updateQuestionOnly = false;
+            $this->updateQuestionOnly = strtolower($updateQuestionOnly) === 'true';
         }
     }
 
-    public function getUpdateQuestionOnly()
+    public function getUpdateQuestionOnly(): bool
     {
         return $this->updateQuestionOnly;
     }
@@ -498,6 +499,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     if ($childNode->attributes->getNamedItem('QuestionOnly') !== null) {
                         $this->setUpdateQuestionOnly($childNode->attributes->getNamedItem('QuestionOnly'));
                     }
+
                     break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($childNode->nodeValue);

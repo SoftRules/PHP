@@ -86,6 +86,7 @@ interface QuestionComponentContract extends UiComponentContract
     public function setUpdateQuestionOnly($updateQuestionOnly): void;
 
     public function getUpdateQuestionOnly();
+
     public function setInvalidMessage($invalidMessage): void;
 
     public function getInvalidMessage(): string;

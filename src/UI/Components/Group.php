@@ -404,9 +404,8 @@ class Group implements GroupComponentContract, RenderableWrapper
         $html .= '</div>'; // header-col
         $html .= '</div>'; // card-header
         $html .= "<div id='sr_{$this->getGroupID()}Body' class='collapse'>";
-        $html .= "<div class='card-body'>";
 
-        return $html;
+        return $html . "<div class='card-body'>";
     }
 
     public function renderClosingTags(): string
