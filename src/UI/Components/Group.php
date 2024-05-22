@@ -396,8 +396,8 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function getExpandableOpeningsTag(?StyleData $style): string
     {
-        $html = "<div class='container sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
-        $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body'>";
+        $html = "<div class='sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
+        $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body' onclick='expandClick(this);'>";
         $html .= "<div class='col-sm-11 header-col'>";
         $html .= "<span class='fas'/>";
         $html .= "<span id='sr_{$this->getGroupID()}Header'>{$this->getName()}</span>";

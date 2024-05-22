@@ -259,3 +259,13 @@ window.setSwitchValue = function (item) {
         updateControls($(item));
     }
 }
+
+window.expandClick = function (item) {
+	var id = $(item).data('target');
+	if ($(id).hasClass('show')) {
+		$(id).removeClass('show');
+	}
+	else{
+		$(id).addClass('show');
+	}	
+}
