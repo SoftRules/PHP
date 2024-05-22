@@ -655,10 +655,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private function getSliderControl(): string
     {
         $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
-        if ($this->getUpdateUserInterface()) {
-            $update = " onblur='updateUserInterface($(this))'";
-        }
-
+       
         //format date
         $value = str_replace(',', '.', $this->getValue());
 
@@ -679,7 +676,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-displaytype="{$this->getDisplayType()->value}"
                        data-invalidmessage="{$this->getInvalidMessage()}"
                        {$this->styleTypeProperty()}
-                       data-isvalid='false'/>
+                       data-isvalid='true'/>
 
                 <script>
                     new rSlider({
