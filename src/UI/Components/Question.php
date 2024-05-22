@@ -561,7 +561,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         } else {
             $html .= "<div class='form-group row sr-question' data-row='{$this->getQuestionID()}'>";
             $html .= "<div class='col-sm-4'>";
-            $html .= "<label class='sr-label control-label align-self-center' for='{$this->getName()}' id='{$this->getQuestionID()}-label' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
+            $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
             $html .= '</div>';
 
             $html .= "<div class='col-sm-7'>";
