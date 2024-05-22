@@ -636,8 +636,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private function getSliderControl(): string
     {
-        //update
-        $update = " onblur='updateControls($(this))'";
+        $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
         if ($this->getUpdateUserInterface()) {
             $update = " onblur='updateUserInterface($(this))'";
         }
@@ -656,11 +655,11 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        style="{$this->getStyle()->slider->inlineStyle}"
                        id="{$this->getName()}"
                        value="{$value}"
+                       data-prevValue="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
                        data-displaytype="{$this->getDisplayType()->value}"
                        data-invalidmessage="{$this->getInvalidMessage()}"
-                       {$update}
                        {$this->styleTypeProperty()}
                        data-isvalid='false'/>
 
@@ -675,6 +674,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                         set: [{$value}],
                         scale: false,
                         labels: false,
+                        onChange() {
+                            {$updateMethod}($('#{$this->getName()}[data-id="{$this->getQuestionID()}"]'));
+                        },
                     });
                 </script>
                 HTML;
