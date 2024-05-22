@@ -561,7 +561,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         } else {
             $html .= "<div class='form-group row sr-question' data-row='{$this->getQuestionID()}'>";
             $html .= "<div class='col-sm-4'>";
-            $html .= "<label class='sr-label control-label align-self-center' for='{$this->getName()}' id='{$this->getQuestionID()}' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
+            $html .= "<label class='sr-label control-label align-self-center' for='{$this->getName()}' id='{$this->getQuestionID()}-label' data-id='{$this->getQuestionID()}'>{$this->getDescription()}</label>";
             $html .= '</div>';
 
             $html .= "<div class='col-sm-7'>";
@@ -639,7 +639,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <input {$type}
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
-                       id="{$this->getName()}"
+                       name="{$this->getName()}"
+                       id="{$this->getQuestionID()}"
                        value="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
@@ -668,7 +669,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <input type="hidden"
                        class="sr-question sr-question-slider sr-slider {$this->getStyle()->slider->class}"
                        style="{$this->getStyle()->slider->inlineStyle}"
-                       id="{$this->getName()}"
+                       name="{$this->getName()}"
+                       id="{$this->getQuestionID()}"
                        value="{$value}"
                        data-prevValue="{$value}"
                        data-id="{$this->getQuestionID()}"
@@ -680,7 +682,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
                 <script>
                     new rSlider({
-                        target: '#{$this->getName()}',
+                        target: '#{$this->getQuestionID()}',
                         step: {$step},
                         values: {
                             min: {$min},
@@ -690,7 +692,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                         scale: false,
                         labels: false,
                         onChange() {
-                            {$updateMethod}($('#{$this->getName()}[data-id="{$this->getQuestionID()}"]'));
+                            {$updateMethod}($('#{$this->getQuestionID()}[data-id="{$this->getQuestionID()}"]'));
                         },
                     });
                 </script>
@@ -708,7 +710,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             <<<HTML
             <select class="sr-question sr-question-choice {$this->getStyle()->default->class}"
                     style="{$this->getStyle()->default->inlineStyle}"
-                    id="{$this->getName()}"
+                    id="{$this->getQuestionID()}"
                     name="{$this->getName()}"
                     data-id="{$this->getQuestionID()}"
                     data-elementpath="{$this->getElementPath()}"
@@ -745,7 +747,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
                 <label class='switch'>
                     <input type='checkbox'
-                            id='{$this->getName()}'
+                            id="{$this->getQuestionID()}"
                             name='{$this->getName()}'
                             value='{$data_on}'
                             data-elementpath="{$this->getElementPath()}"
@@ -789,7 +791,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <input type='hidden'
                        class='togglefield-hidden'
                        data-id='{$this->getQuestionID()}'
-                       id='{$this->getName()}'
+                       id="{$this->getQuestionID()}"
                        value='{$this->getValue()}'
                        {$this->styleTypeProperty()}
                        data-elementpath='{$this->getElementPath()}'/>

@@ -65,7 +65,7 @@ window.updateUserInterface = function ($item) {
 
     $item.data('prevValue', value);
 
-    const name = $item.attr('id');
+    const name = $item.attr('name');
     const path = $item.data('elementpath');
 
     //check if control is valid to update
@@ -80,7 +80,7 @@ window.updateUserInterface = function ($item) {
 
 window.updateControls = function ($item) {
     const value = $item.val();
-    const name = $item.attr('id');
+    const name = $item.attr('name');
     const path = $item.data('elementpath');
 
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
