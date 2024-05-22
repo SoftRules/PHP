@@ -4,6 +4,7 @@
     padding: 20px;
     background-color: rgb(245, 245, 245);
 }
+
 .card-header {
     color: #172d5d;
     font-size: large;
@@ -11,20 +12,49 @@
     height: 60px;
     font-weight: bold;
     text-align: left;
- }
+}
+
+.card-header[data-target][data-toggle="collapse"] {
+    cursor: pointer;
+}
+
+.card-header[data-target][data-toggle="collapse"] .header-col {
+    padding-left: 0;
+}
+
+.card-header[data-target][data-toggle="collapse"] .header-col .fas {
+    padding-right: 5px;
+    min-width: 25px;
+}
+
+.card-header[data-toggle="collapse"] .header-col .fas:before {
+    content: "\2228";
+}
+
+.card-header[data-toggle="collapse"].collapsed .header-col .fas:before {
+    content: "\003e";
+}
 
 .input-group {
     width: 100%;
 }
 
- .input-group-addon{
-    width:40px;
+.input-group-addon {
+    width: 40px;
 }
 
-.sr-label{
+.sr-group-gridrow {
+    padding: 5px;
+}
+
+.sr-label {
     font-size: 14px;
     font-weight: 100;
- }
+}
+
+.sr-label-th {
+    font-weight: bold;
+}
 
 .sr-question-help {
     font-size: 14pt;
@@ -35,17 +65,38 @@
 
 .sr-table-td {
     border-top: 0px;
- }
+}
 
 .sr-align-left {
-  text-align: left;
+    text-align: left;
 }
 
 .sr-align-right {
-  text-align: right;
+    text-align: right;
 }
+
 .sr-align-center {
-  text-align: center;
+    text-align: center;
+}
+
+.waitScreen {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.waitScreen .loadingscreen_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .sr-group-grid {
@@ -68,25 +119,25 @@ img {
 }
 
 [data-displaytype="kenteken"] {
-  background-color: #FECD23 !important;
-  background-image: url(https://www.comparity.nl/img/kenteken_NL.svg) !important;
-  background-repeat: no-repeat !important;
-  background-size: contain !important;
-  background-position: left !important;
-  outline: none;
-  box-shadow: none !important;
-  padding-left: 25px;
-  height: 32px;
-  padding-bottom: 5px;
-  text-transform: uppercase !important;
-  color: #000;
-  font-weight: 700;
-  overflow: hidden;
-  border-radius: 3px !important;
-  text-align: center !important;
-  font-size: 11pt !important;
-  width: 148px !important;
-  flex: unset !important
+    background-color: #FECD23 !important;
+    background-image: url(https://www.comparity.nl/img/kenteken_NL.svg) !important;
+    background-repeat: no-repeat !important;
+    background-size: contain !important;
+    background-position: left !important;
+    outline: none;
+    box-shadow: none !important;
+    padding-left: 25px;
+    height: 32px;
+    padding-bottom: 5px;
+    text-transform: uppercase !important;
+    color: #000;
+    font-weight: 700;
+    overflow: hidden;
+    border-radius: 3px !important;
+    text-align: center !important;
+    font-size: 11pt !important;
+    width: 148px !important;
+    flex: unset !important
 }
 
 

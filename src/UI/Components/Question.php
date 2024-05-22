@@ -49,7 +49,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $includeInvisibleQuestion;
 
-    private \SoftRules\PHP\Enums\eDataType $dataType = eDataType::none;
+    private eDataType $dataType = eDataType::none;
 
     private ?eDisplayType $displayType = eDisplayType::none;
 
@@ -62,6 +62,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $elementPath;
 
     private bool $updateUserInterface = false;
+
+    private bool $updateQuestionOnly = false;
 
     private string $invalidMessage = '';
 
@@ -285,6 +287,18 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->elementPath;
     }
 
+    public function setUpdateQuestionOnly($updateQuestionOnly): void
+    {
+        if (is_string($updateQuestionOnly)) {
+            $this->updateQuestionOnly = strtolower($updateQuestionOnly) === 'true';
+        }
+    }
+
+    public function getUpdateQuestionOnly(): bool
+    {
+        return $this->updateQuestionOnly;
+    }
+
     public function setUpdateUserInterface($updateUserInterface): void
     {
         if (is_string($updateUserInterface)) {
@@ -482,6 +496,10 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     break;
                 case 'UpdateUserInterface':
                     $this->setUpdateUserInterface($childNode->nodeValue);
+                    if ($childNode->attributes->getNamedItem('QuestionOnly') !== null) {
+                        $this->setUpdateQuestionOnly($childNode->attributes->getNamedItem('QuestionOnly'));
+                    }
+
                     break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($childNode->nodeValue);
@@ -555,14 +573,14 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 default => '',
             };
 
-            if ($this->textValues->isNotEmpty()) { //selectbox
+            if ($this->getDisplayType() === eDisplayType::slider) {
+                $html .= $this->getSliderControl();
+            } elseif ($this->textValues->isNotEmpty()) { //selectbox
                 if ($this->getDisplayType() === eDisplayType::toggle) {
                     $html .= $this->getToggleControl();
                 } else {
                     $html .= $this->getDefaultSelectBoxControl();
                 }
-            } elseif($this->getDisplayType() === eDisplayType::slider) {
-                $html .= $this->getSliderControl();
             } else { //input
                 $html .= $this->getDefaultInputControl();
             }
@@ -699,10 +717,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     data-elementpath="{$this->getElementPath()}"
                     data-displaytype="{$this->getDisplayType()->value}"
                     data-invalidmessage = "{$this->getInvalidMessage()}"
-                    data-isvalid='false'
                     {$update}
                     {$this->styleTypeProperty()}
-                    >
+                    data-isvalid='false'>
                 {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
             </select>
             HTML;
@@ -720,7 +737,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $data_off = $this->textValues->last()->getValue();
         }
 
-        $checked = $this->getValue() === $data_on ? 'checked' : ''; //not yet implemented
+        $checked = $this->getValue() === $data_on ? 'checked' : '';
 
         return
             <<<HTML
@@ -743,8 +760,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                             data-toggle='toggle'
                             data-id='{$this->getQuestionID()}'
                             onchange='setSwitchValue(this);'>
-
-                    <span class='slider round'></span>
                 </label>
             </div>
             HTML;
@@ -782,10 +797,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        {$this->styleTypeProperty()}
                        data-elementpath='{$this->getElementPath()}'/>
 
-                <div class='btn-group btn-radio'>
-                    {$values}
+                {$values}
                 </div>
-            </div>
             HTML;
     }
 }

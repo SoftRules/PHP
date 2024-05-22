@@ -301,6 +301,7 @@ class Group implements GroupComponentContract, RenderableWrapper
     {
         $style = match ($this->getType()) {
             eGroupType::page => $this->getStyle()->page,
+            // TODO: add other styles and map them here
             default => null,
         };
 
@@ -312,7 +313,7 @@ class Group implements GroupComponentContract, RenderableWrapper
             eGroupType::gridcolumn => $this->getGridColumnOpeningsTag($style),
             eGroupType::table => $this->getTableOpeningsTag($style),
             eGroupType::row => $this->getTableRowOpeningsTag($style),
-            eGroupType::expandable => "<div class='sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>",
+            eGroupType::expandable => $this->getExpandableOpeningsTag($style),
             default => 'Group Type not implemented ' . $this->getType()->value . '<br>',
         };
     }
@@ -393,6 +394,20 @@ class Group implements GroupComponentContract, RenderableWrapper
         return "<tr class='sr-table-tr group sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
     }
 
+    public function getExpandableOpeningsTag(?StyleData $style): string
+    {
+        $html = "<div class='sr-group-{$this->getType()->value} {$style?->class}' style='{$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
+        $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body' onclick='expandClick(this);'>";
+        $html .= "<div class='col-sm-11 header-col'>";
+        $html .= "<span class='fas'/>";
+        $html .= "<span id='sr_{$this->getGroupID()}Header'>{$this->getName()}</span>";
+        $html .= '</div>'; // header-col
+        $html .= '</div>'; // card-header
+        $html .= "<div id='sr_{$this->getGroupID()}Body' class='collapse'>";
+
+        return $html . "<div class='card-body'>";
+    }
+
     public function renderClosingTags(): string
     {
         return match ($this->getType()) {
@@ -403,7 +418,7 @@ class Group implements GroupComponentContract, RenderableWrapper
             eGroupType::gridcolumn => '</div>',
             eGroupType::table => '</tbody></table></div>',
             eGroupType::row => '</tr>',
-            eGroupType::expandable => '</div>',
+            eGroupType::expandable => '</div></div></div>',
             default => '</div>',
         };
     }

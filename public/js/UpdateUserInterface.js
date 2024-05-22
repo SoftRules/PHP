@@ -7,6 +7,14 @@ $(document).ready(() => {
     //scriptActions();
 });
 
+function showWaitScreen() {
+    $('#waitScreen').show();
+}
+
+function hideWaitScreen() {
+    $('#waitScreen').hide();
+}
+
 function parseXML(xml) {
     try {
         return $.parseXML(xml)
@@ -15,14 +23,6 @@ function parseXML(xml) {
     }
 
     return null;
-}
-
-function showWaitCursor() {
-    document.body.style.cursor = 'wait';
-}
-
-function hideWaitCursor() {
-    document.body.style.cursor = 'default';
 }
 
 $(document)
@@ -100,7 +100,7 @@ function objectToFormData(object) {
 }
 
 function getXML_HTML(methodUrl, xml, id = undefined) {
-    showWaitCursor();
+    showWaitScreen();
 
     fetch(methodUrl, {
         method: 'POST',
@@ -136,12 +136,12 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
         })
         .finally(() => {
             scriptActions();
-            hideWaitCursor();
+            hideWaitScreen();
         });
 }
 
 function getHTML(xml) {
-    showWaitCursor();
+    showWaitScreen();
 
     fetch(config.routes.renderXml, {
         method: 'POST',
@@ -170,7 +170,7 @@ function getHTML(xml) {
 
             alert(error);
         })
-        .finally(() => hideWaitCursor());
+        .finally(() => hideWaitScreen());
 }
 
 function scriptActions() {
@@ -198,8 +198,10 @@ function scriptActions() {
             for (let i = 0; i < obj.length; i++) {
                 if (obj[i].Command === 'Hide') {
                     $('[data-id=' + obj[i].ItemID + ']').hide();
+                    $('[data-row=' + obj[i].ItemID + ']').hide();
                 } else if (obj[i].Command === 'Show') {
                     $('[data-id=' + obj[i].ItemID + ']').show();
+                    $('[data-row=' + obj[i].ItemID + ']').show();
                 } else if (obj[i].Command === 'Valid') {
                     $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
                 } else if (obj[i].Command === 'Invalid') {
@@ -226,13 +228,12 @@ function scriptActions() {
 
             alert(error);
         })
-        .finally(() => hideWaitCursor());
+        .finally(() => hideWaitScreen());
 }
 
-function toggleClick(item) {
-    var value = $(item).data('value');
+window.toggleClick = function (item) {
     var name = $(item).attr('id');
-    $('#' + name).val(value);
+    $('#' + name).val($(item).data('value'));
     $(item).siblings().removeClass('active');
     $(item).addClass('active');
 
@@ -244,7 +245,7 @@ function toggleClick(item) {
 }
 
 window.setSwitchValue = function (item) {
-    var name = $(item).attr('id');
+    const name = $(item).attr('id');
 
     if ($(item).prop('checked')) {
         $(item).val($(item).data('onvalue'));
@@ -257,4 +258,14 @@ window.setSwitchValue = function (item) {
     } else {
         updateControls($(item));
     }
+}
+
+window.expandClick = function (item) {
+	var id = $(item).data('target');
+	if ($(id).hasClass('show')) {
+		$(id).removeClass('show');
+	}
+	else{
+		$(id).addClass('show');
+	}	
 }
