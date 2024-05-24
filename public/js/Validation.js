@@ -30,8 +30,8 @@ function fieldRestoreFailed($item, index) {
 }
 
 function isReadonly($item) {
-    const attr = $item.attr('readonly');
-
+    const attr = $item.attr('disabled');
+    //const attr = $item.disabled;
     // For some browsers, `attr` is undefined; for others, `attr` is false. Check for both.
     return typeof attr !== typeof undefined && attr !== false;
 }
@@ -229,9 +229,9 @@ function ValidatePage($page) {
 
             if ($(this).is('textarea, input')) {
 
-                if (! $(this).prop('required') || $(this).data('activehiddenfield') == false || isReadonly($(this))) {
+                if (! $(this).prop('required') || isReadonly($(this))) {
 
-                    if (! $(this).data('activehiddenfield') == false && ! isReadonly($(this)) && $(this).attr('type') == 'number') {
+                    if (! isReadonly($(this)) && $(this).attr('type') == 'number') {
                         if (! $(this).val()) {
                             fail = true;
                             failedIDs += $(this).attr('id') + ' ';
@@ -307,9 +307,9 @@ function ValidatePage($page) {
                 }
             }
             if ($(this).is('select')) {
-                if (! $(this).prop('required') || $(this).data('activehiddenfield') == false || $(this).css('display') == 'none' || isReadonly($(this))) {
+                if (! $(this).prop('required') || $(this).css('display') == 'none' || isReadonly($(this))) {
                 } else {
-                    if ($(this).val() == '' || $(this).val() == null) {
+                    if ($(this).val() == '' || $(this).val() == null || $(this).val() == '#') {
                         fail = true;
                         failedIDs += $(this).attr('id') + ' ';
                         validationFail($(this), errorMessage, 1);
