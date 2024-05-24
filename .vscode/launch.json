@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        
+        {
+            "name": "Launch & Profile built-in server",
+            "type": "php",
+            "request": "launch",
+            "noDebug": true,
+            "profile": true,
+            "runtimeArgs": [
+                "-S",
+                "localhost:8000",
+                "-t",
+                "public"
+            ],
+            "port": 9003,
+            "serverReadyAction": {
+                "action": "openExternally"
+            }
+        },
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "env": {
+                "XDEBUG_CONFIG": "log_level=7",
+            }
+        }
+    ]
+}

@@ -545,21 +545,32 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this;
     }
 
-    public function render(): string
+    public function render($components, $userInterfaceData): string
     {
         $html = '';
 
+        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData); 
+        $visibleStyle = $visible ? '' : 'display: none;';
+
+        if ($this->defaultState === eDefaultState::Editable) {
+            $enable = $this->getDefaultStateExpression()->value($components, $userInterfaceData); 
+        } else {
+            $enable = ! $this->getDefaultStateExpression()->value($components, $userInterfaceData); 
+        }
+
+        $disabled = $enable ? '': 'disabled';
+        
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
         if ($this->getParentGroupType() === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
         }
 
         if ($this->getDisplayType() === eDisplayType::switch) {
-            $html .= $this->getSwitchControl();
+            $html .= $this->getSwitchControl($disabled);
         } elseif ($this->getDisplayType() === eDisplayType::raty) {
             //$html .= $this->getToggleControl();
         } else {
-            $html .= "<div class='form-group row sr-question' data-row='{$this->getQuestionID()}'>";
+            $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->getQuestionID()}-row'>";
             $html .= "<div class='col-sm-4'>";
             $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
             $html .= '</div>';
@@ -579,10 +590,10 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 if ($this->getDisplayType() === eDisplayType::toggle) {
                     $html .= $this->getToggleControl();
                 } else {
-                    $html .= $this->getDefaultSelectBoxControl();
+                    $html .= $this->getDefaultSelectBoxControl($disabled);
                 }
             } else { //input
-                $html .= $this->getDefaultInputControl();
+                $html .= $this->getDefaultInputControl($disabled);
             }
 
             $html .= '</div>'; //input group
@@ -604,7 +615,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $html;
     }
 
-    private function getDefaultInputControl(): string
+    private function getDefaultInputControl(string $disabled): string
     {
         //update
         $update = " onblur='updateControls($(this))'";
@@ -648,6 +659,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-invalidmessage="{$this->getInvalidMessage()}"
                        data-isvalid='false'
                        {$update}
+                       {$disabled}
                        {$this->styleTypeProperty()}
                        />
                 HTML;
@@ -699,7 +711,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 HTML;
     }
 
-    private function getDefaultSelectBoxControl(): string
+    private function getDefaultSelectBoxControl(string $disabled): string
     {
         $update = " onchange='updateControls($(this))'";
         if ($this->getUpdateUserInterface()) {
@@ -717,6 +729,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     data-displaytype="{$this->getDisplayType()->value}"
                     data-invalidmessage = "{$this->getInvalidMessage()}"
                     {$update}
+                    {$disabled}
                     {$this->styleTypeProperty()}
                     data-isvalid='false'>
                 {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
@@ -724,7 +737,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             HTML;
     }
 
-    private function getSwitchControl(): string
+    private function getSwitchControl(string $disabled): string
     {
         $data_on = '1';
         $data_off = '0';
@@ -758,6 +771,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                             data-offvalue='{$data_off}'
                             data-toggle='toggle'
                             data-id='{$this->getQuestionID()}'
+                            {$disabled}
                             onchange='setSwitchValue(this);'>
                 </label>
             </div>

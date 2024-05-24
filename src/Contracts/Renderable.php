@@ -4,5 +4,5 @@ namespace SoftRules\PHP\Contracts;
 
 interface Renderable
 {
-    public function render(): string;
+    public function render($components, $userInterfaceData): string;
 }

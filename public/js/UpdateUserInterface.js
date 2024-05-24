@@ -202,10 +202,10 @@ function scriptActions() {
                 for (let i = 0; i < obj.length; i++) {
                     if (obj[i].Command === 'Hide') {
                         $('[data-id=' + obj[i].ItemID + ']').hide();
-                        $('[data-row=' + obj[i].ItemID + ']').hide();
+                        $('#' + obj[i].ItemID + '-row').hide();
                     } else if (obj[i].Command === 'Show') {
                         $('[data-id=' + obj[i].ItemID + ']').show();
-                        $('[data-row=' + obj[i].ItemID + ']').show();
+                        $('#' + obj[i].ItemID + '-row').show();
                     } else if (obj[i].Command === 'Valid') {
                         $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
                     } else if (obj[i].Command === 'Invalid') {

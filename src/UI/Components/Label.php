@@ -12,6 +12,7 @@ use SoftRules\PHP\Enums\eDisplayType;
 use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
@@ -30,7 +31,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     private string $description;
 
-    private ?\SoftRules\PHP\Enums\eDisplayType $displayType = null;
+    private ?eDisplayType $displayType = null;
 
     private ParameterContract $parameter;
 
@@ -170,7 +171,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         return $this;
     }
 
-    public function render(): string
+    public function render($components, $userInterfaceData): string
     {
         //displaytypes: Attention, Informationbutton
         //custum properties: align en valign. StyleTypes, HelpText?

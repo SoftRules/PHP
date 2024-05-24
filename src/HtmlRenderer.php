@@ -30,15 +30,15 @@ final class HtmlRenderer implements Stringable
         $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
         $this->html .= "<div class='errorContainer alert alert-danger' style='margin-top: 2px; display:none' data-type='Danger' id='messageAlert'></div>";
 
-        $this->renderComponents($UIClass->components);
+        $this->renderComponents($UIClass->components, $this->userInterfaceData);
     }
 
-    private function renderComponents(UiComponentsCollection $components): void
+    private function renderComponents($components, $userInterfaceData): void
     {
         foreach ($components as $component) {
             if ($component instanceof RenderableWrapper) {
-                $this->html .= $component->renderOpeningTags();
-                $this->renderComponents($component->getComponents());
+                $this->html .= $component->renderOpeningTags($components, $userInterfaceData);
+                $this->renderComponents($component->getComponents(), $userInterfaceData);
                 $this->html .= $component->renderClosingTags();
 
                 if ($component instanceof GroupComponentContract && $component->shouldHavePagination()) {
@@ -64,7 +64,7 @@ final class HtmlRenderer implements Stringable
             }
 
             if ($component instanceof Renderable) {
-                $this->html .= $component->render();
+                $this->html .= $component->render($components, $userInterfaceData);
             }
         }
     }

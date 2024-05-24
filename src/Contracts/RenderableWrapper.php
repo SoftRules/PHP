@@ -6,7 +6,7 @@ use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
 interface RenderableWrapper
 {
-    public function renderOpeningTags(): string;
+    public function renderOpeningTags($components, $userInterfaceData): string;
 
     public function renderClosingTags(): string;
 

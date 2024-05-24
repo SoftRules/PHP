@@ -47,12 +47,12 @@ function checkPattern($item) {
     return true;
 }
 
-function checkFractionDigits(objectID) {
-    const fractionDigits = $(objectID).data('fractiondigits');
+function checkFractionDigits(item) {
+    const fractionDigits = $(item).data('fractiondigits');
 
     // For some browsers, `fractiondigits` is undefined; for others, `fractiondigits` is false. Check for both.
     if (typeof fractionDigits !== typeof undefined && fractionDigits !== false) {
-        const currentDecimalPlaces = decimalPlaces($(objectID).val());
+        const currentDecimalPlaces = decimalPlaces($(item).val());
 
         return currentDecimalPlaces <= fractionDigits;
     }
@@ -148,44 +148,53 @@ function hasInvalidMessage($item) {
 }
 
 function validationSuccess($item, isGroup) {
-    const row = $item.data('id') + '_row';
+    var row = $('#' + $item.attr('id')+'-row')
     $(row).removeClass('has-error');
 
     $(messageAlert).html('');
     $(messageAlert).hide();
 }
 
-function selectSuccess(objectID) {
-    name = $(objectID).attr('name');
-    id = $(objectID).data('id') + '-Validation';
-    validationid = $(objectID).data('id') + 'ValidationMessage';
+function selectSuccess($item) {    
+    var row = $('#' + $item.attr('id')+'-row')
+    $(row).removeClass('has-error');
+    
+    var name = $(item).attr('name');
+    id = $(item).data('id') + '-Validation';
+    validationid = $(item).data('id') + 'ValidationMessage';
 
-    if (failedFields.indexOf('#' + $(objectID).attr('id') != -1)) {
-        index = failedFields.indexOf('#' + $(objectID).attr('id'));
+    if (failedFields.indexOf('#' + $(item).attr('id') != -1)) {
+        index = failedFields.indexOf('#' + $(item).attr('id'));
         failedFields.splice(index, 1);
     }
 
-    if (successSelects.indexOf('#' + $(objectID).attr('id')) == -1) {
-        successSelects.push('#' + $(objectID).attr('id'));
+    if (successSelects.indexOf('#' + $(item).attr('id')) == -1) {
+        successSelects.push('#' + $(item).attr('id'));
     }
 
     $('#' + id).html('');
-    if ($('#' + validationid).length != 0 && $(objectID).data('hiddenfield') == false || $(objectID).data('hiddenfield') == 0) {
+    if ($('#' + validationid).length != 0 && $(item).data('hiddenfield') == false || $(item).data('hiddenfield') == 0) {
         $('#' + validationid).html('');
     }
 }
 
 function validationFail($item, failMessage, isGroup) {
-    var invalidMessage = 'Question ' + $item.attr('id') + ' is invalid.';
-    var row = '#' + $item.data('id') + '_row';
+    var invalidMessage = '';
+    var row = $('#' + $item.attr('id')+'-row')
+    $(row).addClass('has-error');
+
+    var label = $('#' + $item.attr('id')+'-label').text();
+    var invalidMessage = label + ' is ongeldig.';
 
     if (hasInvalidMessage($item)) {
         invalidMessage = $item.data('invalidmessage')
     }
-
-    if (failMessage.length != 0) {
+    
+    if ((invalidMessage == '') && (failMessage.length != 0)) {
         invalidMessage = failMessage;
     }
+
+    invalidMessage = label + ': ' + invalidMessage;
 
     if (isGroup) {
         if ($(messageAlert).html() == '') {
@@ -243,14 +252,14 @@ function ValidateGroup(GroupID) {
 
                         if (! checkFractionDigits($(this))) {
                             var digits = $(this).data('fractiondigits');
-                            var errorString = 'The value can have only up to ' + digits + ' digits in the fractional portion. <br/>';
+                            var errorString = 'The value can have only up to ' + digits + ' digits in the fractional portion.';
 
                             if (digits == 1) {
-                                errorString = 'The value can have only up to one digit in the fractional portion. <br/>';
+                                errorString = 'The value can have only up to one digit in the fractional portion.';
                             }
 
                             if (digits == 0) {
-                                errorString = 'The value cannot have digits in the fractional portion. <br/>';
+                                errorString = 'The value cannot have digits in the fractional portion. ';
                             }
                             errorMessage += errorString;
                             fail = true;
@@ -260,7 +269,7 @@ function ValidateGroup(GroupID) {
 
                         if (! checkMinExclusive($(this))) {
                             var value = $(this).data('minexclusive');
-                            errorMessage += 'Please enter a value greater than ' + value + '. <br/>';
+                            errorMessage += 'Please enter a value greater than ' + value ;
                             fail = true;
                             failedIDs += $(this).attr('id') + ' ';
                             SingleFieldFail = true;
@@ -357,7 +366,7 @@ function validateField($item) {
 
             if ($item.attr('type') == 'integer') {
                 if (isNaN(parseInt($item.val()))) {
-                    errorMessage = 'Vul een geheel getal in';
+                    errorMessage = 'vul een geheel getal in';
                     fail = true;
                 }
             }
@@ -369,14 +378,14 @@ function validateField($item) {
             if ($item.val()) {
                 if (! checkFractionDigits($item)) {
                     var digits = $item.data('fractiondigits');
-                    var errorString = 'The value can have only up to ' + digits + ' digits in the fractional portion. <br/>';
+                    var errorString = 'de waarde kan maximaal ' + digits + ' decimalen achter de komma bevatten. <br/>';
 
                     if (digits == 1) {
-                        errorString = 'The value can have only up to one digit in the fractional portion. <br/>';
+                        errorString = 'de waarde kan maximaal één decimaal bevatten. <br/>';
                     }
 
                     if (digits == 0) {
-                        errorString = 'The value cannot have digits in the fractional portion. <br/>';
+                        errorString = 'de waarde mag geen cijfers achter de komma bevatten. <br/>';
                     }
                     errorMessage += errorString;
                     fail = true;
@@ -388,25 +397,25 @@ function validateField($item) {
 
                 if (! checkMinExclusive($item)) {
                     var value = $item.data('minexclusive');
-                    errorMessage += 'Please enter a value greater than ' + value + '. <br/>';
+                    errorMessage += 'de waarde moet groter zijn dan ' + value + '. <br/>';
                     fail = true
                 }
 
                 if (! checkMinInclusive($item)) {
                     var value = $item.data('mininclusive');
-                    errorMessage += 'Please enter a value greater than or equal to ' + value + '. <br/>';
+                    errorMessage += 'de waarde moet groter of gelijk zijn als ' + value + '. <br/>';
                     fail = true
                 }
 
                 if (! checkMaxExclusive($item)) {
                     var value = $item.data('maxexclusive');
-                    errorMessage += 'Please enter a value less than ' + value + '. <br/>';
+                    errorMessage += 'de waarde moet kleiner zijn dan ' + value + '. <br/>';
                     fail = true
                 }
 
                 if (! checkMaxInclusive($item)) {
                     var value = $item.data('maxinclusive');
-                    errorMessage += 'Please enter a value less than or equal to ' + value + '. <br/>';
+                    errorMessage += 'de waarde moet kleiner of gelijk zijn als ' + value + '. <br/>';
                     fail = true
                 }
             }
@@ -430,7 +439,7 @@ function validateField($item) {
         validationSuccess($item, 0);
         return true;
     } else {
-        console.log(`ValidateField: ${ $item.attr('id') } failed`);
+        console.log(`ValidateField: ${ $item.attr('name') } failed`);
         validationFail($item, errorMessage, 0);
         return false;
     }

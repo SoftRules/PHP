@@ -220,8 +220,11 @@ class Button implements ButtonComponentContract, Renderable
         return $this;
     }
 
-    public function render(): string
+    public function render($components, $userInterfaceData): string
     {
+        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData); 
+        $visibleStyle = $visible ? '' : 'display: none;';
+        
         foreach ($this->getCustomProperties() as $customProperty) {
             switch (strtolower((string) $customProperty->getName())) {
                 case 'nextpage':
@@ -267,7 +270,7 @@ class Button implements ButtonComponentContract, Renderable
 
         } else {
 
-        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
 
         }
 
