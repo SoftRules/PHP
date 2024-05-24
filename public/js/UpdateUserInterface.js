@@ -85,8 +85,11 @@ window.updateControls = function ($item) {
 
     $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
-    scriptActions();
-    validateField($item);
+    scriptActions()
+        .then(() => validateField($item))
+        .catch((error) => {
+            // Moeten we iets doen als scriptActions niet uitgevoerd kan worden?
+        });
 }
 
 function objectToFormData(object) {
@@ -134,8 +137,8 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
 
             alert(error);
         })
-        .finally(() => {
-            scriptActions();
+        .finally(async () => {
+            await scriptActions();
             hideWaitScreen();
         });
 }
@@ -174,65 +177,71 @@ function getHTML(xml) {
 }
 
 function scriptActions() {
-    const xml = new XMLSerializer().serializeToString($xml);
+    return new Promise((resolve, reject) => {
+        const xml = new XMLSerializer().serializeToString($xml);
 
-    fetch(config.routes.scriptactions, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/xml',
-        },
-        body: objectToFormData({
-            xml,
-        }),
-    })
-        .then(async (response) => {
-            if (response.ok) {
-                return response.text();
-            }
-
-            throw new Error('Foutmelding: ' + await response.text());
+        fetch(config.routes.scriptactions, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/xml',
+            },
+            body: objectToFormData({
+                xml,
+            }),
         })
-        .then((data) => {
-            const obj = JSON.parse(data);
+            .then(async (response) => {
+                if (response.ok) {
+                    return response.text();
+                }
 
-            for (let i = 0; i < obj.length; i++) {
-                if (obj[i].Command === 'Hide') {
-                    $('[data-id=' + obj[i].ItemID + ']').hide();
-                    $('[data-row=' + obj[i].ItemID + ']').hide();
-                } else if (obj[i].Command === 'Show') {
-                    $('[data-id=' + obj[i].ItemID + ']').show();
-                    $('[data-row=' + obj[i].ItemID + ']').show();
-                } else if (obj[i].Command === 'Valid') {
-                    $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
-                } else if (obj[i].Command === 'Invalid') {
-                    $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', false);
-                } else if (obj[i].Command === 'Required') {
-                    $('[data-id=' + obj[i].ItemID + ']').prop('required', true);
-                } else if (obj[i].Command === 'NotRequired') {
-                    $('[data-id=' + obj[i].ItemID + ']').prop('required', false);
-                } else if (obj[i].Command === 'Enabled') {
-                    $('[data-id=' + obj[i].ItemID + ']').prop('disabled', false);
-                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
-                        $('[data-id=' + obj[i].ItemID + ']').parent().removeClass('disabled');
-                    }
-                } else if (obj[i].Command === 'Disabled') {
-                    $('[data-id=' + obj[i].ItemID + ']').prop('disabled', true);
-                    if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
-                        $('[data-id=' + obj[i].ItemID + ']').parent().addClass('disabled');
+                throw new Error('Foutmelding: ' + await response.text());
+            })
+            .then((data) => {
+                const obj = JSON.parse(data);
+
+                for (let i = 0; i < obj.length; i++) {
+                    if (obj[i].Command === 'Hide') {
+                        $('[data-id=' + obj[i].ItemID + ']').hide();
+                        $('[data-row=' + obj[i].ItemID + ']').hide();
+                    } else if (obj[i].Command === 'Show') {
+                        $('[data-id=' + obj[i].ItemID + ']').show();
+                        $('[data-row=' + obj[i].ItemID + ']').show();
+                    } else if (obj[i].Command === 'Valid') {
+                        $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
+                    } else if (obj[i].Command === 'Invalid') {
+                        $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', false);
+                    } else if (obj[i].Command === 'Required') {
+                        $('[data-id=' + obj[i].ItemID + ']').prop('required', true);
+                    } else if (obj[i].Command === 'NotRequired') {
+                        $('[data-id=' + obj[i].ItemID + ']').prop('required', false);
+                    } else if (obj[i].Command === 'Enabled') {
+                        $('[data-id=' + obj[i].ItemID + ']').prop('disabled', false);
+                        if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
+                            $('[data-id=' + obj[i].ItemID + ']').parent().removeClass('disabled');
+                        }
+                    } else if (obj[i].Command === 'Disabled') {
+                        $('[data-id=' + obj[i].ItemID + ']').prop('disabled', true);
+                        if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
+                            $('[data-id=' + obj[i].ItemID + ']').parent().addClass('disabled');
+                        }
                     }
                 }
-            }
-        })
-        .catch((error) => {
-            console.log(error);
 
-            alert(error);
-        })
-        .finally(() => hideWaitScreen());
+                resolve();
+            })
+            .catch((error) => {
+                console.log(error);
+
+                alert(error);
+
+                reject(error);
+            })
+            .finally(() => hideWaitScreen());
+    });
 }
 
 window.toggleClick = function (item) {
-    var name = $(item).attr('id');
+    const name = $(item).attr('id');
     $('#' + name).val($(item).data('value'));
     $(item).siblings().removeClass('active');
     $(item).addClass('active');
@@ -261,11 +270,10 @@ window.setSwitchValue = function (item) {
 }
 
 window.expandClick = function (item) {
-	var id = $(item).data('target');
-	if ($(id).hasClass('show')) {
-		$(id).removeClass('show');
-	}
-	else{
-		$(id).addClass('show');
-	}	
+    const $target = $($(item).data('target'));
+    if ($target.hasClass('show')) {
+        $target.removeClass('show');
+    } else {
+        $target.addClass('show');
+    }
 }
