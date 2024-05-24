@@ -32,7 +32,7 @@ final class HtmlRenderer implements Stringable
         $this->renderComponents($UIClass->components, $this->userInterfaceData);
     }
 
-    private function renderComponents($components, $userInterfaceData): void
+    private function renderComponents(\SoftRules\PHP\UI\Collections\UiComponentsCollection $components, $userInterfaceData): void
     {
         foreach ($components as $component) {
             if ($component instanceof RenderableWrapper) {
