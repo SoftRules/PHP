@@ -4,7 +4,6 @@ let $xml;
 
 $(document).ready(() => {
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
-    //scriptActions();
 });
 
 function showWaitScreen() {
@@ -28,11 +27,15 @@ function parseXML(xml) {
 $(document)
     .on('click', '.updateButton, .processButton', e => {
         // if current control is valid
-        updateUserInterface($(e.currentTarget));
+        if (ValidatePage($('#page'))) {
+            updateUserInterface($(e.currentTarget));
+        }
     })
     .on('click', '.nextButton', e => {
         // if all visible page controls are valid
-        nextPage($(e.currentTarget));
+        if (ValidatePage($('#page'))) {
+            nextPage($(e.currentTarget));
+        }
     })
     .on('click', '.previousButton', e => {
         // no validation check needed

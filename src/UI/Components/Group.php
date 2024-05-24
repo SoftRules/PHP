@@ -324,7 +324,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function getPageOpeningsTag(?StyleData $style, string $visibleStyle): string
     {
-        $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$visibleStyle} {$style?->inlineStyle}' {$this->styleTypeProperty()}>";
+        $html = "<div id='page' class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$visibleStyle} {$style?->inlineStyle}' {$this->styleTypeProperty()}>";
 
         if ($this->getName() !== '') {
             $html .= "<div class='card-header'>";

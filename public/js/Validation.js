@@ -159,21 +159,21 @@ function selectSuccess($item) {
     var row = $('#' + $item.attr('id')+'-row')
     $(row).removeClass('has-error');
     
-    var name = $(item).attr('name');
-    id = $(item).data('id') + '-Validation';
-    validationid = $(item).data('id') + 'ValidationMessage';
+    var name = $item.attr('name');
+    id = $item.data('id') + '-Validation';
+    validationid = $item.data('id') + 'ValidationMessage';
 
-    if (failedFields.indexOf('#' + $(item).attr('id') != -1)) {
-        index = failedFields.indexOf('#' + $(item).attr('id'));
+    if (failedFields.indexOf('#' + $item.attr('id') != -1)) {
+        index = failedFields.indexOf('#' + $item.attr('id'));
         failedFields.splice(index, 1);
     }
 
-    if (successSelects.indexOf('#' + $(item).attr('id')) == -1) {
-        successSelects.push('#' + $(item).attr('id'));
+    if (successSelects.indexOf('#' + $item.attr('id')) == -1) {
+        successSelects.push('#' + $item.attr('id'));
     }
 
     $('#' + id).html('');
-    if ($('#' + validationid).length != 0 && $(item).data('hiddenfield') == false || $(item).data('hiddenfield') == 0) {
+    if ($('#' + validationid).length != 0 && $item.data('hiddenfield') == false || $item.data('hiddenfield') == 0) {
         $('#' + validationid).html('');
     }
 }
@@ -210,22 +210,18 @@ function validationFail($item, failMessage, isGroup) {
     $(messageAlert).show();
 }
 
-function ProcessValidation() {
-    return ValidateGroup(currentPage);
-}
 
-function ValidateGroup(GroupID) {
+function ValidatePage($page) {
     fail = false;
     var errorMessage = '';
     var failedIDs = '';
     var SingleFieldFail = false;
     fail_log = '';
-    var id = '#' + GroupID;
-
+    
     $(messageAlert).html('');
     $(messageAlert).hide();
 
-    $('#' + GroupID).find('textarea, input, select').each(function () {
+    $($page).find('textarea, input, select').each(function () {
         var hasInvisibleParent = $(this).parents(':hidden').length;
         if (hasInvisibleParent == 0) {
             SingleFieldFail = false;
@@ -329,7 +325,7 @@ function ValidateGroup(GroupID) {
                 }
             }
             if (! $(this).is('select')) {
-                if (! SingleFieldFail || IgnoreValidation === true) {
+                if (! SingleFieldFail) {
                     validationSuccess($(this), 1);
                 } else {
                     validationFail($(this), errorMessage, 1);
@@ -339,7 +335,7 @@ function ValidateGroup(GroupID) {
     });
 
     //submit if fail never got set to true
-    if (! fail || IgnoreValidation === true) {
+    if (! fail) {
         return true;
     } else {
         console.log('Failed labels: ' + failedIDs);
