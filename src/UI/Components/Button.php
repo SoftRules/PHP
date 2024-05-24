@@ -222,9 +222,9 @@ class Button implements ButtonComponentContract, Renderable
 
     public function render($components, $userInterfaceData): string
     {
-        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData); 
+        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
-        
+
         foreach ($this->getCustomProperties() as $customProperty) {
             switch (strtolower((string) $customProperty->getName())) {
                 case 'nextpage':

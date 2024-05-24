@@ -6,7 +6,6 @@ use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
-use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\SoftRulesFormData;
 use Stringable;
 

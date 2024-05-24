@@ -12,7 +12,6 @@ use SoftRules\PHP\Enums\eDisplayType;
 use SoftRules\PHP\Enums\eGroupType;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
-use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\CustomProperty;
 use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;

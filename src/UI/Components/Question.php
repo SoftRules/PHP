@@ -549,17 +549,17 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $html = '';
 
-        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData); 
+        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
 
         if ($this->defaultState === eDefaultState::Editable) {
-            $enable = $this->getDefaultStateExpression()->value($components, $userInterfaceData); 
+            $enable = $this->getDefaultStateExpression()->value($components, $userInterfaceData);
         } else {
-            $enable = ! $this->getDefaultStateExpression()->value($components, $userInterfaceData); 
+            $enable = ! $this->getDefaultStateExpression()->value($components, $userInterfaceData);
         }
 
-        $disabled = $enable ? '': 'disabled';
-        
+        $disabled = $enable ? '' : 'disabled';
+
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
         if ($this->getParentGroupType() === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
@@ -668,7 +668,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private function getSliderControl(): string
     {
         $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
-       
+
         //format date
         $value = str_replace(',', '.', $this->getValue());
 

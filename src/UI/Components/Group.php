@@ -3,7 +3,6 @@
 namespace SoftRules\PHP\UI\Components;
 
 use DOMElement;
-use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
@@ -306,9 +305,9 @@ class Group implements GroupComponentContract, RenderableWrapper
             default => null,
         };
 
-        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData); 
+        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
-        
+
         return match ($this->getType()) {
             eGroupType::page => $this->getPageOpeningsTag($style, $visibleStyle),
             eGroupType::box => $this->getBoxOpeningsTag($style, $visibleStyle),
@@ -340,7 +339,7 @@ class Group implements GroupComponentContract, RenderableWrapper
     }
 
     public function getBoxOpeningsTag(?StyleData $style, string $visibleStyle): string
-    {        
+    {
         $html = "<div class='card sr-group sr-group-{$this->getType()->value} {$style?->class}' style='{$visibleStyle} {$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
 
         if ($this->getName() !== '') {
