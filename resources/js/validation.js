@@ -10,18 +10,18 @@ $(document).on('focus click', 'input', e => {
     lastVal = $(e.currentTarget).val();
 });
 
-function restoreValidation() {
-    successFields.forEach(fieldRestoreSucces);
-    successSelects.forEach(selectRestoreSucces);
+export function restoreValidation() {
+    successFields.forEach(fieldRestoreSuccess);
+    successSelects.forEach(selectRestoreSuccess);
     failedFields.forEach(fieldRestoreFailed);
     failedSelects.forEach(fieldRestoreFailed);
 }
 
-function fieldRestoreSucces($item, index) {
+function fieldRestoreSuccess($item, index) {
     validationSuccess($item, 0);
 }
 
-function selectRestoreSucces($item, index) {
+function selectRestoreSuccess($item, index) {
     selectSuccess($item);
 }
 
@@ -155,10 +155,10 @@ function validationSuccess($item, isGroup) {
     $(messageAlert).hide();
 }
 
-function selectSuccess($item) {    
+function selectSuccess($item) {
     var row = $('#' + $item.attr('id')+'-row')
     $(row).removeClass('has-error');
-    
+
     var name = $(item).attr('name');
     id = $(item).data('id') + '-Validation';
     validationid = $(item).data('id') + 'ValidationMessage';
@@ -189,7 +189,7 @@ function validationFail($item, failMessage, isGroup) {
     if (hasInvalidMessage($item)) {
         invalidMessage = $item.data('invalidmessage')
     }
-    
+
     if ((invalidMessage == '') && (failMessage.length != 0)) {
         invalidMessage = failMessage;
     }
@@ -347,7 +347,7 @@ function ValidateGroup(GroupID) {
     }
 }
 
-function validateField($item) {
+export function validateField($item) {
     fail = false;
     fail_log = '';
     var errorMessage = '';

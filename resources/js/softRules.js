@@ -1,8 +1,14 @@
 ﻿import './rSlider.min.js';
+import {delegate} from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
+import '@fortawesome/fontawesome-free/js/all.js';
+import { validateField } from './validation';
 
 let $xml;
 
 $(document).ready(() => {
+    delegate('#softrules-form', {target: '.sr-tooltip'});
+
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
     //scriptActions();
 });
@@ -165,8 +171,6 @@ function getHTML(xml) {
         })
         .then((data) => {
             $('#softrules-form-content').html(data);
-
-            tippy('.sr-tooltip');
         })
         .catch((error) => {
             console.error(error);

@@ -110,45 +110,50 @@ final class SoftRulesForm implements Stringable
     public function render(): HtmlString
     {
         return new HtmlString(
-            <<<EOT
-<form id='softrules-form'
-      method='POST'
-      style="padding: 15px;">
-{$this->csrfProtection}
-<div id="softrules-form-content">Aan het laden...</div>
-</form>
+            <<<HTML
+            <script>
+                const config = {
+                    product: '{$this->product}',
+                    initialXml: '{$this->initialXml}',
+                    routes: {
+                        firstPage: '{$this->firstPageRoute}',
+                        renderXml: '{$this->renderXmlRoute}',
+                        updateUserInterface: '{$this->updateUserInterfaceRoute}',
+                        previousPage: '{$this->previousPageRoute}',
+                        nextPage: '{$this->nextPageRoute}',
+                        scriptactions: '{$this->scriptActionsRoute}',
+                    },
+                };
+                let script = document.createElement('script');
+                script.type = 'module';
+                script.src = '{$this->javascriptPath}/softRules.js';
+                document.head.appendChild(script);
 
-<script>
-    const config = {
-        product: '{$this->product}',
-        initialXml: '{$this->initialXml}',
-        routes: {
-            firstPage: '{$this->firstPageRoute}',
-            renderXml: '{$this->renderXmlRoute}',
-            updateUserInterface: '{$this->updateUserInterfaceRoute}',
-            previousPage: '{$this->previousPageRoute}',
-            nextPage: '{$this->nextPageRoute}',
-            scriptactions: '{$this->scriptActionsRoute}',
-        },
-    };
-    let script_update = document.createElement('script');
-    script_update.type = 'module';
-    script_update.src = '{$this->javascriptPath}/UpdateUserInterface.js';
-    document.head.appendChild(script_update);
+                let link  = document.createElement('link');
+                link.rel  = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '{$this->cssPath}/SoftRules.css';
+                document.head.appendChild(link);
+            </script>
 
-    let script_val = document.createElement('script');
-    script_val.type = 'text/javascript';
-    script_val.src = '{$this->javascriptPath}/Validation.js';
-    document.head.appendChild(script_val);
+            <form id='softrules-form'
+                  method='POST'
+                  style="padding: 15px; display: none;">
+                {$this->csrfProtection}
 
-    var link  = document.createElement('link');
-    link.rel  = 'stylesheet';
-    link.type = 'text/css';
-    link.href = '{$this->cssPath}/softrules.css';
-    document.head.appendChild(link);
-</script>
+                <div class='errorContainer alert alert-danger' style='margin-top: 2px; display:none' data-type='Danger' id='messageAlert'></div>
 
-EOT
+                <div id="softrules-form-content"></div>
+
+                <div id='waitScreen' class='waitScreen'>
+                    <div class='loadingscreen_div'>
+                        <img src='https://www.softrules.com/wp-content/themes/softrules/assets/logo.jpg' alt='My Tp / SoftRules©' style='width:250px;height:166px;'/>
+
+                        <i class="fa fa-solid fa-spinner fa-spin" style="font-size: 36px; height: 36px;"></i>
+                    </div>
+                </div>
+            </form>
+            HTML
         );
     }
 

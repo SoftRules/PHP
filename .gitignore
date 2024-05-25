@@ -31,6 +31,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+1
 
 # Dependencies
 auth.json
@@ -55,6 +56,8 @@ nbproject/
 nbproject/private/
 .idea/*
 !/.idea/codeStyles
+
+mix-manifest.json
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
