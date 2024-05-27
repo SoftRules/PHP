@@ -5,15 +5,11 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="//kit.fontawesome.com/524951f108.js" crossorigin="anonymous"></script>
     <link rel="stylesheet"
           href="//cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
           integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
           crossorigin="anonymous">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="//unpkg.com/@spreadtheweb/multi-range-slider@1.0.2/dist/range-slider.main.min.js"></script>
-    <script src="//unpkg.com/@popperjs/core@2"></script>
-    <script src="//unpkg.com/tippy.js@6"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoftRules PHP</title>
