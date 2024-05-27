@@ -149,7 +149,7 @@ final class SoftRulesForm implements Stringable
                     <div class='loadingscreen_div'>
                         <img src='https://www.softrules.com/wp-content/themes/softrules/assets/logo.jpg' alt='My Tp / SoftRules©' style='width:250px;height:166px;'/>
 
-                        <i class="fa fa-solid fa-spinner fa-spin" style="font-size: 36px; height: 36px;"></i>
+                        <i class="fa fas fa-solid fa-spinner fa-spin" style="font-size: 40px; height: 36px;"></i>
                     </div>
                 </div>
             </form>

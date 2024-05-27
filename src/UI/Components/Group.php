@@ -403,7 +403,7 @@ class Group implements GroupComponentContract, RenderableWrapper
         $html = "<div class='sr-group-{$this->getType()->value} {$style?->class}' style='{$visibleStyle} {$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
         $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body' onclick='expandClick(this);'>";
         $html .= "<div class='col-sm-11 header-col'>";
-        $html .= "<span class='fas'/>";
+        $html .= "<i class='fas fa-chevron-down' style='margin-right: 5px;'></i>";
         $html .= "<span id='sr_{$this->getGroupID()}Header'>{$this->getName()}</span>";
         $html .= '</div>'; // header-col
         $html .= '</div>'; // card-header

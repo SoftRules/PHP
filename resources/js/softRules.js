@@ -1,11 +1,14 @@
 ﻿import './rSlider.min.js';
-import {delegate} from 'tippy.js';
+import { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import '@fortawesome/fontawesome-free/js/all.js';
-import { validateField } from './validation';
+import Validator from './Validator';
 
 let $xml;
 let lastVal = '';
+
+const validator = new Validator();
+window.validator = validator;
 
 $(document).ready(() => {
     delegate('#softrules-form', {target: '.sr-tooltip'});
@@ -21,7 +24,6 @@ function hideWaitScreen() {
     $('#waitScreen').hide();
 }
 
-
 function parseXML(xml) {
     try {
         return $.parseXML(xml)
@@ -34,14 +36,11 @@ function parseXML(xml) {
 
 $(document)
     .on('click', '.updateButton, .processButton', e => {
-        // if current control is valid
-        if (ValidatePage($('#page'))) {
-            updateUserInterface($(e.currentTarget));
-        }
+        updateUserInterface($(e.currentTarget));
     })
     .on('click', '.nextButton', e => {
         // if all visible page controls are valid
-        if (ValidatePage($('#page'))) {
+        if (validator.validatePage($('#page'))) {
             nextPage($(e.currentTarget));
         }
     })
@@ -49,14 +48,12 @@ $(document)
         // no validation check needed
         previousPage($(e.currentTarget));
     })
-    .on('focus click', 'input', e =>  {
-
+    .on('focus click', 'input', e => {
         if ($(e.currentTarget).data('toggle') !== 'toggle') {
             lastVal = $(e.currentTarget).val();
         } else {
             lastVal = '#';
         }
-        
     });
 
 function nextPage($item) {
@@ -74,17 +71,22 @@ function previousPage($item) {
 }
 
 window.updateUserInterface = function ($item) {
+    // only if current control is valid
+    if (! validator.validatePage($('#page'))) {
+        return;
+    }
+
     const value = $item.val();
 
-    if (($item.is('img')) || ($item.is('button')) ||(value != lastVal)) { //indien een control van waarde veranderd is of een update op een image/button
+    if (($item.is('img')) || ($item.is('button')) || (value != lastVal)) { //indien een control van waarde veranderd is of een update op een image/button
         const name = $item.attr('name');
         const path = $item.data('elementpath');
 
         $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
         const xmlText = new XMLSerializer().serializeToString($xml);
-        const id = $item.data('id').replace('_', '|');        
-    
+        const id = $item.data('id').replace('_', '|');
+
         getXML_HTML(config.routes.updateUserInterface, xmlText, id);
     }
 }
@@ -94,24 +96,24 @@ window.updateControls = function ($item) {
     const name = $item.attr('name');
     const path = $item.data('elementpath');
 
-    if (value !== typeof undefined ) {
-        if ((value != lastVal) || (value === "")) { //indien een control van waarde veranderd is
+    if (value !== typeof undefined) {
+        if ((value != lastVal) || (value === '')) { //indien een control van waarde veranderd is
             $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
             scriptActions()
-                .then(() => Validate($item))
+                .then(() => validate($item))
                 .catch((error) => {
                     // vooralsnog geen actie nodig
                 });
-            }
+        }
     }
 }
 
-function Validate($item) {
-    if (PageValidated) {
-        ValidatePage($('#page'));
+function validate($item) {
+    if (validator.pageValidated) {
+        validator.validatePage($('#page'));
     } else {
-        validateField($item);
+        validator.fieldPassesValidation($item);
     }
 }
 
@@ -163,7 +165,7 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
         .finally(async () => {
             await scriptActions();
             hideWaitScreen();
-            PageValidated = false;
+            validator.pageValidated = false;
         });
 }
 

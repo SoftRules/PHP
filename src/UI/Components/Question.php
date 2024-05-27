@@ -627,9 +627,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $type = match ($this->getDataType()) {
             eDataType::date => 'type="date" ',
             eDataType::time => 'type="time" ',
-            eDataType::integer => 'type="integer" ',
-            eDataType::currency => 'type="currency" ',
-            eDataType::decimal => 'type="decimal" ',
+            eDataType::integer => 'type="number" ',
+            eDataType::currency => 'type="text" ',
+            eDataType::decimal => 'type="number" ',
             eDataType::string => 'type="text" ',
             default => '',
         };
@@ -648,6 +648,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return
             <<<HTML
                 <input {$type}
+                       data-type="{$this->getDataType()->value}"
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
                        name="{$this->getName()}"
