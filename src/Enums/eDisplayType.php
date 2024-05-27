@@ -19,5 +19,6 @@ enum eDisplayType: string
     case daterange = 'daterange';
     case iban = 'iban';
     case image = 'image';
+    case notificationerror = 'notificationerror';
     case none = '';
 }

@@ -70,15 +70,15 @@ function previousPage($item) {
 window.updateUserInterface = function ($item) {
     const value = $item.val();
 
-    if (($item.is('img')) || ($item.is('button')) ||((validateField($item) && (value != lastVal)))) { //indien een control van waarde veranderd is of een update op een image/button
+    if (($item.is('img')) || ($item.is('button')) ||(value != lastVal)) { //indien een control van waarde veranderd is of een update op een image/button
         const name = $item.attr('name');
         const path = $item.data('elementpath');
 
         $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
         const xmlText = new XMLSerializer().serializeToString($xml);
-        const id = $item.data('id').replace('_', '|');
-
+        const id = $item.data('id').replace('_', '|');        
+    
         getXML_HTML(config.routes.updateUserInterface, xmlText, id);
     }
 }
