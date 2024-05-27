@@ -21,7 +21,7 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
 <body>
     <div class="col-xs-2"></div>
     <div class="col-xs-8">
-    <?php echo \SoftRules\PHP\SoftRulesForm::make('asr.vvp')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
+    <?php echo \SoftRules\PHP\SoftRulesForm::make('volmachtproducten')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
     </div>
     <div class="col-xs-2"></div>
 </body>
