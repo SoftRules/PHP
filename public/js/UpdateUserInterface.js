@@ -1,6 +1,7 @@
 ﻿import './rSlider.min.js';
 
 let $xml;
+let lastVal = '';
 
 $(document).ready(() => {
     getXML_HTML(config.routes.firstPage, decodeURIComponent(config.initialXml));
@@ -13,6 +14,7 @@ function showWaitScreen() {
 function hideWaitScreen() {
     $('#waitScreen').hide();
 }
+
 
 function parseXML(xml) {
     try {
@@ -41,8 +43,14 @@ $(document)
         // no validation check needed
         previousPage($(e.currentTarget));
     })
-    .on('focus', ':input', e => {
-        $(e.currentTarget).data('prevValue', $(e.currentTarget).val());
+    .on('focus click', 'input', e =>  {
+
+        if ($(e.currentTarget).data('toggle') !== 'toggle') {
+            lastVal = $(e.currentTarget).val();
+        } else {
+            lastVal = '#';
+        }
+        
     });
 
 function nextPage($item) {
@@ -62,23 +70,17 @@ function previousPage($item) {
 window.updateUserInterface = function ($item) {
     const value = $item.val();
 
-    if (! $item.is('button') && $item.data('prevValue') === value) {
-        return;
+    if (($item.is('img')) || ($item.is('button')) ||((validateField($item) && (value != lastVal)))) { //indien een control van waarde veranderd is of een update op een image/button
+        const name = $item.attr('name');
+        const path = $item.data('elementpath');
+
+        $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
+
+        const xmlText = new XMLSerializer().serializeToString($xml);
+        const id = $item.data('id').replace('_', '|');
+
+        getXML_HTML(config.routes.updateUserInterface, xmlText, id);
     }
-
-    $item.data('prevValue', value);
-
-    const name = $item.attr('name');
-    const path = $item.data('elementpath');
-
-    //check if control is valid to update
-
-    $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
-
-    const xmlText = new XMLSerializer().serializeToString($xml);
-    const id = $item.data('id').replace('_', '|');
-
-    getXML_HTML(config.routes.updateUserInterface, xmlText, id);
 }
 
 window.updateControls = function ($item) {
@@ -86,13 +88,25 @@ window.updateControls = function ($item) {
     const name = $item.attr('name');
     const path = $item.data('elementpath');
 
-    $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
+    if (value !== typeof undefined ) {
+        if ((value != lastVal) || (value === "")) { //indien een control van waarde veranderd is
+            $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
-    scriptActions()
-        .then(() => validateField($item))
-        .catch((error) => {
-            // Moeten we iets doen als scriptActions niet uitgevoerd kan worden?
-        });
+            scriptActions()
+                .then(() => Validate($item))
+                .catch((error) => {
+                    // vooralsnog geen actie nodig
+                });
+            }
+    }
+}
+
+function Validate($item) {
+    if (PageValidated) {
+        ValidatePage($('#page'));
+    } else {
+        validateField($item);
+    }
 }
 
 function objectToFormData(object) {
@@ -143,6 +157,7 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
         .finally(async () => {
             await scriptActions();
             hideWaitScreen();
+            PageValidated = false;
         });
 }
 
