@@ -765,6 +765,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                             data-onvalue='{$data_on}'
                             data-offvalue='{$data_off}'
                             data-id='{$this->getQuestionID()}'
+                            data-toggle='toggle'
                             {$disabled}
                             onchange='setSwitchValue(this);'/>
 
