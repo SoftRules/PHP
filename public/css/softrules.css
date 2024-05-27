@@ -1,12 +1,16 @@
 @import "rSlider.min.css";
 
+:root {
+    --primary-color: #172d5d;
+}
+
 .card-body {
     padding: 20px;
     background-color: rgb(245, 245, 245);
 }
 
 .card-header {
-    color: #172d5d;
+    color: var(--primary-color);
     font-size: large;
     padding: 10px 0 !important;
     height: 60px;
@@ -97,6 +101,113 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
+}
+
+.onoffswitch {
+    position: relative;
+    width: 54px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    float: left;
+
+    label {
+        margin: 0;
+    }
+}
+
+.switch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(55, 55, 55, 0.18);
+
+    input {
+        display: none !important;
+
+        &:checked ~ .onoffswitch-inner {
+            margin-left: 0;
+        }
+
+        &:checked ~ .onoffswitch-switch {
+            right: 3px;
+            background: var(--primary-color);
+        }
+
+        &[disabled] ~ .onoffswitch-inner, &[disabled] ~ .onoffswitch-switch {
+            opacity: 0.9;
+            cursor: not-allowed;
+            background-color: #ddd;
+
+            &::before, &::after {
+                background-color: #ddd;
+            }
+        }
+    }
+
+    label.error {
+        position: absolute;
+        top: 25px;
+        min-width: 250px;
+    }
+}
+
+.onoffswitch-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+
+    &::before, &::after {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 20px;
+        padding: 0;
+        line-height: 20px;
+        font-size: 12px;
+        color: white;
+        font-family: Trebuchet, Arial, sans-serif;
+        font-weight: normal;
+        box-sizing: border-box;
+    }
+
+    &::before {
+        content: "Ja";
+        padding-left: 10px;
+        background-color: var(--primary-color);
+
+        [data-theme="default"] & {
+            background-color: var(--primary-color);
+            color: black;
+        }
+    }
+
+    &::after {
+        content: "Nee";
+        padding-right: 9px;
+        background-color: #efefef;
+        color: #888;
+        text-align: right;
+    }
+}
+
+.onoffswitch-switch {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: -1px -2px;
+    background: #FFFFFF;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 36px;
+    border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+    box-shadow: 0 1px 5px rgba(25, 25, 25, 0.15), 0 2px 2px rgba(85, 85, 85, 0.33);
 }
 
 .sr-group-grid {

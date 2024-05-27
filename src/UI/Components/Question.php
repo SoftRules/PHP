@@ -753,12 +753,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         return
             <<<HTML
-            <div class='sr-switch'>
-                <input type='hidden'
-                        value='{$this->getValue()}'
-                        name='sr_{$this->getQuestionID()}'>
-
-                <label class='switch'>
+            <span class="onoffswitch">
+                <label class="switch-label">
                     <input type='checkbox'
                             id="{$this->getQuestionID()}"
                             name='{$this->getName()}'
@@ -766,15 +762,16 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                             data-elementpath="{$this->getElementPath()}"
                             data-updateinterface='{$updateuserinterface}'
                             {$checked}
-                            data-toggle='toggle'
                             data-onvalue='{$data_on}'
                             data-offvalue='{$data_off}'
-                            data-toggle='toggle'
                             data-id='{$this->getQuestionID()}'
                             {$disabled}
-                            onchange='setSwitchValue(this);'>
+                            onchange='setSwitchValue(this);'/>
+
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
                 </label>
-            </div>
+            </span>
             HTML;
     }
 
