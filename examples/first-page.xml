@@ -10,12 +10,12 @@
                 <VP_HUISNR>21</VP_HUISNR>
                 <VP_TOEVOEG></VP_TOEVOEG>
                 <VP_PLAATS>SOMMELSDYK</VP_PLAATS>
-                <VP_PCODE>3245RL</VP_PCODE>
+                <VP_PCODE>3245 RL</VP_PCODE>
                 <VP_LAND>NL</VP_LAND>
                 <VP_TELNUM>06-12345678</VP_TELNUM>
                 <VP_EMAIL>hans@bienefelt.nl</VP_EMAIL>
                 <VP_GEBDAT>19690326</VP_GEBDAT>
-                <VP_GSSC>I</VP_GSSC>
+                <VP_GSSC>A</VP_GSSC>
             </VP>
         </Relatiemantel>
         <Pakket>
