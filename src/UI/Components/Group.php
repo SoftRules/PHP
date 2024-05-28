@@ -327,7 +327,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
         if ($this->getName() !== '') {
             $html .= "<div class='card-header'>";
-            $html .= "<div class='col-sm-11 header-col'>";
+            $html .= "<div class='header-col'>";
             $html .= "<span>{$this->getName()}</span>";
             $html .= '</div>';
             $html .= '</div>';
@@ -344,7 +344,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
         if ($this->getName() !== '') {
             $html .= "<div class='card-header'>";
-            $html .= "<div class='col-sm-11 header-col'>";
+            $html .= "<div class='header-col'>";
             $html .= "<span>{$this->getName()}</span>";
             $html .= '</div>';
             $html .= '</div>';

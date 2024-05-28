@@ -25,8 +25,6 @@ final class HtmlRenderer implements Stringable
         $this->currentPage = $UIClass->getPage();
         $this->userInterfaceData = $UIClass->getUserInterfaceData();
 
-        $this->html .= "<p>Pagina: {$this->currentPage} v/d {$this->totalPages} Pagina's</p>";
-
         $this->renderComponents($UIClass->components, $this->userInterfaceData);
     }
 
@@ -39,7 +37,7 @@ final class HtmlRenderer implements Stringable
                 $this->html .= $component->renderClosingTags();
 
                 if ($component instanceof GroupComponentContract && $component->shouldHavePagination()) {
-                    $this->html .= "<div class='row pagination-row' style='display: flex; gap: 5px;'>";
+                    $this->html .= "<div class='pagination-row' style='display: flex; gap: 5px; margin-top: 15px;'>";
 
                     $nextPageID = $this->currentPage;
                     $previousPageID = $this->currentPage;

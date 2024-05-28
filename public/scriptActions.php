@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 require_once __DIR__ . '/../bootstrap/bootstrap.php';
+
 use SoftRules\PHP\EvaluateExpressions;
 use SoftRules\PHP\UI\SoftRulesFormData;
 

@@ -260,24 +260,20 @@ class Button implements ButtonComponentContract, Renderable
             $html .= "<td class='sr-table-td'>";
         }
 
-        $html .= '<div>';
         if ($this->getDisplayType() === eDisplayType::tile) {
             $hint = $this->getHint();
             $width = $this->getCustomPropertyByName('width')?->getValue() ?? '';
             $height = $this->getCustomPropertyByName('height')?->getValue() ?? '';
             $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
             $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
-
         } else {
-
-        $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
-
+            $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
         }
 
         if ($this->getParentGroupType() === eGroupType::row) {
             $html .= '</td>';
         }
 
-        return $html .= '</div>';
+        return $html;
     }
 }
