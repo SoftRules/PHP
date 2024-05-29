@@ -36,7 +36,9 @@ function parseXML(xml) {
 
 $(document)
     .on('click', '.updateButton, .processButton', e => {
-        updateUserInterface($(e.currentTarget));
+        if (validator.validatePage($('#page'))) {
+            updateUserInterface($(e.currentTarget));
+        }
     })
     .on('click', '.nextButton', e => {
         // if all visible page controls are valid
@@ -72,7 +74,7 @@ function previousPage($item) {
 
 window.updateUserInterface = function ($item) {
     // only if current control is valid
-    if (! validator.validatePage($('#page'))) {
+    if (! validator.fieldPassesValidation($item)) {
         return;
     }
 

@@ -628,6 +628,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             eDataType::date => 'type="date" ',
             eDataType::time => 'type="time" ',
             eDataType::integer => 'type="number" ',
+            eDataType::int => 'type="number" ',
             eDataType::currency => 'type="text" ',
             eDataType::decimal => 'type="number" ',
             eDataType::string => 'type="text" ',
@@ -659,6 +660,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-displaytype="{$this->getDisplayType()->value}"
                        data-invalidmessage="{$this->getInvalidMessage()}"
                        data-isvalid='false'
+                       data-length="{$this->getRestrictions()->getLength()}"
+                       data-pattern="{$this->getRestrictions()->getPattern()}"
                        {$update}
                        {$disabled}
                        {$this->styleTypeProperty()}

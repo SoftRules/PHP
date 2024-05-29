@@ -20,7 +20,7 @@ export default class Validator {
      * @returns {boolean}
      */
     checkPattern($item) {
-        const pattern = $item.attr('pattern');
+        const pattern = $item.data('pattern');
 
         // For some browsers, `patt` is undefined; for others, `patt` is false. Check for both.
         if (typeof pattern !== typeof undefined && pattern !== false) {
@@ -35,12 +35,12 @@ export default class Validator {
      * @param item
      * @returns {boolean}
      */
-    checkFractionDigits(item) {
-        const fractionDigits = $(item).data('fractiondigits');
+    checkFractionDigits($item) {
+        const fractionDigits = $item.data('fractiondigits');
 
         // For some browsers, `fractiondigits` is undefined; for others, `fractiondigits` is false. Check for both.
         if (typeof fractionDigits !== typeof undefined && fractionDigits !== false) {
-            const currentDecimalPlaces = this.decimalPlaces($(item).val());
+            const currentDecimalPlaces = this.decimalPlaces($item.val());
 
             return currentDecimalPlaces <= fractionDigits;
         }
@@ -72,12 +72,12 @@ export default class Validator {
      * @private
      * @returns {boolean}
      */
-    checkMaxExclusive(objectID) {
-        const maxExclusive = $(objectID).data('maxexclusive');
+    checkMaxExclusive($item) {
+        const maxExclusive = $item.data('maxexclusive');
 
         // For some browsers, `maxexclusive` is undefined; for others, `maxexclusive` is false. Check for both.
         if (typeof maxExclusive !== typeof undefined && maxExclusive !== false) {
-            const currentVal = $(objectID).val();
+            const currentVal = $item.val();
 
             return currentVal < maxExclusive;
         }
@@ -89,12 +89,12 @@ export default class Validator {
      * @private
      * @returns {boolean}
      */
-    checkMaxInclusive(objectID) {
-        const maxInclusive = $(objectID).data('maxinclusive');
+    checkMaxInclusive($item) {
+        const maxInclusive = $item.data('maxinclusive');
 
         // For some browsers, `maxexclusive` is undefined; for others, `maxexclusive` is false. Check for both.
         if (typeof maxInclusive !== typeof undefined && maxInclusive !== false) {
-            const currentVal = $(objectID).val();
+            const currentVal = $item.val();
 
             return currentVal <= maxInclusive;
         }
@@ -106,12 +106,12 @@ export default class Validator {
      * @private
      * @returns {boolean}
      */
-    checkMinExclusive(objectID) {
-        const minExclusive = $(objectID).data('minexclusive');
+    checkMinExclusive($item) {
+        const minExclusive = $item.data('minexclusive');
 
         // For some browsers, `minexclusive` is undefined; for others, `minexclusive` is false. Check for both.
         if (typeof minExclusive !== typeof undefined && minExclusive !== false) {
-            const currentVal = $(objectID).val();
+            const currentVal = $item.val();
 
             return currentVal > minExclusive;
         }
@@ -123,12 +123,12 @@ export default class Validator {
      * @private
      * @returns {boolean}
      */
-    checkMinInclusive(objectID) {
-        const minInclusive = $(objectID).data('mininclusive');
+    checkMinInclusive($item) {
+        const minInclusive = $item.data('mininclusive');
 
         // For some browsers, `mininclusive` is undefined; for others, `mininclusive` is false. Check for both.
         if (typeof minInclusive !== typeof undefined && minInclusive !== false) {
-            const currentVal = $(objectID).val();
+            const currentVal = $item.val();
 
             return currentVal >= minInclusive;
         }
@@ -140,14 +140,10 @@ export default class Validator {
      * @private
      * @returns {boolean}
      */
-    checkWhiteSpace(objectID) {
-        const whiteSpace = $(objectID).data('whitespace');
-
-        // For some browsers, `mininclusive` is undefined; for others, `mininclusive` is false. Check for both.
-        if (typeof whiteSpace !== typeof undefined && whiteSpace !== false) {
-            const currentVal = $(objectID).val();
-
-            return currentVal >= whiteSpace;
+    checkLength($item) {
+        const length = $item.data('length');
+        if (typeof length !== typeof undefined && length !== '') {
+            return String($item.val()).length === length;       
         }
 
         return true;
@@ -198,7 +194,7 @@ export default class Validator {
             invalidMessage = $item.data('invalidmessage')
         }
 
-        if (invalidMessage === '' && failMessage !== typeof undefined && ! failMessage.length) {
+        if (failMessage !== typeof undefined && failMessage !== '') {
             invalidMessage = failMessage;
         }
 
@@ -230,7 +226,7 @@ export default class Validator {
 
         const hasFailure = $($page).find('textarea, input, select').get()
             .filter(el => ! $(el).parents(':hidden').length)
-            .some(el => ! this.fieldPassesValidation($(el)));
+            .some(el => ! validator.fieldPassesValidation($(el))); 
 
         if (hasFailure) {
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -260,7 +256,7 @@ export default class Validator {
                 fail = true;
             }
 
-            if ($item.prop('required') && ! this.isReadonly($item)) {
+            if (! this.isReadonly($item)) { 
                 if ($item.val()) {
                     if ($item.attr('data-type') === 'integer') {
                         if (isNaN(parseInt($item.val()))) {
@@ -271,46 +267,54 @@ export default class Validator {
 
                     if (! this.checkFractionDigits($item)) {
                         var digits = $item.data('fractiondigits');
-                        var errorString = 'de waarde kan maximaal ' + digits + ' decimalen achter de komma bevatten. <br/>';
+                        var errorString = 'de waarde kan maximaal ' + digits + ' decimalen achter de komma bevatten';
 
                         if (digits == 1) {
-                            errorString = 'de waarde kan maximaal één decimaal bevatten. <br/>';
+                            errorString = 'de waarde kan maximaal één decimaal bevatten';
                         } else if (digits == 0) {
-                            errorString = 'de waarde mag geen cijfers achter de komma bevatten. <br/>';
+                            errorString = 'de waarde mag geen cijfers achter de komma bevatten';
                         }
                         errorMessage += errorString;
                         fail = true;
                     }
 
                     if (! this.checkPattern($item)) {
-                        //fail = true;
+                        fail = true;
                     }
 
                     if (! this.checkMinExclusive($item)) {
                         var value = $item.data('minexclusive');
-                        errorMessage += 'de waarde moet groter zijn dan ' + value + '. <br/>';
+                        errorMessage += 'de waarde moet groter zijn dan ' + value;
                         fail = true
                     }
 
                     if (! this.checkMinInclusive($item)) {
                         var value = $item.data('mininclusive');
-                        errorMessage += 'de waarde moet groter of gelijk zijn als ' + value + '. <br/>';
+                        errorMessage += 'de waarde moet groter of gelijk zijn als ' + value;
                         fail = true
                     }
 
                     if (! this.checkMaxExclusive($item)) {
                         var value = $item.data('maxexclusive');
-                        errorMessage += 'de waarde moet kleiner zijn dan ' + value + '. <br/>';
+                        errorMessage += 'de waarde moet kleiner zijn dan ' + value;
                         fail = true
                     }
 
                     if (! this.checkMaxInclusive($item)) {
                         var value = $item.data('maxinclusive');
-                        errorMessage += 'de waarde moet kleiner of gelijk zijn als ' + value + '. <br/>';
+                        errorMessage += 'de waarde moet kleiner of gelijk zijn als ' + value;
+                        fail = true
+                    }
+
+                    if (! this.checkLength($item)) {
+                        var value = $item.data('length');
+                        errorMessage += 'de waarde moet ' + value + ' lang zijn';
                         fail = true
                     }
                 } else {
-                    fail = true;
+                    if ($item.prop('required')) {
+                        fail = true;
+                    }
                 }
             }
         }

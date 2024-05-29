@@ -7,6 +7,7 @@ enum eDataType: string
     case date = 'date';
     case time = 'time';
     case integer = 'integer';
+    case int = 'int';
     case currency = 'currency';
     case decimal = 'decimal';
     case string = 'string';
