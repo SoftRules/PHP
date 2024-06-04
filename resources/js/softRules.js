@@ -73,10 +73,14 @@ function previousPage($item) {
 }
 
 window.updateUserInterface = function ($item) {
-    // only if current control is valid
-    if (! validator.fieldPassesValidation($item)) {
-        return;
-    }
+    // only if current control is valid or data-novalidate = true;
+
+    if (validator.canValidate($item)) {
+
+        if (! validator.fieldPassesValidation($item)) {
+            return;
+        }
+    }       
 
     const value = $item.val();
 

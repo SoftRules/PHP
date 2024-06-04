@@ -225,27 +225,7 @@ class Button implements ButtonComponentContract, Renderable
         $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
 
-        foreach ($this->getCustomProperties() as $customProperty) {
-            switch (strtolower((string) $customProperty->getName())) {
-                case 'nextpage':
-                    $name = $customProperty->getValue();
-                    break;
-                case 'pictureurl':
-                    $pictureUrl = $customProperty->getValue();
-                    break;
-                case 'width':
-                    $width = $customProperty->getValue();
-                    break;
-                case 'height':
-                    $height = $customProperty->getValue();
-                    break;
-                case 'align':
-                    $align = " data-align='" . $customProperty->getValue() . "'";
-                    break;
-                default:
-                    break;
-            }
-        }
+        //todo custom properties: align, nextpage
 
         $buttonStyle = $this->getStyle()->default;
 
@@ -267,7 +247,8 @@ class Button implements ButtonComponentContract, Renderable
             $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
             $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
         } else {
-            $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}'>{$this->getText()}</button>";
+            $novalidate = $this->getCustomPropertyByName('novalidate')?->getValue() ?? '';
+            $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}' data-novalidate='{$novalidate}'>{$this->getText()}</button>";
         }
 
         if ($this->getParentGroupType() === eGroupType::row) {

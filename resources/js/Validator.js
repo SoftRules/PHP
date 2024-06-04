@@ -330,4 +330,16 @@ export default class Validator {
 
         return false;
     }
+
+    canValidate($item) {
+        if ($item.is('button')) {
+            const novalidate = $item.data('novalidate');
+            
+            if (typeof novalidate !== typeof undefined && novalidate !== false) {
+                return false;
+            }        
+        }
+
+        return true;
+    }
 }

@@ -644,6 +644,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         if ($this->getDataType() === eDataType::date) {
             $date = date_create($value);
             $value = date_format($date, 'Y-m-d');
+        } else {
+            $value = str_replace(',', '.', $value);
         }
 
         return
