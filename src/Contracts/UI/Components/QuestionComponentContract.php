@@ -114,7 +114,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function setReadyForProcess($readyForProcess): void;
 
-    public function getReadyForProcess();
+    public function getReadyForProcess(): bool;
 
     public function addTextValue(TextValueComponentContract $textValue): void;
 }

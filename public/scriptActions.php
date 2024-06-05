@@ -6,7 +6,7 @@ use SoftRules\PHP\EvaluateExpressions;
 use SoftRules\PHP\UI\SoftRulesFormData;
 
 if (isset($_POST['xml'])) {
-    $actions = new EvaluateExpressions(SoftRulesFormData::fromXmlString((string) $_POST['xml']));
+    $actions = new EvaluateExpressions(SoftRulesFormData::fromXmlString((string) $_POST['xml']), $_POST['id']);
     exit($actions->actionList->toJson(JSON_PRETTY_PRINT));
 }
 

@@ -15,10 +15,10 @@ require_once __DIR__ . '/../bootstrap/bootstrap.php';
     <title>SoftRules PHP</title>
 </head>
 <body>
-<div class="col-xs-2"></div>
-<div class="col-xs-8">
+<div class="col-xs-3"></div>
+<div class="col-xs-6">
     <?php echo \SoftRules\PHP\SoftRulesForm::make('volmachtproducten')->withInitialXml(file_get_contents(__DIR__ . '/../examples/first-page.xml')); ?>
 </div>
-<div class="col-xs-2"></div>
+<div class="col-xs-3"></div>
 </body>
 </html>

@@ -5,7 +5,6 @@ import '@fortawesome/fontawesome-free/js/all.js';
 import Validator from './Validator';
 
 let $xml;
-let lastVal = '';
 
 const validator = new Validator();
 window.validator = validator;
@@ -49,13 +48,6 @@ $(document)
     .on('click', '.previousButton', e => {
         // no validation check needed
         previousPage($(e.currentTarget));
-    })
-    .on('focus click', 'input', e => {
-        if ($(e.currentTarget).data('toggle') !== 'toggle') {
-            lastVal = $(e.currentTarget).val();
-        } else {
-            lastVal = '#';
-        }
     });
 
 function nextPage($item) {
@@ -83,8 +75,9 @@ window.updateUserInterface = function ($item) {
     }       
 
     const value = $item.val();
+    const lastvalue = $item.data('value');
 
-    if (($item.is('img')) || ($item.is('button')) || (value != lastVal)) { //indien een control van waarde veranderd is of een update op een image/button
+    if (($item.is('img')) || ($item.is('button')) || (value != lastvalue)) { //indien een control van waarde veranderd is of een update op een image/button
         const name = $item.attr('name');
         const path = $item.data('elementpath');
 
@@ -99,15 +92,21 @@ window.updateUserInterface = function ($item) {
 
 window.updateControls = function ($item) {
     const value = $item.val();
+    const lastvalue = $item.data('value');
     const name = $item.attr('name');
     const path = $item.data('elementpath');
 
     if (value !== typeof undefined) {
-        if ((value != lastVal) || (value === '')) { //indien een control van waarde veranderd is
+        if ((value != lastvalue) && (value !== '') && (value !== undefined)) { //indien een control van waarde veranderd is
             $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
 
-            scriptActions()
+            const id = $item.data('id')
+            
+            scriptActions(id)
                 .then(() => validate($item))
+                .then(() => { 
+                    $item.data('value', value); //bijwerken value attribute
+                })
                 .catch((error) => {
                     // vooralsnog geen actie nodig
                 });
@@ -169,7 +168,7 @@ function getXML_HTML(methodUrl, xml, id = undefined) {
             alert(error);
         })
         .finally(async () => {
-            await scriptActions();
+            await scriptActions(null);//skip id after UpdateUserinterface
             hideWaitScreen();
             validator.pageValidated = false;
         });
@@ -206,7 +205,7 @@ function getHTML(xml) {
         .finally(() => hideWaitScreen());
 }
 
-function scriptActions() {
+function scriptActions(id) {
     return new Promise((resolve, reject) => {
         const xml = new XMLSerializer().serializeToString($xml);
 
@@ -216,6 +215,7 @@ function scriptActions() {
                 'Accept': 'application/xml',
             },
             body: objectToFormData({
+                id,
                 xml,
             }),
         })
@@ -254,6 +254,8 @@ function scriptActions() {
                         if ($('[data-id=' + obj[i].ItemID + ']').parent().hasClass('toggle-switch')) {
                             $('[data-id=' + obj[i].ItemID + ']').parent().addClass('disabled');
                         }
+                    } else if (obj[i].Command === 'HideButton') {                        
+                        $('[data-id=' + obj[i].ItemID + ']').hide();
                     }
                 }
 

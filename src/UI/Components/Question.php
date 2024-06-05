@@ -373,10 +373,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function setReadyForProcess($readyForProcess): void
     {
-        $this->readyForProcess = $readyForProcess;
+        if (is_string($readyForProcess)) {
+            $this->readyForProcess = strtolower($readyForProcess) === 'true';
+        }    
     }
 
-    public function getReadyForProcess()
+    public function getReadyForProcess(): bool
     {
         return $this->readyForProcess;
     }
@@ -560,9 +562,19 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         $disabled = $enable ? '' : 'disabled';
 
+        $viewLabel = $this->getCustomPropertyByName('nolabel')?->getValue() ?? true;
+        if ($viewLabel === '1') {
+            $viewLabel = true;
+        } else {
+            if ($viewLabel === '0') {
+                $viewLabel = false;
+            }   
+        }
+
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
         if ($this->getParentGroupType() === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
+            $viewLabel = false; //in tables never paint question labels
         }
 
         if ($this->getDisplayType() === eDisplayType::switch) {
@@ -571,9 +583,11 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             //$html .= $this->getToggleControl();
         } else {
             $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->getQuestionID()}-row'>";
-            $html .= "<div class='col-sm-4'>";
-            $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
-            $html .= '</div>';
+            if ($viewLabel === true) {
+                $html .= "<div class='col-sm-4'>";
+                $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
+                $html .= '</div>';
+            }
 
             $html .= "<div class='col-sm-7'>";
             $html .= "<div class='sr-input-group input-group'>";
@@ -657,6 +671,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        name="{$this->getName()}"
                        id="{$this->getQuestionID()}"
                        value="{$value}"
+                       data-value="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
                        data-displaytype="{$this->getDisplayType()->value}"
@@ -690,6 +705,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        name="{$this->getName()}"
                        id="{$this->getQuestionID()}"
                        value="{$value}"
+                       data-value="{$value}"
                        data-prevValue="{$value}"
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
