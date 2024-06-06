@@ -12,4 +12,6 @@ interface ComponentWithCustomPropertiesContract
      * @return Collection<int, CustomPropertyContract>
      */
     public function getCustomProperties(): Collection;
+
+    public function getCustomPropertyByName(string $propertyName): ?CustomPropertyContract;
 }

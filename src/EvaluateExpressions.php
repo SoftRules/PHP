@@ -24,17 +24,20 @@ final class EvaluateExpressions implements Stringable
     private readonly UiComponentsCollection $allComponents;
 
     public readonly ActionCollection $actionList;
-    public readonly string $changedItem;
-    public readonly string $hideButton;
+
+    public readonly ?string $changedItem;
+
+    public string $hideButton = '';
+
     public bool $canHideButton = false;
 
-    public function __construct(SoftRulesFormData $UIClass, $changedItem)
+    public function __construct(SoftRulesFormData $UIClass, ?string $changedItem)
     {
         $this->actionList = new ActionCollection();
         $this->userInterfaceData = $UIClass->getUserInterfaceData();
         $this->allComponents = $UIClass->components;
-        $this->changedItem = str_replace('|','_', $changedItem);
-        $this->evaluateExpressions($UIClass->components);        
+        $this->changedItem = $changedItem ? str_replace('|', '_', $changedItem) : null;
+        $this->evaluateExpressions($UIClass->components);
     }
 
     private function evaluateExpressions(UiComponentsCollection $components): void
@@ -49,8 +52,9 @@ final class EvaluateExpressions implements Stringable
                         $this->actionList->add(new Action($component->getGroupID(), 'Hide', ''));
                     }
                 }
+
                 //check for Custom property 'Hidebutton' in Group if Type=page
-                if ($component->getType() === eGroupType::page) {                
+                if ($component->getType() === eGroupType::page) {
                     $this->hideButton = $component->getCustomPropertyByName('hidebutton')?->getValue() ?? '';
                 }
 
@@ -90,11 +94,10 @@ final class EvaluateExpressions implements Stringable
                 }
 
                 if ($component->getQuestionID() === $this->changedItem) {
-                    if ($component->getReadyForProcess() === true) {
+                    if ($component->getReadyForProcess()) {
                         $this->canHideButton = true;
                     }
-                }                
-                
+                }
             } elseif ($component instanceof LabelComponentContract) {
                 //Visible expression
                 if ($this->itemVisible($component)) {
@@ -102,7 +105,6 @@ final class EvaluateExpressions implements Stringable
                 } else {
                     $this->actionList->add(new Action($component->getLabelID(), 'Hide', ''));
                 }
-
             } elseif ($component instanceof ButtonComponentContract) {
                 //Visible expression
                 if ($this->itemVisible($component)) {

@@ -2,6 +2,7 @@
 
 namespace SoftRules\PHP\UI\Components;
 
+use Carbon\Carbon;
 use DOMElement;
 use Illuminate\Support\Collection;
 use SoftRules\PHP\Contracts\Renderable;
@@ -67,7 +68,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private string $invalidMessage = '';
 
-    private $readyForProcess;
+    private ?bool $readyForProcess = null;
 
     private $coreValue;
 
@@ -375,12 +376,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         if (is_string($readyForProcess)) {
             $this->readyForProcess = strtolower($readyForProcess) === 'true';
-        }    
+        }
     }
 
     public function getReadyForProcess(): bool
     {
-        return $this->readyForProcess;
+        return $this->readyForProcess ?? false;
     }
 
     public function addTextValue(TextValueComponentContract $textValue): void
@@ -565,10 +566,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $viewLabel = $this->getCustomPropertyByName('nolabel')?->getValue() ?? true;
         if ($viewLabel === '1') {
             $viewLabel = true;
-        } else {
-            if ($viewLabel === '0') {
-                $viewLabel = false;
-            }   
+        } elseif ($viewLabel === '0') {
+            $viewLabel = false;
         }
 
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
@@ -583,7 +582,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             //$html .= $this->getToggleControl();
         } else {
             $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->getQuestionID()}-row'>";
-            if ($viewLabel === true) {
+            if ($viewLabel) {
                 $html .= "<div class='col-sm-4'>";
                 $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
                 $html .= '</div>';
@@ -641,11 +640,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $type = match ($this->getDataType()) {
             eDataType::date => 'type="date" ',
             eDataType::time => 'type="time" ',
-            eDataType::integer => 'type="number" ',
-            eDataType::int => 'type="number" ',
-            eDataType::currency => 'type="text" ',
-            eDataType::decimal => 'type="number" ',
-            eDataType::string => 'type="text" ',
+            eDataType::integer, eDataType::int, eDataType::decimal => 'type="number" ',
+            eDataType::currency, eDataType::string => 'type="text" ',
             default => '',
         };
 
@@ -656,10 +652,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         //format date
         $value = $this->getValue();
         if ($this->getDataType() === eDataType::date) {
-            $date = date_create($value);
-            $value = date_format($date, 'Y-m-d');
+            $value = Carbon::parse($value)->format('Y-m-d');
         } else {
-            $value = str_replace(',', '.', $value);
+            $value = $this->commaToDotNotation($value);
         }
 
         return
@@ -686,16 +681,21 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 HTML;
     }
 
+    private function commaToDotNotation(string $value): string
+    {
+        return str_replace(',', '.', $value);
+    }
+
     private function getSliderControl(): string
     {
         $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
 
         //format date
-        $value = str_replace(',', '.', $this->getValue());
+        $value = $this->commaToDotNotation($this->getValue());
 
-        $step = str_replace(',', '.', $this->getCustomPropertyByName('Stepsize')?->getValue() ?? '1');
-        $min = str_replace(',', '.', $this->getCustomPropertyByName('MinValue')?->getValue() ?? '1');
-        $max = str_replace(',', '.', $this->getCustomPropertyByName('MaxValue')?->getValue() ?? '1');
+        $step = $this->commaToDotNotation($this->getCustomPropertyByName('Stepsize')?->getValue() ?? '1');
+        $min = $this->commaToDotNotation($this->getCustomPropertyByName('MinValue')?->getValue() ?? '1');
+        $max = $this->commaToDotNotation($this->getCustomPropertyByName('MaxValue')?->getValue() ?? '1');
 
         return
             <<<HTML
