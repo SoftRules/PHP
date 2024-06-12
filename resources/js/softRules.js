@@ -97,7 +97,7 @@ window.updateUserInterface = function ($item) {
                 getXML_HTML(config.routes.updateUserInterface, xmlText, id);
             })
             .catch((error) => {
-                // vooralsnog geen actie nodig
+                // vooralsnog geen actie nodig 
             });
     }
 }
