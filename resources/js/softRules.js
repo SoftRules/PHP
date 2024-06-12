@@ -65,42 +65,57 @@ function previousPage($item) {
 }
 
 window.updateUserInterface = function ($item) {
-    // only if current control is valid or data-novalidate = true;
-
-    if (validator.canValidate($item)) {
-
-        if (! validator.fieldPassesValidation($item)) {
-            return;
-        }
-    }       
-
-    const value = $item.val();
+    var id = $item.data('id')
+    var value = $item.val();    
     const lastvalue = $item.data('value');
+    const name = $item.attr('name');
+    const path = $item.data('elementpath');
+    
+    if ($item.attr('type') == "date") { //set date in correct format
+        value = toDate(value);      
+    }    
 
     if (($item.is('img')) || ($item.is('button')) || (value != lastvalue)) { //indien een control van waarde veranderd is of een update op een image/button
-        const name = $item.attr('name');
-        const path = $item.data('elementpath');
-
         $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
+                    
+        scriptActions(id)
+            .finally(() => {                 
+                validate($item);
+                $item.data('value', value); //bijwerken value attribute
 
-        const xmlText = new XMLSerializer().serializeToString($xml);
-        const id = $item.data('id').replace('_', '|');
-
-        getXML_HTML(config.routes.updateUserInterface, xmlText, id);
+                // only if current control is valid or data-novalidate = true;
+                if (validator.canValidate($item)) {
+                    if (! validator.fieldPassesValidation($item)) {
+                        return;
+                    }                
+                }
+                
+                const xmlText = new XMLSerializer().serializeToString($xml);
+        
+                id = $item.data('id').replace('_', '|'); // waarom hier een replacement?
+        
+                getXML_HTML(config.routes.updateUserInterface, xmlText, id);
+            })
+            .catch((error) => {
+                // vooralsnog geen actie nodig
+            });
     }
 }
 
 window.updateControls = function ($item) {
-    const value = $item.val();
+    const id = $item.data('id')
+    var value = $item.val();    
     const lastvalue = $item.data('value');
     const name = $item.attr('name');
     const path = $item.data('elementpath');
+    
+    if ($item.attr('type') == "date") { //set date in correct format
+        value = toDate(value);      
+    }
 
     if (value !== typeof undefined) {
         if ((value != lastvalue) && (value !== '') && (value !== undefined)) { //indien een control van waarde veranderd is
             $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
-
-            const id = $item.data('id')
             
             scriptActions(id)
                 .then(() => validate($item))
@@ -130,6 +145,14 @@ function objectToFormData(object) {
     });
 
     return formData;
+}
+
+function toDate(value) {
+    const newDate = new Date(value);
+    const day = String(newDate.getDate()).padStart(2, '0');
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const year = newDate.getFullYear();
+    return `${day}-${month}-${year}`;  
 }
 
 function getXML_HTML(methodUrl, xml, id = undefined) {
@@ -268,12 +291,12 @@ function scriptActions(id) {
 
                 reject(error);
             })
-            .finally(() => hideWaitScreen());
+            //.finally(() => hideWaitScreen());
     });
 }
 
 window.toggleClick = function (item) {
-    const name = $(item).attr('id');
+    const name = $(item).data('id');
     $('#' + name).val($(item).data('value'));
     $(item).siblings().removeClass('active');
     $(item).addClass('active');

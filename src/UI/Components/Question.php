@@ -652,7 +652,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         //format date
         $value = $this->getValue();
         if ($this->getDataType() === eDataType::date) {
-            $value = Carbon::parse($value)->format('Y-m-d');
+            if ($value !== "") {
+                $value = Carbon::parse($value)->format('Y-m-d');
+            }
         } else {
             $value = $this->commaToDotNotation($value);
         }

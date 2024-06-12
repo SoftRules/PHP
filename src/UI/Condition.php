@@ -294,9 +294,9 @@ class Condition implements ConditionContract
             return null;
         }
 
-        $formats = ['dd-MM-yyyy'];
+        $formats = ['d-m-Y'];
         foreach ($formats as $f) {
-            try {
+            try {                
                 return Carbon::createFromFormat($f, $value);
             } catch (Throwable) {
                 //
