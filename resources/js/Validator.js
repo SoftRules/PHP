@@ -1,3 +1,4 @@
+//versie 14-06-2024 16:03
 export default class Validator {
     constructor() {
         this.pageValidated = false;

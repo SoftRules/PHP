@@ -1,4 +1,5 @@
-﻿import './rSlider.min.js';
+﻿//versie 14-06-2024 16:03
+import './rSlider.min.js';
 import { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import '@fortawesome/fontawesome-free/js/all.js';
