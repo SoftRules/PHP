@@ -296,7 +296,7 @@ class Condition implements ConditionContract
 
         $formats = ['d-m-Y'];
         foreach ($formats as $f) {
-            try {                
+            try {
                 return Carbon::createFromFormat($f, $value);
             } catch (Throwable) {
                 //

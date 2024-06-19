@@ -36,9 +36,7 @@ class Action implements ActionContract
         return $this->value;
     }
 
-    public function __construct(private string $itemID, private string $command, private string $value)
-    {
-    }
+    public function __construct(private string $itemID, private string $command, private string $value) {}
 
     public function jsonSerialize(): array
     {
