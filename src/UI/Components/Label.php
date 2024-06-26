@@ -173,13 +173,16 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
     public function render($components, $userInterfaceData): string
     {
         //displaytypes: Attention, Informationbutton
-        //custum properties: align en valign. StyleTypes, HelpText?
+        //custum properties: align en valign. HelpText?
         //custom properties depricated: columnwidth, columnwidth_unit
         $labelClass = 'sr-label';
 
         if ($this->getParentGroupType() === eGroupType::tableheader) {
             $labelClass .= ' sr-label-th';
         }
+
+        //Custom property Styletype
+        $styleType = $this->styleTypeProperty();
 
         $html = match($this->getParentGroupType()) {
             eGroupType::row => "<td class='sr-table-td'>",
@@ -212,6 +215,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     <span data-id="{$this->getLabelID()}"
                         class="{$labelClass} {$this->getStyle()->default->class} {$align} {$valign}"
                         style="{$this->getStyle()->default->inlineStyle}">
+                        {$styleType}
                         {$this->getText()}
                     </span>
                     HTML;

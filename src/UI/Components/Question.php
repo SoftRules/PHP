@@ -659,12 +659,16 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $value = $this->commaToDotNotation($value);
         }
 
+        //Custom property Styletype
+        $styleType = $this->styleTypeProperty();
+
         return
             <<<HTML
                 <input {$type}
                        data-type="{$this->getDataType()->value}"
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
+                       {$styleType}
                        name="{$this->getName()}"
                        id="{$this->getQuestionID()}"
                        value="{$value}"
@@ -678,7 +682,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-pattern="{$this->getRestrictions()->getPattern()}"
                        {$update}
                        {$disabled}
-                       {$this->styleTypeProperty()}
                        />
                 HTML;
     }
@@ -699,11 +702,14 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $min = $this->commaToDotNotation($this->getCustomPropertyByName('MinValue')?->getValue() ?? '1');
         $max = $this->commaToDotNotation($this->getCustomPropertyByName('MaxValue')?->getValue() ?? '1');
 
+        $styleType = $this->styleTypeProperty();
+
         return
             <<<HTML
                 <input type="hidden"
                        class="sr-question sr-question-slider sr-slider {$this->getStyle()->slider->class}"
                        style="{$this->getStyle()->slider->inlineStyle}"
+                       {$styleType}
                        name="{$this->getName()}"
                        id="{$this->getQuestionID()}"
                        value="{$value}"
@@ -712,8 +718,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-id="{$this->getQuestionID()}"
                        data-elementpath="{$this->getElementPath()}"
                        data-displaytype="{$this->getDisplayType()->value}"
-                       data-invalidmessage="{$this->getInvalidMessage()}"
-                       {$this->styleTypeProperty()}
+                       data-invalidmessage="{$this->getInvalidMessage()}"                       
                        data-isvalid='true'/>
 
                 <script>
@@ -742,10 +747,14 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $update = " onchange='updateUserInterface($(this))'";
         }
 
+        //Custom property Styletype
+        $styleType = $this->styleTypeProperty();
+
         return
             <<<HTML
             <select class="sr-question sr-question-choice {$this->getStyle()->default->class}"
                     style="{$this->getStyle()->default->inlineStyle}"
+                    {$styleType}
                     id="{$this->getQuestionID()}"
                     name="{$this->getName()}"
                     data-id="{$this->getQuestionID()}"
@@ -754,7 +763,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     data-invalidmessage = "{$this->getInvalidMessage()}"
                     {$update}
                     {$disabled}
-                    {$this->styleTypeProperty()}
+                    
                     data-isvalid='false'>
                 {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
             </select>
@@ -804,6 +813,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
 
+        //Custom property Styletype
+        $styleType = $this->styleTypeProperty();
+
         $values = '';
         foreach ($this->textValues as $textValue) {
             $active = $textValue->getValue() === $this->getValue() ? 'active' : '';
@@ -811,10 +823,10 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $values .= <<<HTML
             <button type='button'
                     class='sr btn btn-secondary {$active}'
+                    {$styleType}
                     data-id='{$this->getQuestionID()}'
                     data-updateinterface='{$updateuserinterface}'
                     data-value='{$textValue->getValue()}'
-                    data-name='{$this->getName()}'
                     onclick='toggleClick(this)'>
                 {$textValue->getText()}
             </button>
@@ -827,9 +839,10 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 <input type='hidden'
                        class='togglefield-hidden'
                        data-id='{$this->getQuestionID()}'
-                       id="{$this->getQuestionID()}"
+                       id='{$this->getQuestionID()}'
                        value='{$this->getValue()}'
-                       {$this->styleTypeProperty()}
+                       name='{$this->getName()}'
+                       {$styleType}
                        data-elementpath='{$this->getElementPath()}'/>
 
                 {$values}

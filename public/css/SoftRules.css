@@ -184,12 +184,11 @@
 }
 #softrules-form .sr-group-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 33.3%));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 100%));
   grid-gap: 10px 0;
 }
-#softrules-form .sr-group-grid .sr-group-grid {
-  display: block;
-  grid-gap: 0;
+#softrules-form .sr-togglefield {
+  padding-left: 15px;
 }
 #softrules-form img {
   max-width: 100%;

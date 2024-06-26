@@ -1,4 +1,4 @@
-﻿//versie 14-06-2024 16:03
+﻿//versie 26-06-2024
 import './rSlider.min.js';
 import { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
@@ -303,9 +303,9 @@ window.toggleClick = function (item) {
     $(item).addClass('active');
 
     if ($('#' + name).data('updateinterface')) {
-        updateUserInterface($(item));
+        updateUserInterface($('#' + name));
     } else {
-        updateControls($(item));
+        updateControls($('#' + name));
     }
 }
 
