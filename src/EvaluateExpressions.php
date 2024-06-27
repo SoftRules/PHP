@@ -113,7 +113,7 @@ final class EvaluateExpressions implements Stringable
                     $this->actionList->add(new Action($component->getButtonID(), 'Hide', ''));
                 }
 
-                if ($this->hideButton !== '') {
+                if (($this->hideButton !== '') && ($this->changedItem != 'null')) {
                     if ($component->getText() === $this->hideButton) {
                         if ($this->canHideButton) {
                             $this->actionList->add(new Action($component->getButtonID(), 'HideButton', $this->hideButton));

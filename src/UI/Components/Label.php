@@ -214,8 +214,8 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
                     <<<HTML
                     <span data-id="{$this->getLabelID()}"
                         class="{$labelClass} {$this->getStyle()->default->class} {$align} {$valign}"
-                        style="{$this->getStyle()->default->inlineStyle}">
-                        {$styleType}
+                        style="{$this->getStyle()->default->inlineStyle}"
+                        {$styleType}>
                         {$this->getText()}
                     </span>
                     HTML;

@@ -76,7 +76,7 @@ window.updateUserInterface = function ($item) {
         value = toDate(value);      
     }    
 
-    if (($item.is('img')) || ($item.is('button')) || (value != lastvalue)) { //indien een control van waarde veranderd is of een update op een image/button
+    if (($item.is('img')) || ($item.is('button')) || valuechanged(value, lastvalue)) { //indien een control van waarde veranderd is of een update op een image/button
         $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
                     
         scriptActions(id)
@@ -103,6 +103,25 @@ window.updateUserInterface = function ($item) {
     }
 }
 
+function valuechanged(value, lastvalue) {
+    const fvalue = parseFloat(value);
+    const lvalue = parseFloat(lastvalue);  
+
+    if ((fvalue !== NaN) && (lvalue !== NaN)) {
+        if (fvalue != lvalue) { 
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    if (value != lastvalue) {
+        return true;
+    }
+
+    return false;
+}
+
 window.updateControls = function ($item) {
     const id = $item.data('id')
     var value = $item.val();    
@@ -115,7 +134,7 @@ window.updateControls = function ($item) {
     }
 
     if (value !== typeof undefined) {
-        if ((value != lastvalue) && (value !== '') && (value !== undefined)) { //indien een control van waarde veranderd is
+        if ((valuechanged(value, lastvalue)) && (value !== '') && (value !== undefined)) { //indien een control van waarde veranderd is
             $($xml).find(`Question > Name:contains("${ name }")`).parent().find(`Question > ElementPath:contains("${ path }")`).parent().children('value').text(value);
             
             scriptActions(id)
@@ -292,7 +311,8 @@ function scriptActions(id) {
 
                 reject(error);
             })
-            //.finally(() => hideWaitScreen());
+            .finally(() => { 
+            });
     });
 }
 
