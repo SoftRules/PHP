@@ -593,7 +593,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
             $html .= match ($this->getDataType()) {
                 eDataType::currency => "<span class='input-group-addon'>&euro;</span>",
-                eDataType::date => "<span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span>",
                 default => '',
             };
 
@@ -655,8 +654,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             if ($value !== '') {
                 $value = Carbon::parse($value)->format('Y-m-d');
             }
-        } else {
-            $value = $this->commaToDotNotation($value);
         }
 
         //Custom property Styletype
