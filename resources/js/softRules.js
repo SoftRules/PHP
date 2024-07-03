@@ -274,17 +274,17 @@ function scriptActions(id) {
 
                 for (let i = 0; i < obj.length; i++) {
                     if (obj[i].Command === 'Hide') {
-                        console.log('Hide: ' +  $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
+                        console.log('Hide: ' + obj[i].ItemID + ' class:' + $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
                         $('[data-id=' + obj[i].ItemID + ']').hide();
                         $('#' + obj[i].ItemID + '-row').hide();
                     } else if (obj[i].Command === 'Show') {
                         $('[data-id=' + obj[i].ItemID + ']').show();
                         $('#' + obj[i].ItemID + '-row').show();
                     } else if (obj[i].Command === 'Valid') {
-                        console.log('Valid: ' +  $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
+                        console.log('Valid: ' + obj[i].ItemID + ' class:' + $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
                         $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', true);
                     } else if (obj[i].Command === 'Invalid') {
-                        console.log('Invalid: ' +  $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
+                        console.log('Invalid: ' + obj[i].ItemID + ' class:' + $('[data-id=' + obj[i].ItemID + ']').attr('class') + ' name:' + $('[data-id=' + obj[i].ItemID + ']').attr('name'));
                         $('[data-id=' + obj[i].ItemID + ']').attr('data-isvalid', false);
                     } else if (obj[i].Command === 'Required') {
                         $('[data-id=' + obj[i].ItemID + ']').prop('required', true);
