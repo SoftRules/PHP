@@ -674,7 +674,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        data-elementpath="{$this->getElementPath()}"
                        data-displaytype="{$this->getDisplayType()->value}"
                        data-invalidmessage="{$this->getInvalidMessage()}"
-                       data-isvalid='false'
+                       data-isvalid='true'
                        data-length="{$this->getRestrictions()->getLength()}"
                        data-pattern="{$this->getRestrictions()->getPattern()}"
                        {$update}
