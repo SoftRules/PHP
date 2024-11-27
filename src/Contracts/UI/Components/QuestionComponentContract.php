@@ -12,6 +12,7 @@ use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eDataType;
 use SoftRules\PHP\Enums\eDefaultState;
 use SoftRules\PHP\Enums\eDisplayType;
+use SoftRules\PHP\Enums\eScope;
 
 interface QuestionComponentContract extends UiComponentContract
 {
@@ -83,9 +84,17 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function getUpdateUserInterface(): bool;
 
-    public function setUpdateQuestionOnly($updateQuestionOnly): void;
+    public function setScope($scope): void;
 
-    public function getUpdateQuestionOnly();
+    public function getScope(): eScope;
+    
+    public function addGroupID($groupid): void;
+
+    public function getGroupdIDs(): array;
+
+    public function setShowWaitScreen($showwaitscreen): bool;
+
+    public function getShowWaitScreen(): bool;
 
     public function setInvalidMessage($invalidMessage): void;
 

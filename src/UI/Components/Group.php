@@ -33,7 +33,7 @@ class Group implements GroupComponentContract, RenderableWrapper
     private eGroupType $type;
 
     private $updateUserInterface;
-
+   
     private string $pageID;
 
     private $suppressItemsWhenInvisible;
@@ -226,7 +226,6 @@ class Group implements GroupComponentContract, RenderableWrapper
                     foreach ($childNode->childNodes as $grandChildNode) {
                         $this->addCustomProperty(CustomProperty::createFromDomNode($grandChildNode));
                     }
-
                     break;
                 case 'VisibleExpression':
                     $this->setVisibleExpression(Expression::createFromDomNode($childNode));
@@ -248,9 +247,7 @@ class Group implements GroupComponentContract, RenderableWrapper
                             default:
                                 break;
                         }
-                    }
-
-                    break;
+                    }                
                 case 'Items':
                     /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {

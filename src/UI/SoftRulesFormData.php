@@ -29,6 +29,7 @@ final class SoftRulesFormData implements SoftRulesFormContract
     private string $configID;
 
     private string $userInterfaceID;
+    private string $userInterfaceVersionID;
 
     public readonly UiComponentsCollection $components;
 
@@ -80,6 +81,15 @@ final class SoftRulesFormData implements SoftRulesFormContract
     public function getUserInterfaceID(): string
     {
         return $this->userInterfaceID;
+    }
+    public function setUserInterfaceVersionID(string $userInterfaceVersionID): void
+    {
+        $this->userInterfaceVersionID = $userInterfaceVersionID;
+    }
+
+    public function getUserInterfaceVersionID(): string
+    {
+        return $this->userInterfaceVersionID;
     }
 
     public function setPage(int $page): void
@@ -184,6 +194,9 @@ final class SoftRulesFormData implements SoftRulesFormContract
                 case 'UserInterfaceID':
                     $this->setUserInterfaceID($child->nodeValue);
                     break;
+                case 'UserInterfaceVersionID':
+                        $this->setUserInterfaceVersionID($child->nodeValue);
+                        break;
                 case 'State':
                     $this->setState((string) $child->nodeValue);
                     break;

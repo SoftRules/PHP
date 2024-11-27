@@ -16,6 +16,7 @@ use SoftRules\PHP\Enums\eDataType;
 use SoftRules\PHP\Enums\eDefaultState;
 use SoftRules\PHP\Enums\eDisplayType;
 use SoftRules\PHP\Enums\eGroupType;
+use SoftRules\PHP\Enums\eScope;
 use SoftRules\PHP\Traits\HasCustomProperties;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\CustomProperty;
@@ -33,6 +34,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public static ?QuestionComponentStyle $style = null;
 
     private string $questionID;
+    private string $key;
 
     private $name;
 
@@ -63,8 +65,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $elementPath;
 
     private bool $updateUserInterface = false;
+    
+    private eScope $scope = eScope::Userinterface;
+    
+    private array $groupIDs = [];
 
-    private bool $updateQuestionOnly = false;
+    private bool $showwaitscreen = true;
 
     private string $invalidMessage = '';
 
@@ -118,6 +124,14 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function getQuestionID(): string
     {
         return $this->questionID;
+    }
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
+    }
+    public function getKey(): string
+    {
+        return $this->key;
     }
 
     public function setName($name): void
@@ -288,18 +302,6 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return $this->elementPath;
     }
 
-    public function setUpdateQuestionOnly($updateQuestionOnly): void
-    {
-        if (is_string($updateQuestionOnly)) {
-            $this->updateQuestionOnly = strtolower($updateQuestionOnly) === 'true';
-        }
-    }
-
-    public function getUpdateQuestionOnly(): bool
-    {
-        return $this->updateQuestionOnly;
-    }
-
     public function setUpdateUserInterface($updateUserInterface): void
     {
         if (is_string($updateUserInterface)) {
@@ -310,6 +312,36 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public function getUpdateUserInterface(): bool
     {
         return $this->updateUserInterface;
+    }
+
+    public function setScope($scope): void
+    {  
+        $this->scope = eScope::from(strtolower($scope));
+    }
+
+    public function getScope(): eScope
+    {
+        return $this->scope;
+    }
+
+    public function getGroupdIDs(): array
+    {
+        return $this->groupIDs;
+    }
+
+    public function addGroupID($groupid): void
+    {
+        $this->groupIDs[] = $groupid;
+    }
+
+    public function getShowWaitScreen(): bool
+    {
+        return $this->showwaitscreen;
+    }
+
+    public function setShowWaitScreen($showwaitscreen): bool
+    {
+        return $this->showwaitscreen;
     }
 
     public function setInvalidMessage($invalidMessage): void
@@ -407,6 +439,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                 case 'QuestionID':
                     $this->setQuestionID($childNode->nodeValue);
                     break;
+                case 'Key':
+                    $this->setKey($childNode->nodeValue);
+                    break;
                 case 'Name':
                     $this->setName($childNode->nodeValue);
                     break;
@@ -499,11 +534,20 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     break;
                 case 'UpdateUserInterface':
                     $this->setUpdateUserInterface($childNode->nodeValue);
-                    if ($childNode->attributes->getNamedItem('QuestionOnly') !== null) {
-                        $this->setUpdateQuestionOnly($childNode->attributes->getNamedItem('QuestionOnly'));
+                    if ($childNode->attributes->getNamedItem('Scope') !== null) {
+                        $this->setScope($childNode->attributes->getNamedItem('Scope')->nodeValue);
+                    }
+                    if ($childNode->attributes->getNamedItem('ShowWaitScreen') !== null) {
+                        $this->setShowWaitScreen($childNode->attributes->getNamedItem('ShowWaitScreen')->nodeValue);
                     }
 
                     break;
+                case 'UpdateGroups':
+                        /** @var DOMElement $grandChildNode */
+                        foreach ($childNode->childNodes as $grandChildNode) {
+                            $this->addGroupID($grandChildNode->nodeValue);
+                        }
+                        break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($childNode->nodeValue);
                     break;
@@ -632,6 +676,17 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         //update
         $update = " onblur='updateControls($(this))'";
         if ($this->getUpdateUserInterface()) {
+
+            $wait = $this->showwaitscreen;
+
+            $update = " onblur='updateUserInterface($(this" . $wait ."))'";
+
+            if ($this->scope === eScope::Question) {
+                $update = " onblur='UpdateQuestion($(this" . $wait ."))'";
+            } elseif ($this->scope === eScope::Group) {
+                $update = " onblur='updateGroup($(this" . $wait ."))'";
+            }
+
             $update = " onblur='updateUserInterface($(this))'";
         }
 
