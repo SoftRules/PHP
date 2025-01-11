@@ -78,7 +78,7 @@ return RectorConfig::configure()
         codeQuality: true,
         codingStyle: true,
         typeDeclarations: true,
-        privatization: false,
+        privatization: true,
         naming: false,
         instanceOf: false,
         earlyReturn: true,
