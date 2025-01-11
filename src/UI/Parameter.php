@@ -24,7 +24,7 @@ class Parameter implements ParameterContract
 
     private $usedByEvents;
 
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }

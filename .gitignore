@@ -16,23 +16,6 @@
 # Mono auto generated files
 mono_crash.*
 
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-1
-
 # Dependencies
 auth.json
 /vendor
@@ -56,6 +39,8 @@ nbproject/
 nbproject/private/
 .idea/*
 !/.idea/codeStyles
+.vscode
+src/.vscode
 
 mix-manifest.json
 
