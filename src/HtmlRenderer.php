@@ -6,6 +6,7 @@ use DOMDocument;
 use SoftRules\PHP\Contracts\Renderable;
 use SoftRules\PHP\Contracts\RenderableWrapper;
 use SoftRules\PHP\Contracts\UI\Components\GroupComponentContract;
+use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 use SoftRules\PHP\UI\SoftRulesFormData;
 use Stringable;
 
@@ -13,7 +14,7 @@ final class HtmlRenderer implements Stringable
 {
     private string $html = '';
 
-    private int $currentPage;
+    private readonly int $currentPage;
 
     public readonly int $totalPages;
 
@@ -28,7 +29,7 @@ final class HtmlRenderer implements Stringable
         $this->renderComponents($UIClass->components, $this->userInterfaceData);
     }
 
-    private function renderComponents(\SoftRules\PHP\UI\Collections\UiComponentsCollection $components, $userInterfaceData): void
+    private function renderComponents(UiComponentsCollection $components, $userInterfaceData): void
     {
         foreach ($components as $component) {
             if ($component instanceof RenderableWrapper) {

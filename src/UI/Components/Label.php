@@ -172,16 +172,16 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     public function render($components, $userInterfaceData): string
     {
-        //displaytypes: Attention, Informationbutton
-        //custum properties: align en valign. HelpText?
-        //custom properties depricated: columnwidth, columnwidth_unit
+        // displaytypes: Attention, Informationbutton
+        // custum properties: align en valign. HelpText?
+        // custom properties depricated: columnwidth, columnwidth_unit
         $labelClass = 'sr-label';
 
         if ($this->getParentGroupType() === eGroupType::tableheader) {
             $labelClass .= ' sr-label-th';
         }
 
-        //Custom property Styletype
+        // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
         $html = match($this->getParentGroupType()) {
@@ -199,7 +199,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
             $height = $this->getCustomPropertyByName('height')?->getValue();
             $html .= "<img alt='{$this->getText()}' class='no-pointer-events' src='{$url}' style='max-width={$width}; height={$height};'>";
         } else {
-            //alignment
+            // alignment
             $align = '';
             $valign = '';
             if ($this->getCustomPropertyByName('align')?->getValue() !== null) {

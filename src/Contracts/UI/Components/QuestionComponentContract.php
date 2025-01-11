@@ -87,7 +87,7 @@ interface QuestionComponentContract extends UiComponentContract
     public function setScope($scope): void;
 
     public function getScope(): eScope;
-    
+
     public function addGroupID($groupid): void;
 
     public function getGroupdIDs(): array;

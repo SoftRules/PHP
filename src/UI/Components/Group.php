@@ -33,7 +33,7 @@ class Group implements GroupComponentContract, RenderableWrapper
     private eGroupType $type;
 
     private $updateUserInterface;
-   
+
     private string $pageID;
 
     private $suppressItemsWhenInvisible;
@@ -216,7 +216,7 @@ class Group implements GroupComponentContract, RenderableWrapper
                     break;
                 case 'DisplayType':
                 case 'RepeatingPath':
-                    //no need to parse
+                    // no need to parse
                     break;
                 case 'SuppressItemsWhenInvisible':
                     $this->setSuppressItemsWhenInvisible($childNode->nodeValue);
@@ -247,7 +247,7 @@ class Group implements GroupComponentContract, RenderableWrapper
                             default:
                                 break;
                         }
-                    }                
+                    }
                 case 'Items':
                     /** @var DOMElement $grandChildNode */
                     foreach ($childNode->childNodes as $grandChildNode) {
@@ -396,7 +396,7 @@ class Group implements GroupComponentContract, RenderableWrapper
 
     public function getExpandableOpeningsTag(?StyleData $style, string $visibleStyle): string
     {
-        //TODO: defaultexpandable behaviour!
+        // TODO: defaultexpandable behaviour!
         $html = "<div class='sr-group-{$this->getType()->value} {$style?->class}' style='{$visibleStyle} {$style?->inlineStyle}' {$this->styleTypeProperty()} data-id='{$this->getGroupID()}'>";
         $html .= "<div class='card-header collapsed' data-toggle='collapse' data-target='#sr_{$this->getGroupID()}Body' onclick='expandClick(this);'>";
         $html .= "<div class='col-sm-11 header-col'>";

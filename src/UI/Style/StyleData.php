@@ -2,11 +2,11 @@
 
 namespace SoftRules\PHP\UI\Style;
 
-final class StyleData
+final readonly class StyleData
 {
     public function __construct(
-        public readonly string $class,
-        public readonly string $inlineStyle = '',
+        public string $class,
+        public string $inlineStyle = '',
     ) {
         //
     }

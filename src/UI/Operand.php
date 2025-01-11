@@ -50,7 +50,7 @@ class Operand implements OperandContract
         return $this->attributes;
     }
 
-    public function setValueType(eValueType|string|int $valueType): void //eValueType
+    public function setValueType(eValueType|string|int $valueType): void // eValueType
     {
         if ($valueType instanceof eValueType) {
             $this->valueType = $valueType;

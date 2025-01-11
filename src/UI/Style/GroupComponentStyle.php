@@ -2,10 +2,10 @@
 
 namespace SoftRules\PHP\UI\Style;
 
-final class GroupComponentStyle implements UiComponentStyle
+final readonly class GroupComponentStyle implements UiComponentStyle
 {
     public function __construct(
-        public readonly StyleData $page,
+        public StyleData $page,
         // TODO add other group types
     ) {
         //

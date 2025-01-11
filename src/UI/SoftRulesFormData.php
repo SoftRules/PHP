@@ -82,6 +82,7 @@ final class SoftRulesFormData implements SoftRulesFormContract
     {
         return $this->userInterfaceID;
     }
+
     public function setUserInterfaceVersionID(string $userInterfaceVersionID): void
     {
         $this->userInterfaceVersionID = $userInterfaceVersionID;
@@ -218,7 +219,7 @@ final class SoftRulesFormData implements SoftRulesFormContract
                     }
 
                     break;
-                case 'Questions': //this tag contains child elements, of which we only want one.
+                case 'Questions': // this tag contains child elements, of which we only want one.
                     /** @var DOMElement $childNode */
                     foreach ($child->childNodes as $childNode) {
                         switch ($childNode->nodeName) {

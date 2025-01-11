@@ -2,13 +2,13 @@
 
 namespace SoftRules\PHP\UI\Style;
 
-final class ButtonComponentStyle implements UiComponentStyle
+final readonly class ButtonComponentStyle implements UiComponentStyle
 {
     public function __construct(
-        public readonly StyleData $default,
-        public readonly StyleData $primary,
-        public readonly StyleData $success,
-        public readonly StyleData $danger,
+        public StyleData $default,
+        public StyleData $primary,
+        public StyleData $success,
+        public StyleData $danger,
     ) {
         //
     }

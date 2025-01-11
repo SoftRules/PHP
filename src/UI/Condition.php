@@ -92,8 +92,8 @@ class Condition implements ConditionContract
         foreach ($components as $component) {
             if ($component instanceof Question) {
                 if ($component->getName() == $operand->getValue()) {
-                    //Tussen accolades staat de instantie van de node in het xml. Staat er niets, dan impliceert dat de eerste instantie zijnde {1}
-                    //Door {1} te vervangen door niets, kunnen de strings met elkaar vergeleken worden.
+                    // Tussen accolades staat de instantie van de node in het xml. Staat er niets, dan impliceert dat de eerste instantie zijnde {1}
+                    // Door {1} te vervangen door niets, kunnen de strings met elkaar vergeleken worden.
                     $itemPath = str_replace('{1}', '', $component->getElementPath());
                     $operandPath = str_replace('{1}', '', $operand->getElementPath());
 

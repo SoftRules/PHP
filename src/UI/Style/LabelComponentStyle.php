@@ -2,10 +2,10 @@
 
 namespace SoftRules\PHP\UI\Style;
 
-final class LabelComponentStyle implements UiComponentStyle
+final readonly class LabelComponentStyle implements UiComponentStyle
 {
     public function __construct(
-        public readonly StyleData $default,
+        public StyleData $default,
         // TODO add other group types
     ) {
         //

@@ -225,7 +225,7 @@ class Button implements ButtonComponentContract, Renderable
         $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
 
-        //todo custom properties: align, nextpage
+        // todo custom properties: align, nextpage
 
         $buttonStyle = $this->getStyle()->default;
 

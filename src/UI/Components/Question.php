@@ -65,9 +65,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private $elementPath;
 
     private bool $updateUserInterface = false;
-    
+
     private eScope $scope = eScope::Userinterface;
-    
+
     private array $groupIDs = [];
 
     private bool $showwaitscreen = true;
@@ -125,10 +125,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         return $this->questionID;
     }
+
     public function setKey(string $key): void
     {
         $this->key = $key;
     }
+
     public function getKey(): string
     {
         return $this->key;
@@ -315,8 +317,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     }
 
     public function setScope($scope): void
-    {  
-        $this->scope = eScope::from(strtolower($scope));
+    {
+        $this->scope = eScope::from(strtolower((string) $scope));
     }
 
     public function getScope(): eScope
@@ -617,13 +619,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
         if ($this->getParentGroupType() === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
-            $viewLabel = false; //in tables never paint question labels
+            $viewLabel = false; // in tables never paint question labels
         }
 
         if ($this->getDisplayType() === eDisplayType::switch) {
             $html .= $this->getSwitchControl($disabled);
         } elseif ($this->getDisplayType() === eDisplayType::raty) {
-            //$html .= $this->getToggleControl();
+            // $html .= $this->getToggleControl();
         } else {
             $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->getQuestionID()}-row'>";
             if ($viewLabel) {
@@ -642,18 +644,18 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
             if ($this->getDisplayType() === eDisplayType::slider) {
                 $html .= $this->getSliderControl();
-            } elseif ($this->textValues->isNotEmpty()) { //selectbox
+            } elseif ($this->textValues->isNotEmpty()) { // selectbox
                 if ($this->getDisplayType() === eDisplayType::toggle) {
                     $html .= $this->getToggleControl();
                 } else {
                     $html .= $this->getDefaultSelectBoxControl($disabled);
                 }
-            } else { //input
+            } else { // input
                 $html .= $this->getDefaultInputControl($disabled);
             }
 
-            $html .= '</div>'; //input group
-            $html .= '</div>'; //control
+            $html .= '</div>'; // input group
+            $html .= '</div>'; // control
 
             $html .= "<div class='col-sm-1'>";
             if ($this->getHelpText() !== null) {
@@ -661,7 +663,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             }
 
             $html .= '</div>';
-            $html .= '</div>'; //form-group
+            $html .= '</div>'; // form-group
         }
 
         if ($this->getParentGroupType() === eGroupType::row) {
@@ -673,24 +675,24 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private function getDefaultInputControl(string $disabled): string
     {
-        //update
+        // update
         $update = " onblur='updateControls($(this))'";
         if ($this->getUpdateUserInterface()) {
 
             $wait = $this->showwaitscreen;
 
-            $update = " onblur='updateUserInterface($(this" . $wait ."))'";
+            $update = " onblur='updateUserInterface($(this" . $wait . "))'";
 
             if ($this->scope === eScope::Question) {
-                $update = " onblur='UpdateQuestion($(this" . $wait ."))'";
+                $update = " onblur='UpdateQuestion($(this" . $wait . "))'";
             } elseif ($this->scope === eScope::Group) {
-                $update = " onblur='updateGroup($(this" . $wait ."))'";
+                $update = " onblur='updateGroup($(this" . $wait . "))'";
             }
 
             $update = " onblur='updateUserInterface($(this))'";
         }
 
-        //type depends on DataType or DisplayType
+        // type depends on DataType or DisplayType
         $type = match ($this->getDataType()) {
             eDataType::date => 'type="date" ',
             eDataType::time => 'type="time" ',
@@ -703,7 +705,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $type = 'type="password" ';
         }
 
-        //format date
+        // format date
         $value = $this->getValue();
         if ($this->getDataType() === eDataType::date) {
             if ($value !== '') {
@@ -711,7 +713,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             }
         }
 
-        //Custom property Styletype
+        // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
         return
@@ -747,7 +749,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
 
-        //format date
+        // format date
         $value = $this->commaToDotNotation($this->getValue());
 
         $step = $this->commaToDotNotation($this->getCustomPropertyByName('Stepsize')?->getValue() ?? '1');
@@ -799,7 +801,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $update = " onchange='updateUserInterface($(this))'";
         }
 
-        //Custom property Styletype
+        // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
         return
@@ -865,7 +867,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
 
-        //Custom property Styletype
+        // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
         $values = '';

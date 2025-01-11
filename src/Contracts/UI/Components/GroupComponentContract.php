@@ -6,7 +6,6 @@ use SoftRules\PHP\Contracts\UI\ComponentWithCustomPropertiesContract;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Contracts\UI\UiComponentContract;
 use SoftRules\PHP\Enums\eGroupType;
-use SoftRules\PHP\Enums\eScope;
 
 interface GroupComponentContract extends ComponentWithCustomPropertiesContract, UiComponentContract
 {
@@ -21,7 +20,7 @@ interface GroupComponentContract extends ComponentWithCustomPropertiesContract, 
     public function setType(eGroupType|string $type): void;
 
     public function getType(): eGroupType;
-    
+
     public function setUpdateUserInterface($updateUserInterface): void;
 
     public function getUpdateUserInterface();

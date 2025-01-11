@@ -44,7 +44,7 @@ final class EvaluateExpressions implements Stringable
     {
         foreach ($components as $component) {
             if ($component instanceof GroupComponentContract) {
-                //Visible expression
+                // Visible expression
                 if ($component->getType() !== eGroupType::page) {
                     if ($this->itemVisible($component)) {
                         $this->actionList->add(new Action($component->getGroupID(), 'Show', ''));
@@ -53,7 +53,7 @@ final class EvaluateExpressions implements Stringable
                     }
                 }
 
-                //check for Custom property 'Hidebutton' in Group if Type=page
+                // check for Custom property 'Hidebutton' in Group if Type=page
                 if ($component->getType() === eGroupType::page) {
                     $this->hideButton = $component->getCustomPropertyByName('hidebutton')?->getValue() ?? '';
                 }
@@ -62,7 +62,7 @@ final class EvaluateExpressions implements Stringable
                     $this->evaluateExpressions($component->getComponents());
                 }
             } elseif ($component instanceof QuestionComponentContract) {
-                //Visible expression
+                // Visible expression
                 $visible = $this->itemVisible($component);
                 if ($visible) {
                     $this->actionList->add(new Action($component->getQuestionID(), 'Show', ''));
@@ -70,7 +70,7 @@ final class EvaluateExpressions implements Stringable
                     $this->actionList->add(new Action($component->getQuestionID(), 'Hide', ''));
                 }
 
-                //Required expression (only when visible)
+                // Required expression (only when visible)
                 $required = $component->getRequiredExpression()->value($this->allComponents, $this->userInterfaceData);
                 if (($required) && ($visible)) {
                     $this->actionList->add(new Action($component->getQuestionID(), 'Required', ''));
@@ -78,7 +78,7 @@ final class EvaluateExpressions implements Stringable
                     $this->actionList->add(new Action($component->getQuestionID(), 'NotRequired', ''));
                 }
 
-                //Valid expression (only when visible)
+                // Valid expression (only when visible)
                 $valid = $component->getValidExpression()->value($this->allComponents, $this->userInterfaceData);
                 if (($valid) && ($visible)) {
                     $this->actionList->add(new Action($component->getQuestionID(), 'Valid', ''));
@@ -86,7 +86,7 @@ final class EvaluateExpressions implements Stringable
                     $this->actionList->add(new Action($component->getQuestionID(), 'Invalid', ''));
                 }
 
-                //Enabled expression
+                // Enabled expression
                 if ($this->itemEnabled($component)) {
                     $this->actionList->add(new Action($component->getQuestionID(), 'Enabled', ''));
                 } else {
@@ -99,14 +99,14 @@ final class EvaluateExpressions implements Stringable
                     }
                 }
             } elseif ($component instanceof LabelComponentContract) {
-                //Visible expression
+                // Visible expression
                 if ($this->itemVisible($component)) {
                     $this->actionList->add(new Action($component->getLabelID(), 'Show', ''));
                 } else {
                     $this->actionList->add(new Action($component->getLabelID(), 'Hide', ''));
                 }
             } elseif ($component instanceof ButtonComponentContract) {
-                //Visible expression
+                // Visible expression
                 if ($this->itemVisible($component)) {
                     $this->actionList->add(new Action($component->getButtonID(), 'Show', ''));
                 } else {

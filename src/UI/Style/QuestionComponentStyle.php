@@ -2,11 +2,11 @@
 
 namespace SoftRules\PHP\UI\Style;
 
-final class QuestionComponentStyle implements UiComponentStyle
+final readonly class QuestionComponentStyle implements UiComponentStyle
 {
     public function __construct(
-        public readonly StyleData $default,
-        public readonly StyleData $slider,
+        public StyleData $default,
+        public StyleData $slider,
         // TODO add specific question types
     ) {
         //
