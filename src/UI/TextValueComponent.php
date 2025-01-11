@@ -6,7 +6,7 @@ use DOMElement;
 use SoftRules\PHP\Contracts\UI\TextValueComponentContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class TextValueComponent implements TextValueComponentContract
+final class TextValueComponent implements TextValueComponentContract
 {
     use ParsedFromXml;
 
@@ -78,7 +78,7 @@ class TextValueComponent implements TextValueComponentContract
 
         return
             <<<HTML
-            <option value="{$this->getValue()}" {$selectedAttribute}>{$this->getText()}</option>
+            <option value="{$this->value}" {$selectedAttribute}>{$this->text}</option>
             HTML;
     }
 }

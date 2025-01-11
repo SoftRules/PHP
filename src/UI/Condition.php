@@ -18,7 +18,7 @@ use SoftRules\PHP\UI\Components\Group;
 use SoftRules\PHP\UI\Components\Question;
 use Throwable;
 
-class Condition implements ConditionContract
+final class Condition implements ConditionContract
 {
     use ParsedFromXml;
 
@@ -126,16 +126,16 @@ class Condition implements ConditionContract
         $res = false;
         $processed = false;
 
-        if ($this->getLeftOperand()->getValueType() === eValueType::ELEMENTNAME) {
-            $lfs = $this->getElement($components, $this->getLeftOperand(), $UserInterfaceData);
+        if ($this->leftOperand->getValueType() === eValueType::ELEMENTNAME) {
+            $lfs = $this->getElement($components, $this->leftOperand, $UserInterfaceData);
         } else {
-            $lfs = $this->getLeftOperand()->getValue();
+            $lfs = $this->leftOperand->getValue();
         }
 
-        if ($this->getRightOperand()->getValueType() === eValueType::ELEMENTNAME) {
-            $rfs = $this->getElement($components, $this->getRightOperand(), $UserInterfaceData);
+        if ($this->rightOperand->getValueType() === eValueType::ELEMENTNAME) {
+            $rfs = $this->getElement($components, $this->rightOperand, $UserInterfaceData);
         } else {
-            $rfs = $this->getRightOperand()->getValue();
+            $rfs = $this->rightOperand->getValue();
         }
 
         $lf = $this->convertInt($lfs);
@@ -143,7 +143,7 @@ class Condition implements ConditionContract
 
         if ($lf !== null && $rf !== null) {
             $processed = true;
-            switch ($this->getOperator()) {
+            switch ($this->operator) {
                 case eOperator::EQUAL:
                     $res = $lf === $rf;
                     break;
@@ -173,7 +173,7 @@ class Condition implements ConditionContract
 
                     break;
                 default:
-                    echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
+                    echo 'Operator not implemented yet:' . $this->operator->value . '<br>';
                     break;
             }
         }
@@ -184,7 +184,7 @@ class Condition implements ConditionContract
 
             if ($ld && $rd) {
                 $processed = true;
-                switch ($this->getOperator()) {
+                switch ($this->operator) {
                     case eOperator::EQUAL:
                         $res = $ld->isSameDay($rd);
                         break;
@@ -216,7 +216,7 @@ class Condition implements ConditionContract
 
                         break;
                     default:
-                        echo 'Operator not implemented yet:' . $this->getOperator()->value . '<br>';
+                        echo 'Operator not implemented yet:' . $this->operator->value . '<br>';
                         break;
                 }
             }
@@ -224,7 +224,7 @@ class Condition implements ConditionContract
 
         if (! $processed) {
             // treat both operands as strings
-            switch ($this->getOperator()) {
+            switch ($this->operator) {
                 case eOperator::EQUAL:
                     $res = ((string) $lfs === (string) $rfs);
                     break;
@@ -257,7 +257,7 @@ class Condition implements ConditionContract
             }
         }
 
-        return match ($this->getLogOperator()) {
+        return match ($this->logOperator) {
             eLogOperator::AND => $res && $status,
             eLogOperator::OR => $res || $status,
             default => $status,

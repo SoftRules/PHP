@@ -17,7 +17,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\ButtonComponentStyle;
 
-class Button implements ButtonComponentContract, Renderable
+final class Button implements ButtonComponentContract, Renderable
 {
     use HasCustomProperties, ParsedFromXml;
 
@@ -41,7 +41,7 @@ class Button implements ButtonComponentContract, Renderable
 
     private ParameterContract $parameter;
 
-    private ?eGroupType $parentGroupType = eGroupType::none;
+    private eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
     {
@@ -165,7 +165,7 @@ class Button implements ButtonComponentContract, Renderable
         $this->parentGroupType = $parentGroupType;
     }
 
-    public function getParentGroupType(): ?eGroupType
+    public function getParentGroupType(): eGroupType
     {
         return $this->parentGroupType;
     }
@@ -222,36 +222,36 @@ class Button implements ButtonComponentContract, Renderable
 
     public function render($components, $userInterfaceData): string
     {
-        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
+        $visible = $this->visibleExpression->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
 
         // todo custom properties: align, nextpage
 
         $buttonStyle = $this->getStyle()->default;
 
-        $buttonFunction = match ($this->getType()) {
+        $buttonFunction = match ($this->type) {
             eButtonType::submit => 'processButton',
             eButtonType::navigate, eButtonType::update => 'updateButton',
             default => '',
         };
 
         $html = '';
-        if ($this->getParentGroupType() === eGroupType::row) {
+        if ($this->parentGroupType === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
         }
 
-        if ($this->getDisplayType() === eDisplayType::tile) {
-            $hint = $this->getHint();
+        if ($this->displayType === eDisplayType::tile) {
+            $hint = $this->hint;
             $width = $this->getCustomPropertyByName('width')?->getValue() ?? '';
             $height = $this->getCustomPropertyByName('height')?->getValue() ?? '';
             $pictureurl = $this->getCustomPropertyByName('pictureurl')?->getValue() ?? '';
-            $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->getButtonID()}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
+            $html .= "<img class='{$buttonFunction}' alt='{$hint}' width='{$width}' height='{$height}' src='{$pictureurl}' border=0 data-type='button' data-id='{$this->buttonID}' type=button onMouseOver=\"this.style.cursor='pointer'\">";
         } else {
             $novalidate = $this->getCustomPropertyByName('novalidate')?->getValue() ?? '';
-            $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->getButtonID()}' data-novalidate='{$novalidate}'>{$this->getText()}</button>";
+            $html .= "<button type='button' class='sr-button {$buttonFunction} {$buttonStyle->class}' style='{$visibleStyle} {$buttonStyle->inlineStyle}' {$this->styleTypeProperty('default')} data-type='button' data-id='{$this->buttonID}' data-novalidate='{$novalidate}'>{$this->text}</button>";
         }
 
-        if ($this->getParentGroupType() === eGroupType::row) {
+        if ($this->parentGroupType === eGroupType::row) {
             $html .= '</td>';
         }
 

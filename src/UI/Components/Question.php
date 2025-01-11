@@ -26,7 +26,7 @@ use SoftRules\PHP\UI\Restrictions;
 use SoftRules\PHP\UI\Style\QuestionComponentStyle;
 use SoftRules\PHP\UI\TextValueComponent;
 
-class Question implements ComponentWithCustomPropertiesContract, QuestionComponentContract, Renderable
+final class Question implements ComponentWithCustomPropertiesContract, QuestionComponentContract, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -49,13 +49,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $helpText;
 
-    private ?eDefaultState $defaultState = eDefaultState::none;
+    private eDefaultState $defaultState = eDefaultState::none;
 
     private $includeInvisibleQuestion;
 
     private eDataType $dataType = eDataType::none;
 
-    private ?eDisplayType $displayType = eDisplayType::none;
+    private eDisplayType $displayType = eDisplayType::none;
 
     private $displayOnly;
 
@@ -71,7 +71,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private array $groupIDs = [];
 
-    private bool $showwaitscreen = true;
+    private bool $showWaitScreen = true;
 
     private string $invalidMessage = '';
 
@@ -79,7 +79,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private $coreValue;
 
-    private ?eGroupType $parentGroupType = eGroupType::none;
+    private eGroupType $parentGroupType = eGroupType::none;
 
     /**
      * @var Collection<int, TextValueComponentContract>
@@ -339,12 +339,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     public function getShowWaitScreen(): bool
     {
-        return $this->showwaitscreen;
+        return $this->showWaitScreen;
     }
 
-    public function setShowWaitScreen($showwaitscreen): bool
+    public function setShowWaitScreen(bool $showWaitScreen): void
     {
-        return $this->showwaitscreen;
+        $this->showWaitScreen = $showWaitScreen;
     }
 
     public function setInvalidMessage($invalidMessage): void
@@ -429,7 +429,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $this->parentGroupType = $parentGroupType;
     }
 
-    public function getParentGroupType(): ?eGroupType
+    public function getParentGroupType(): eGroupType
     {
         return $this->parentGroupType;
     }
@@ -542,7 +542,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     }
 
                     if ($childNode->attributes->getNamedItem('ShowWaitScreen') !== null) {
-                        $this->setShowWaitScreen($childNode->attributes->getNamedItem('ShowWaitScreen')->nodeValue);
+                        $this->setShowWaitScreen((bool) $childNode->attributes->getNamedItem('ShowWaitScreen')->nodeValue);
                     }
 
                     break;
@@ -601,13 +601,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         $html = '';
 
-        $visible = $this->getVisibleExpression()->value($components, $userInterfaceData);
+        $visible = $this->visibleExpression->value($components, $userInterfaceData);
         $visibleStyle = $visible ? '' : 'display: none;';
 
         if ($this->defaultState === eDefaultState::Editable) {
-            $enable = $this->getDefaultStateExpression()->value($components, $userInterfaceData);
+            $enable = $this->defaultStateExpression->value($components, $userInterfaceData);
         } else {
-            $enable = ! $this->getDefaultStateExpression()->value($components, $userInterfaceData);
+            $enable = ! $this->defaultStateExpression->value($components, $userInterfaceData);
         }
 
         $disabled = $enable ? '' : 'disabled';
@@ -620,35 +620,35 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         }
 
         // indien parent een table row betreft, dan atlijd in <td></td> plaatsen
-        if ($this->getParentGroupType() === eGroupType::row) {
+        if ($this->parentGroupType === eGroupType::row) {
             $html .= "<td class='sr-table-td'>";
             $viewLabel = false; // in tables never paint question labels
         }
 
-        if ($this->getDisplayType() === eDisplayType::switch) {
+        if ($this->displayType === eDisplayType::switch) {
             $html .= $this->getSwitchControl($disabled);
-        } elseif ($this->getDisplayType() === eDisplayType::raty) {
+        } elseif ($this->displayType === eDisplayType::raty) {
             // $html .= $this->getToggleControl();
         } else {
-            $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->getQuestionID()}-row'>";
+            $html .= "<div class='form-group row sr-question' style='{$visibleStyle}' id='{$this->questionID}-row'>";
             if ($viewLabel) {
                 $html .= "<div class='col-sm-4'>";
-                $html .= "<label class='sr-label control-label align-self-center' for='{$this->getQuestionID()}' id='{$this->getQuestionID()}-label'>{$this->getDescription()}</label>";
+                $html .= "<label class='sr-label control-label align-self-center' for='{$this->questionID}' id='{$this->questionID}-label'>{$this->description}</label>";
                 $html .= '</div>';
             }
 
             $html .= "<div class='col-sm-7'>";
             $html .= "<div class='sr-input-group input-group'>";
 
-            $html .= match ($this->getDataType()) {
+            $html .= match ($this->dataType) {
                 eDataType::currency => "<span class='input-group-addon'>&euro;</span>",
                 default => '',
             };
 
-            if ($this->getDisplayType() === eDisplayType::slider) {
+            if ($this->displayType === eDisplayType::slider) {
                 $html .= $this->getSliderControl();
             } elseif ($this->textValues->isNotEmpty()) { // selectbox
-                if ($this->getDisplayType() === eDisplayType::toggle) {
+                if ($this->displayType === eDisplayType::toggle) {
                     $html .= $this->getToggleControl();
                 } else {
                     $html .= $this->getDefaultSelectBoxControl($disabled);
@@ -661,15 +661,15 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             $html .= '</div>'; // control
 
             $html .= "<div class='col-sm-1'>";
-            if ($this->getHelpText() !== null) {
-                $html .= "<i class='fa fa-info-circle sr-question-help sr-tooltip' data-tippy-content='{$this->getHelpText()}'></i>";
+            if ($this->helpText !== null) {
+                $html .= "<i class='fa fa-info-circle sr-question-help sr-tooltip' data-tippy-content='{$this->helpText}'></i>";
             }
 
             $html .= '</div>';
             $html .= '</div>'; // form-group
         }
 
-        if ($this->getParentGroupType() === eGroupType::row) {
+        if ($this->parentGroupType === eGroupType::row) {
             $html .= '</td>';
         }
 
@@ -680,9 +680,9 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     {
         // update
         $update = " onblur='updateControls($(this))'";
-        if ($this->getUpdateUserInterface()) {
+        if ($this->updateUserInterface) {
 
-            $wait = $this->showwaitscreen;
+            $wait = $this->showWaitScreen;
 
             $update = " onblur='updateUserInterface($(this" . $wait . "))'";
 
@@ -696,7 +696,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         }
 
         // type depends on DataType or DisplayType
-        $type = match ($this->getDataType()) {
+        $type = match ($this->dataType) {
             eDataType::date => 'type="date" ',
             eDataType::time => 'type="time" ',
             eDataType::integer, eDataType::int, eDataType::decimal => 'type="number" ',
@@ -704,13 +704,13 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             default => '',
         };
 
-        if ($this->getDisplayType() === eDisplayType::password) { // overwrite $type
+        if ($this->displayType === eDisplayType::password) { // overwrite $type
             $type = 'type="password" ';
         }
 
         // format date
-        $value = $this->getValue();
-        if ($this->getDataType() === eDataType::date && $value !== '') {
+        $value = $this->value;
+        if ($this->dataType === eDataType::date && $value !== '') {
             $value = Carbon::parse($value)->format('Y-m-d');
         }
 
@@ -720,21 +720,21 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         return
             <<<HTML
                 <input {$type}
-                       data-type="{$this->getDataType()->value}"
+                       data-type="{$this->dataType->value}"
                        class="sr-question sr-question-input {$this->getStyle()->default->class}"
                        style="{$this->getStyle()->default->inlineStyle}"
                        {$styleType}
-                       name="{$this->getName()}"
-                       id="{$this->getQuestionID()}"
+                       name="{$this->name}"
+                       id="{$this->questionID}"
                        value="{$value}"
                        data-value="{$value}"
-                       data-id="{$this->getQuestionID()}"
-                       data-elementpath="{$this->getElementPath()}"
-                       data-displaytype="{$this->getDisplayType()->value}"
-                       data-invalidmessage="{$this->getInvalidMessage()}"
+                       data-id="{$this->questionID}"
+                       data-elementpath="{$this->elementPath}"
+                       data-displaytype="{$this->displayType->value}"
+                       data-invalidmessage="{$this->invalidMessage}"
                        data-isvalid='true'
-                       data-length="{$this->getRestrictions()->getLength()}"
-                       data-pattern="{$this->getRestrictions()->getPattern()}"
+                       data-length="{$this->restrictions->getLength()}"
+                       data-pattern="{$this->restrictions->getPattern()}"
                        {$update}
                        {$disabled}
                        />
@@ -748,10 +748,10 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private function getSliderControl(): string
     {
-        $updateMethod = $this->getUpdateUserInterface() ? 'updateUserInterface' : 'updateControls';
+        $updateMethod = $this->updateUserInterface ? 'updateUserInterface' : 'updateControls';
 
         // format date
-        $value = $this->commaToDotNotation($this->getValue());
+        $value = $this->commaToDotNotation($this->value);
 
         $step = $this->commaToDotNotation($this->getCustomPropertyByName('Stepsize')?->getValue() ?? '1');
         $min = $this->commaToDotNotation($this->getCustomPropertyByName('MinValue')?->getValue() ?? '1');
@@ -765,20 +765,20 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                        class="sr-question sr-question-slider sr-slider {$this->getStyle()->slider->class}"
                        style="{$this->getStyle()->slider->inlineStyle}"
                        {$styleType}
-                       name="{$this->getName()}"
-                       id="{$this->getQuestionID()}"
+                       name="{$this->name}"
+                       id="{$this->questionID}"
                        value="{$value}"
                        data-value="{$value}"
                        data-prevValue="{$value}"
-                       data-id="{$this->getQuestionID()}"
-                       data-elementpath="{$this->getElementPath()}"
-                       data-displaytype="{$this->getDisplayType()->value}"
-                       data-invalidmessage="{$this->getInvalidMessage()}"                       
+                       data-id="{$this->questionID}"
+                       data-elementpath="{$this->elementPath}"
+                       data-displaytype="{$this->displayType->value}"
+                       data-invalidmessage="{$this->invalidMessage}"
                        data-isvalid='true'/>
 
                 <script>
                     new rSlider({
-                        target: '#{$this->getQuestionID()}',
+                        target: '#{$this->questionID}',
                         step: {$step},
                         values: {
                             min: {$min},
@@ -788,7 +788,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                         scale: false,
                         labels: false,
                         onChange() {
-                            {$updateMethod}($('#{$this->getQuestionID()}[data-id="{$this->getQuestionID()}"]'));
+                            {$updateMethod}($('#{$this->questionID}[data-id="{$this->questionID}"]'));
                         },
                     });
                 </script>
@@ -798,7 +798,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     private function getDefaultSelectBoxControl(string $disabled): string
     {
         $update = " onchange='updateControls($(this))'";
-        if ($this->getUpdateUserInterface()) {
+        if ($this->updateUserInterface) {
             $update = " onchange='updateUserInterface($(this))'";
         }
 
@@ -810,17 +810,17 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             <select class="sr-question sr-question-choice {$this->getStyle()->default->class}"
                     style="{$this->getStyle()->default->inlineStyle}"
                     {$styleType}
-                    id="{$this->getQuestionID()}"
-                    name="{$this->getName()}"
-                    data-id="{$this->getQuestionID()}"
-                    data-elementpath="{$this->getElementPath()}"
-                    data-displaytype="{$this->getDisplayType()->value}"
-                    data-invalidmessage = "{$this->getInvalidMessage()}"
+                    id="{$this->questionID}"
+                    name="{$this->name}"
+                    data-id="{$this->questionID}"
+                    data-elementpath="{$this->elementPath}"
+                    data-displaytype="{$this->displayType->value}"
+                    data-invalidmessage = "{$this->invalidMessage}"
                     {$update}
                     {$disabled}
 
                     data-isvalid='false'>
-                {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
+                {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->value === $textValueItem->getValue()))->implode('')}
             </select>
             HTML;
     }
@@ -830,29 +830,29 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
         $data_on = '1';
         $data_off = '0';
 
-        $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
+        $updateuserinterface = $this->updateUserInterface ? 'true' : 'false';
 
         if ($this->textValues->count() === 2) {
             $data_on = $this->textValues->first()->getValue();
             $data_off = $this->textValues->last()->getValue();
         }
 
-        $checked = $this->getValue() === $data_on ? 'checked' : '';
+        $checked = $this->value === $data_on ? 'checked' : '';
 
         return
             <<<HTML
             <span class="onoffswitch">
                 <label class="switch-label">
                     <input type='checkbox'
-                            id="{$this->getQuestionID()}"
-                            name='{$this->getName()}'
+                            id="{$this->questionID}"
+                            name='{$this->name}'
                             value='{$data_on}'
-                            data-elementpath="{$this->getElementPath()}"
+                            data-elementpath="{$this->elementPath}"
                             data-updateinterface='{$updateuserinterface}'
                             {$checked}
                             data-onvalue='{$data_on}'
                             data-offvalue='{$data_off}'
-                            data-id='{$this->getQuestionID()}'
+                            data-id='{$this->questionID}'
                             data-toggle='toggle'
                             {$disabled}
                             onchange='setSwitchValue(this);'/>
@@ -866,20 +866,20 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
     private function getToggleControl(): string
     {
-        $updateuserinterface = $this->getUpdateUserInterface() ? 'true' : 'false';
+        $updateuserinterface = $this->updateUserInterface ? 'true' : 'false';
 
         // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
         $values = '';
         foreach ($this->textValues as $textValue) {
-            $active = $textValue->getValue() === $this->getValue() ? 'active' : '';
+            $active = $textValue->getValue() === $this->value ? 'active' : '';
 
             $values .= <<<HTML
             <button type='button'
                     class='sr btn btn-secondary {$active}'
                     {$styleType}
-                    data-id='{$this->getQuestionID()}'
+                    data-id='{$this->questionID}'
                     data-updateinterface='{$updateuserinterface}'
                     data-value='{$textValue->getValue()}'
                     onclick='toggleClick(this)'>
@@ -893,12 +893,12 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
             <div class='form-group sr-togglefield row'>
                 <input type='hidden'
                        class='togglefield-hidden'
-                       data-id='{$this->getQuestionID()}'
-                       id='{$this->getQuestionID()}'
-                       value='{$this->getValue()}'
-                       name='{$this->getName()}'
+                       data-id='{$this->questionID}'
+                       id='{$this->questionID}'
+                       value='{$this->value}'
+                       name='{$this->name}'
                        {$styleType}
-                       data-elementpath='{$this->getElementPath()}'/>
+                       data-elementpath='{$this->elementPath}'/>
 
                 {$values}
                 </div>

@@ -4,7 +4,7 @@ namespace SoftRules\PHP\UI;
 
 use SoftRules\PHP\Contracts\ActionContract;
 
-class Action implements ActionContract
+final class Action implements ActionContract
 {
     public function setCommand(string $command): void
     {

@@ -10,7 +10,7 @@ use SoftRules\PHP\Contracts\UI\ExpressionContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 use SoftRules\PHP\UI\Collections\UiComponentsCollection;
 
-class Expression implements ExpressionContract
+final class Expression implements ExpressionContract
 {
     use ParsedFromXml;
 
@@ -60,7 +60,7 @@ class Expression implements ExpressionContract
 
     public function value(UiComponentsCollection $components, DOMDocument $userInterfaceData): bool
     {
-        $res = $this->getStartValue();
+        $res = $this->startValue;
 
         foreach ($this->conditions as $condition) {
             $res = $condition->value($res, $components, $userInterfaceData);

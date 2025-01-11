@@ -6,7 +6,7 @@ use DOMElement;
 use SoftRules\PHP\Contracts\UI\ParameterContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Parameter implements ParameterContract
+final class Parameter implements ParameterContract
 {
     use ParsedFromXml;
 

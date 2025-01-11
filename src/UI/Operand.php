@@ -8,7 +8,7 @@ use SoftRules\PHP\Contracts\UI\OperandContract;
 use SoftRules\PHP\Enums\eValueType;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class Operand implements OperandContract
+final class Operand implements OperandContract
 {
     use ParsedFromXml;
 

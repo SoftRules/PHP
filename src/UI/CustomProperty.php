@@ -6,7 +6,7 @@ use DOMElement;
 use SoftRules\PHP\Contracts\UI\CustomPropertyContract;
 use SoftRules\PHP\Traits\ParsedFromXml;
 
-class CustomProperty implements CustomPropertyContract
+final class CustomProperty implements CustomPropertyContract
 {
     use ParsedFromXml;
 

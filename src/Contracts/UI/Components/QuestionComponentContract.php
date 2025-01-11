@@ -92,7 +92,7 @@ interface QuestionComponentContract extends UiComponentContract
 
     public function getGroupdIDs(): array;
 
-    public function setShowWaitScreen($showwaitscreen): bool;
+    public function setShowWaitScreen(bool $showWaitScreen): void;
 
     public function getShowWaitScreen(): bool;
 

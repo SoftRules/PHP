@@ -17,7 +17,7 @@ use SoftRules\PHP\UI\Expression;
 use SoftRules\PHP\UI\Parameter;
 use SoftRules\PHP\UI\Style\LabelComponentStyle;
 
-class Label implements ComponentWithCustomPropertiesContract, LabelComponentContract, Renderable
+final class Label implements ComponentWithCustomPropertiesContract, LabelComponentContract, Renderable
 {
     use HasCustomProperties;
     use ParsedFromXml;
@@ -36,7 +36,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
     private ExpressionContract $visibleExpression;
 
-    private ?eGroupType $parentGroupType = eGroupType::none;
+    private eGroupType $parentGroupType = eGroupType::none;
 
     public function __construct()
     {
@@ -124,7 +124,7 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         $this->parentGroupType = $parentGroupType;
     }
 
-    public function getParentGroupType(): ?eGroupType
+    public function getParentGroupType(): eGroupType
     {
         return $this->parentGroupType;
     }
@@ -177,27 +177,27 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
         // custom properties depricated: columnwidth, columnwidth_unit
         $labelClass = 'sr-label';
 
-        if ($this->getParentGroupType() === eGroupType::tableheader) {
+        if ($this->parentGroupType === eGroupType::tableheader) {
             $labelClass .= ' sr-label-th';
         }
 
         // Custom property Styletype
         $styleType = $this->styleTypeProperty();
 
-        $html = match($this->getParentGroupType()) {
+        $html = match($this->parentGroupType) {
             eGroupType::row => "<td class='sr-table-td'>",
             eGroupType::tableheader => "<th class='sr-table-th'>",
 
             default => '',
         };
 
-        if ($this->getDisplayType() === eDisplayType::informationbutton) {
-            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg sr-tooltip' data-tippy-content='{$this->getText()}'></i></span>";
-        } elseif ($this->getDisplayType() === eDisplayType::image) {
+        if ($this->displayType === eDisplayType::informationbutton) {
+            $html .= "<span><i class='fa fa-info-circle fa-fw fa-lg sr-tooltip' data-tippy-content='{$this->text}'></i></span>";
+        } elseif ($this->displayType === eDisplayType::image) {
             $url = $this->getCustomPropertyByName('imageurl')?->getValue();
             $width = $this->getCustomPropertyByName('width')?->getValue();
             $height = $this->getCustomPropertyByName('height')?->getValue();
-            $html .= "<img alt='{$this->getText()}' class='no-pointer-events' src='{$url}' style='max-width={$width}; height={$height};'>";
+            $html .= "<img alt='{$this->text}' class='no-pointer-events' src='{$url}' style='max-width={$width}; height={$height};'>";
         } else {
             // alignment
             $align = '';
@@ -212,16 +212,16 @@ class Label implements ComponentWithCustomPropertiesContract, LabelComponentCont
 
             $html .=
                     <<<HTML
-                    <span data-id="{$this->getLabelID()}"
+                    <span data-id="{$this->labelID}"
                         class="{$labelClass} {$this->getStyle()->default->class} {$align} {$valign}"
                         style="{$this->getStyle()->default->inlineStyle}"
                         {$styleType}>
-                        {$this->getText()}
+                        {$this->text}
                     </span>
                     HTML;
         }
 
-        return $html . match($this->getParentGroupType()) {
+        return $html . match($this->parentGroupType) {
             eGroupType::row => '</td>',
             eGroupType::tableheader => '</th>',
             default => '',

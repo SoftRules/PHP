@@ -4,7 +4,7 @@ namespace SoftRules\PHP\UI;
 
 use SoftRules\PHP\Contracts\UI\RestrictionsContract;
 
-class Restrictions implements RestrictionsContract
+final class Restrictions implements RestrictionsContract
 {
     private $enumerationValues;
 
