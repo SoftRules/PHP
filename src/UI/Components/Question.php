@@ -34,6 +34,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
     public static ?QuestionComponentStyle $style = null;
 
     private string $questionID;
+
     private string $key;
 
     private $name;
@@ -539,6 +540,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     if ($childNode->attributes->getNamedItem('Scope') !== null) {
                         $this->setScope($childNode->attributes->getNamedItem('Scope')->nodeValue);
                     }
+
                     if ($childNode->attributes->getNamedItem('ShowWaitScreen') !== null) {
                         $this->setShowWaitScreen($childNode->attributes->getNamedItem('ShowWaitScreen')->nodeValue);
                     }
@@ -549,6 +551,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                         foreach ($childNode->childNodes as $grandChildNode) {
                             $this->addGroupID($grandChildNode->nodeValue);
                         }
+
                         break;
                 case 'InvalidMessage':
                     $this->setInvalidMessage($childNode->nodeValue);
@@ -815,7 +818,7 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
                     data-invalidmessage = "{$this->getInvalidMessage()}"
                     {$update}
                     {$disabled}
-                    
+
                     data-isvalid='false'>
                 {$this->textValues->map(fn (TextValueComponentContract $textValueItem): string => $textValueItem->render($this->getValue() === $textValueItem->getValue()))->implode('')}
             </select>

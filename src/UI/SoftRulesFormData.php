@@ -29,6 +29,7 @@ final class SoftRulesFormData implements SoftRulesFormContract
     private string $configID;
 
     private string $userInterfaceID;
+
     private string $userInterfaceVersionID;
 
     public readonly UiComponentsCollection $components;

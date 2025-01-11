@@ -76,7 +76,7 @@ return RectorConfig::configure()
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
-        codingStyle: false,
+        codingStyle: true,
         typeDeclarations: true,
         privatization: false,
         naming: false,
