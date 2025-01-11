@@ -48,23 +48,20 @@ class TextValueComponent implements TextValueComponentContract
 
     public function parse(DOMElement $DOMElement): static
     {
-        switch ($DOMElement->nodeName) {
-            case 'Item':
-                foreach ($DOMElement->childNodes as $childNode) {
-                    switch ($childNode->nodeName) {
-                        case 'Value':
-                            $this->setValue((string) $childNode->nodeValue);
-                            break;
-                        case 'Text':
-                            $this->setText((string) $childNode->nodeValue);
-                            break;
-                        case 'ImageUrl':
-                            $this->setImageUrl((string) $childNode->nodeValue);
-                            break;
-                    }
+        if ($DOMElement->nodeName === 'Item') {
+            foreach ($DOMElement->childNodes as $childNode) {
+                switch ($childNode->nodeName) {
+                    case 'Value':
+                        $this->setValue((string) $childNode->nodeValue);
+                        break;
+                    case 'Text':
+                        $this->setText((string) $childNode->nodeValue);
+                        break;
+                    case 'ImageUrl':
+                        $this->setImageUrl((string) $childNode->nodeValue);
+                        break;
                 }
-
-                break;
+            }
         }
 
         return $this;

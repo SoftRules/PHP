@@ -707,10 +707,8 @@ class Question implements ComponentWithCustomPropertiesContract, QuestionCompone
 
         // format date
         $value = $this->getValue();
-        if ($this->getDataType() === eDataType::date) {
-            if ($value !== '') {
-                $value = Carbon::parse($value)->format('Y-m-d');
-            }
+        if ($this->getDataType() === eDataType::date && $value !== '') {
+            $value = Carbon::parse($value)->format('Y-m-d');
         }
 
         // Custom property Styletype
