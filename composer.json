@@ -25,11 +25,11 @@
         "php": "^8.2",
         "ext-dom": "*",
         "ext-simplexml": "*",
-        "guzzlehttp/guzzle": "^7.9.2",
-        "illuminate/collections": "^10.48.23|^11.31|^12.0.1",
-        "illuminate/http": "^10.48.23|^11.31|^12.0.1",
-        "illuminate/support": "^10.48.23|^11.31|^12.0.1",
-        "vlucas/phpdotenv": "^5.6.1"
+        "guzzlehttp/guzzle": "^7.8",
+        "illuminate/collections": "^10.48.23|^11.31|^12.0",
+        "illuminate/http": "^10.48.23|^11.31|^12.0",
+        "illuminate/support": "^10.48.23|^11.31|^12.0",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "laravel/pint": "^1.21",
